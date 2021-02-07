@@ -14,6 +14,8 @@ const app = createSSRApp(App);
 app.use(router).use(store);
 app.use(el);
 
+// store.dispatch('menus/getMenusData');
+
 router.beforeResolve((to, from, next) => {
   let diffed = false;
   const matched = router.resolve(to).matched;

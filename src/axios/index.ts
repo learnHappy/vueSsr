@@ -1,10 +1,14 @@
 import axios from 'axios';
-
 import { ElMessage, ElLoading } from 'element-plus';
 
 const configBaseUrl = 'http://localhost:5656/';
+// const configBaseUrl = process.env.URL;
 
+let elMessage = ElMessage;
+let elLoading = ElLoading;
 let loadingInstance: any = null;
+
+console.log(configBaseUrl);
 
 //create方法创建axios实例
 export const axiosService = axios.create({
@@ -16,7 +20,7 @@ export const axiosService = axios.create({
 });
 
 axiosService.interceptors.request.use((config) => {
-  loadingInstance = ElLoading.service({
+  loadingInstance = elLoading.service({
     lock: true,
     text: 'loading...'
   });
@@ -27,7 +31,9 @@ axiosService.interceptors.request.use((config) => {
 axiosService.interceptors.response.use(
   (response) => {
     try {
-      loadingInstance.close();
+      if (loadingInstance) {
+        loadingInstance.close();
+      }
     } catch (err) {
       console.log(err);
     }
@@ -36,12 +42,18 @@ axiosService.interceptors.response.use(
   (error) => {
     console.log('TCL: error', error);
     const msg = error.Message !== undefined ? error.Message : '';
-    ElMessage({
+    elMessage({
       message: '网络错误' + msg,
       type: 'error',
       duration: 3 * 1000
     });
-    loadingInstance.close();
+    try {
+      if (loadingInstance) {
+        loadingInstance.close();
+      }
+    } catch (error) {
+      console.log(error);
+    }
     return Promise.reject(error);
   }
 );

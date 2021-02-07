@@ -5,7 +5,7 @@ import el from 'element-plus';
 import createRouter from './router/';
 import createStore from './store/';
 import { isPromise } from './utils';
-import axios from 'axios';
+import axios from './axios/index';
 axios.defaults.adapter = require('axios/lib/adapters/http');
 const express = require('express');
 const path = require('path');
@@ -49,6 +49,7 @@ server.get('*', (req: any, res: any) => {
     (async () => {
       await Promise.all(asyncDataFuncs);
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      // await store.dispatch('menus/getMenusData');
       const html = await renderer.renderToString(app);
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const state = JSON.stringify(store.state);

@@ -24,7 +24,7 @@ const aliasConfig = {
     },
     emitManifest: true,
     env: {
-      VITE_VUE_ENV: 'client'
+      VITE_VUE_ENV: 'client',
     }
   });
 

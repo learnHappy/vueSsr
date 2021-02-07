@@ -5,47 +5,26 @@ export default function (type?: 'client' | 'server') {
 
   return createRouter({
     history: routerHistory,
-    // ...routes
     routes: [
       {
-        path: '/',
-        name: '主要功能',
-        redirect: 'welcome',
-        component: () => import('@/components/index.vue'),
-        children: [
-          {
-            path: '/welcome',
-            name: '主页',
-            component: () => import('@/views/welcome.vue')
-          },
-          {
-            path: '/user',
-            name: '用户',
-            component: () => import('@/views/user.vue')
-          },
-          {
-            path: '/reports/revenue',
-            name: '营收报表',
-            component: () => import('@/views/reports/revenue.vue')
-          }
-        ]
-      },{
-        path:'/',
-        name: '常规管理',
-        // icon: 'el-icon-paperclip',
-        component: () => import('@/components/index.vue'),
-        children: [
-          {
-            path: '/setting',
-            name: '系统设置',
-            component: () => import('@/views/welcome.vue')
-          },
-          {
-            path: '/template',
-            name: '模板设置',
-            component: () => import('@/views/index.vue')
-          }
-        ]
+        path: '/welcome',
+        name: '首页',
+        component: () => import('@/views/welcome.vue')
+      },
+      {
+        path: '/statistical',
+        name: '营收统计',
+        component: () => import('@/views/revenue/statistical.vue')
+      },
+      {
+        path: '/:catchAll(.*)',
+        name: '404',
+        component: () => import('@/views/404.vue')
+      },
+      {
+        path: '/test',
+        name: 'test',
+        component: () => import('@/views/test.vue')
       }
     ]
   });

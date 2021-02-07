@@ -43,11 +43,6 @@ server.get("/menus", (req, res) => {
         component: () => import('@/views/welcome.vue')
       },
       {
-        path: '/',
-        name: '首页',
-        component: () => import('@/views/index.vue')
-      },
-      {
         path: '/user',
         name: '用户',
         component: () => import('@/views/user.vue')
@@ -76,6 +71,57 @@ server.get("/menus", (req, res) => {
   }];
   res.end(JSON.stringify(routes));
 })
+
+server.get('/tableData', (req, res) => {
+  const tableData = [{
+      xz: '自费',
+      sszje: '678.99',
+      ysje: '678.99',
+      ybje: '0.00',
+      zfbje: '0.00',
+      wxje: '0.00',
+      ylje: '0.00',
+      qtxjje: '0.00'
+    },
+    {
+      xz: '自费',
+      sszje: '678.99',
+      ysje: '678.99',
+      ybje: '0.00',
+      zfbje: '0.00',
+      wxje: '0.00',
+      ylje: '0.00',
+      qtxjje: '0.00'
+    },
+    {
+      xz: '医保',
+      sszje: '678.99',
+      ysje: '678.99',
+      ybje: '0.00',
+      zfbje: '0.00',
+      wxje: '0.00',
+      ylje: '0.00',
+      qtxjje: '0.00'
+    },
+    {
+      xz: '医保',
+      sszje: '678.99',
+      ysje: '678.99',
+      ybje: '0.00',
+      zfbje: '0.00',
+      wxje: '0.00',
+      ylje: '0.00',
+      qtxjje: '0.00'
+    }
+  ];
+
+  res.end(JSON.stringify({
+    code: 0,
+    data: tableData,
+    message: ''
+  }));
+});
+
 
 server.listen(5656, () => {
   console.log('listen at http://localhos:5656/');

@@ -1,250 +1,280 @@
 <template>
-  <el-card class="box-card" style="margin: -10px -10px 10px -10px !important">
-    <el-breadcrumb separator-class="el-icon-arrow-right">
-      <el-breadcrumb-item>主要功能</el-breadcrumb-item>
-      <el-breadcrumb-item :to="{ path: '/welcome' }">首页</el-breadcrumb-item>
-    </el-breadcrumb>
-  </el-card>
-
-  <el-row :gutter="10">
-    <el-col :xs="24" :md="12">
-      <el-card class="box-card">
-        <template #header>
+  <div class="welcome">
+    <!-- 功能入口 -->
+    <el-row class="fun-style">
+      <el-col :span="24">
+        <el-carousel height="70px" :autoplay="false" trigger="click" indicator-position="outside">
+          <el-carousel-item>
+            <template v-for="o in 7" :key="o">
+              <router-link to="/statistical">
+                <button class="fun-entrance">
+                  <el-row>
+                    <el-col :span="6"><i class="el-icon-date" /></el-col>
+                    <el-col :span="18" style="line-height: 30px">当日营收统计</el-col>
+                  </el-row>
+                </button>
+              </router-link>
+            </template>
+          </el-carousel-item>
+          <el-carousel-item> 1231313 </el-carousel-item>
+        </el-carousel>
+        <div class="head-portrait">
           <el-row>
-            <el-col :span="8">营收金额</el-col>
-            <el-col :span="16" class="date-button">
-              <el-button size="mini" :type="buttonType">当日</el-button>
-              <el-button size="mini">本周</el-button>
-              <el-button size="mini">本月</el-button>
-              <el-button size="mini">上月</el-button>
-            </el-col>
-          </el-row>
-        </template>
-        <div class="text item">
-          <el-row>
-            <el-col :span="3">
-              <i class="el-icon-bank-card" style="font-size: 30px" />
-            </el-col>
-            <el-col :span="5">
-              <h5>医保金额</h5>
-              <div>￥<span class="amount-size">900</span></div>
-            </el-col>
-
-            <el-col :span="3">
-              <i class="el-icon-money" style="font-size: 30px" />
-            </el-col>
-            <el-col :span="5">
-              <h5>自费金额</h5>
-              <div>￥<span class="amount-size">100</span></div>
-            </el-col>
-
-            <el-col :span="3">
-              <i class="el-icon-coin" style="font-size: 30px" />
-            </el-col>
-            <el-col :span="5">
-              <h5>总金额</h5>
-              <div>￥<span class="amount-size">1000</span></div>
+            <el-col :sm="10" :xs="0"> logo </el-col>
+            <el-col :sm="14" :xs="24" style="text-align: left; padding-top: 15px">
+              <el-avatar icon="el-icon-user-solid"></el-avatar>
             </el-col>
           </el-row>
         </div>
-      </el-card>
-    </el-col>
-    <el-col :xs="24" :md="12">
-      <div>
-        <el-card class="box-card">
+      </el-col>
+    </el-row>
+
+    <!-- 营收金额和提醒 -->
+    <el-row :gutter="10">
+      <el-col :sm="12" :xs="24">
+        <el-card class="box-card revenue-money">
           <template #header>
-            <div style="height: 28px; line-height: 28px">综合数据</div>
+            <div>
+              <span class="header-title">营收金额</span>
+              <div class="time-range">
+                <el-button-group>
+                  <el-button round size="small" plain>今日</el-button>
+                  <el-button size="small">本月</el-button>
+                  <el-button round size="small">本年</el-button>
+                </el-button-group>
+              </div>
+            </div>
           </template>
-          <div class="text item">
-            <el-row style="height: 57px">
+          <div>
+            <el-row>
               <el-col :span="8">
-                <h5>就诊人数</h5>
-                <div>10</div>
+                <div class="text">
+                  <h2>900.00</h2>
+                  <p>医保金额(元)</p>
+                </div>
               </el-col>
               <el-col :span="8">
-                <h5>临期商品种类数量</h5>
-                <div style="color: red">20</div>
+                <div class="text">
+                  <h2>100.00</h2>
+                  <p>自费金额(元)</p>
+                </div>
               </el-col>
               <el-col :span="8">
-                <h5>库存不足种类数量</h5>
-                <div style="color: red">15</div>
+                <div class="text">
+                  <h2>1000.00</h2>
+                  <p>总金额(元)</p>
+                </div>
               </el-col>
             </el-row>
           </div>
         </el-card>
-      </div>
-    </el-col>
-  </el-row>
+      </el-col>
+      <el-col :sm="12" :xs="24">
+        <el-card class="box-card comprehensive-data">
+          <template #header>
+            <div>
+              <span class="header-title">综合数据</span>
+            </div>
+          </template>
+          <div>
+            <el-row>
+              <el-col :span="8">
+                <div class="text">
+                  <h2>10</h2>
+                  <p>就诊人数</p>
+                </div>
+              </el-col>
+              <el-col :span="8">
+                <div class="text">
+                  <h2>20</h2>
+                  <p>临期商品种类数量</p>
+                </div>
+              </el-col>
+              <el-col :span="8">
+                <div class="text">
+                  <h2>15</h2>
+                  <p>库存不足种类数量</p>
+                </div>
+              </el-col>
+            </el-row>
+          </div>
+        </el-card>
+      </el-col>
+    </el-row>
 
-  <el-row :gutter="10">
-    <el-col :xs="24" :md="12">
-      <div class="">
+    <!-- 表格数据 -->
+    <el-row>
+      <el-col :span="24">
         <el-card class="box-card">
           <template #header>
-            <div>最近七日营收金额折线图</div>
+            <div>
+              <span class="header-title-native">营收报表</span>
+            </div>
           </template>
-          <div class="text item">
-            <div id="echarts-attendance" class="echarts" />
-          </div>
+          <el-table :data="tableData" style="width: 100%">
+            <el-table-column label="险种" prop="xz" min-width="80" />
+            <el-table-column label="实收总金额" prop="sszje" min-width="120" />
+            <el-table-column label="应收金额" prop="ysje" min-width="100" />
+            <el-table-column label="医保金额" prop="ybje" min-width="100" />
+            <el-table-column label="支付宝金额" prop="zfbje" min-width="120" />
+            <el-table-column label="微信金额" prop="wxje" min-width="100" />
+            <el-table-column label="银联金额" prop="ylje" min-width="100" />
+            <el-table-column label="其他现金金额" prop="qtxjje" min-width="140" />
+            <el-table-column label="操作" min-width="180">
+              <template #default="scope">
+                <el-button round size="mini" type="success" class="el-icon-circle-plus" />
+                <el-button round size="mini" type="warning" class="el-icon-circle-plus-outline" />
+                <el-button round size="mini" type="danger" class="el-icon-delete" />
+              </template>
+            </el-table-column>
+          </el-table>
         </el-card>
-      </div>
-    </el-col>
-    <el-col :xs="24" :md="12">
-      <div class="">
+      </el-col>
+    </el-row>
+
+    <el-row :gutter="10">
+      <el-col :md="16" :sm="24">
+        <el-row>
+          <el-col :span="24">
+            <el-card class="box-card">
+              <template #header>
+                <div>
+                  <span class="header-title-native">柱状图</span>
+                </div>
+              </template>
+              <div id="echarts-doctor" style="height: 300px"></div>
+            </el-card>
+          </el-col>
+        </el-row>
+        <el-row :gutter="10">
+          <el-col :sm="16" :xs="24">
+            <el-card class="box-card">
+              <template #header>
+                <div>
+                  <span class="header-title-native">折线图</span>
+                </div>
+              </template>
+              <div id="echarts-revenue" style="height: 300px"></div>
+            </el-card>
+          </el-col>
+          <el-col :sm="8" :xs="24">
+            <el-card class="box-card">
+              <template #header>
+                <div>
+                  <span class="header-title-native">饼图</span>
+                </div>
+              </template>
+              <div id="revenueEcharts" style="height: 300px"></div>
+            </el-card>
+          </el-col>
+        </el-row>
+      </el-col>
+      <el-col :md="8" :sm="24">
         <el-card class="box-card">
           <template #header>
-            <div>最近七日就诊人数折线图</div>
+            <div>
+              <span class="header-title-native">待处理事项</span>
+            </div>
           </template>
-          <div class="text item">
-            <div id="echarts-revenue" class="echarts" />
+          <div>
+            <div class="pending">
+              <el-row v-for="o in 13" :key="o">
+                <el-col :span="4">
+                  <i class="el-icon-picture-outline-round" />
+                </el-col>
+                <el-col :span="16">
+                  <h5>待处理事项</h5>
+                  <p :class="o === 1 ? 'bule' : ''">待处理事项待处理事项待处理事项</p>
+                </el-col>
+                <el-col :span="4"> <div class="date-buttom">2020.02.04</div> </el-col>
+              </el-row>
+            </div>
+            <el-button type="primary" style="width: 100%">更多</el-button>
           </div>
         </el-card>
-      </div>
-    </el-col>
-  </el-row>
-  <el-row :gutter="10">
-    <el-col :xs="24" :md="12">
-      <el-card class="box-card">
-        <template #header>
-          <div>医生业绩对比图</div>
-        </template>
-        <div class="text item">
-          <div id="echarts-doctor" class="echarts" />
-        </div>
-      </el-card>
-    </el-col>
-    <el-col :xs="24" :md="12">
-      <el-card class="box-card">
-        <template #header>
-          <div>科室业绩对比图</div>
-        </template>
-        <div class="text item">
-          <div id="echarts-department" class="echarts" />
-        </div>
-      </el-card>
-    </el-col>
-  </el-row>
-  <el-row :gutter="10">
-    <el-col :span="24">
-      <el-card class="box-card">
-        <template #header>
-          <div>医生业绩对比图</div>
-        </template>
-        <div class="text item">
-          <div id="echarts-purchasing" class="echarts" />
-        </div>
-      </el-card>
-    </el-col>
-  </el-row>
+      </el-col>
+    </el-row>
+  </div>
 </template>
 
 <script>
-import * as echart from 'echarts';
-
+import { onMounted, reactive, toRefs } from 'vue';
+import * as echarts from 'echarts';
+import axios from '../axios/index';
 export default {
-  data() {
+  async setup() {
+    let tableData = [];
+    await axios.get('tableData').then((res) => {
+      if (res.code === 0) {
+        tableData = res.data;
+      }
+      console.log(res);
+    });
+
+    const state = reactive({
+      tableData
+      // tableData: [
+      //   {
+      //     xz: '自费',
+      //     sszje: '678.99',
+      //     ysje: '678.99',
+      //     ybje: '0.00',
+      //     zfbje: '0.00',
+      //     wxje: '0.00',
+      //     ylje: '0.00',
+      //     qtxjje: '0.00'
+      //   },
+      //   {
+      //     xz: '自费',
+      //     sszje: '678.99',
+      //     ysje: '678.99',
+      //     ybje: '0.00',
+      //     zfbje: '0.00',
+      //     wxje: '0.00',
+      //     ylje: '0.00',
+      //     qtxjje: '0.00'
+      //   },
+      //   {
+      //     xz: '医保',
+      //     sszje: '678.99',
+      //     ysje: '678.99',
+      //     ybje: '0.00',
+      //     zfbje: '0.00',
+      //     wxje: '0.00',
+      //     ylje: '0.00',
+      //     qtxjje: '0.00'
+      //   },
+      //   {
+      //     xz: '医保',
+      //     sszje: '678.99',
+      //     ysje: '678.99',
+      //     ybje: '0.00',
+      //     zfbje: '0.00',
+      //     wxje: '0.00',
+      //     ylje: '0.00',
+      //     qtxjje: '0.00'
+      //   }
+      // ]
+    });
     return {
-      buttonType: 'primary',
-      activeName: 'first'
+      ...toRefs(state)
     };
   },
-  mounted() {
-    this.echartsAttendance();
-    this.echartsRecords();
-    this.echartsDoctor();
-    this.echartsDepartment();
-    this.echartsPurchasing();
-  },
   methods: {
-    handleClick(tab, event) {
-      console.log(tab, event);
-    },
-    echartsAttendance() {
+    echartsDoctor(echarts) {
       /**
        * 报表功能
        */
-      var echartsAttendance = echart.init(document.getElementById('echarts-attendance'), 'light');
+      var echartsDoctor = echarts.init(window.document.getElementById('echarts-doctor'), 'light');
       // 指定图表的配置项和数据
       var option = {
         title: {
           text: ''
         },
         tooltip: {},
-        legend: {
-          data: ['营收金额']
-        },
-        xAxis: {
-          data: ['2020-12-01', '2020-12-02', '2020-12-03', '2020-12-04', '2020-12-05', '2020-12-06', '2020-12-07']
-        },
-        yAxis: {},
-        series: [
-          {
-            name: '销量',
-            type: 'line',
-            data: [5, 20, 36, 10, 10, 20, 15]
-          }
-        ]
-      };
-      // 使用刚指定的配置项和数据显示图表。
-      echartsAttendance.setOption(option);
-    },
-    echartsRecords() {
-      /**
-       * 报表功能
-       */
-      var echartsRecords = echart.init(window.document.getElementById('echarts-revenue'), 'light');
-      // 指定图表的配置项和数据
-      var option = {
-        title: {
-          text: ''
-          // left: 'center'
-        },
-        tooltip: {
-          formatter: (params) => {
-            return `${params.name}的应收金额为￥${params.value}`;
-          }
-        },
-        legend: {
-          data: ['营收金额']
-        },
-        xAxis: {
-          name: '日期',
-          data: ['2020-12-01', '2020-12-02', '2020-12-03', '2020-12-04', '2020-12-05', '2020-12-06', '2020-12-07'],
-          nameTextStyle: {
-            color: 'black'
-          }
-        },
-        yAxis: {
-          name: '单位: ￥',
-          nameTextStyle: {
-            color: 'black'
-          }
-        },
-        series: [
-          {
-            name: '金额',
-            type: 'line',
-            data: [1000, 800, 1100, 500, 700, 1500, 900]
-          }
-        ]
-      };
-      // 使用刚指定的配置项和数据显示图表。
-      echartsRecords.setOption(option);
-    },
-    echartsDoctor() {
-      /**
-       * 报表功能
-       */
-      var echartsDoctor = echart.init(document.getElementById('echarts-doctor'), 'light');
-      // 指定图表的配置项和数据
-      var option = {
-        title: {
-          text: ''
-        },
-        tooltip: {},
-        legend: {
-          data: ['新手', '主任', '院长']
-        },
+        // legend: {
+        //   data: ['新手', '主任', '院长']
+        // },
         xAxis: {
           data: ['2020-07', '2020-08', '2020-09', '2020-10', '2020-11', '2020-12']
         },
@@ -272,174 +302,111 @@ export default {
       // 使用刚指定的配置项和数据显示图表。
       echartsDoctor.setOption(option);
     },
-    echartsDepartment() {
+    echartsRecords(echarts) {
       /**
        * 报表功能
        */
-      var echartsDepartment = echart.init(document.getElementById('echarts-department'), 'light');
+      var echartsRecords = echarts.init(window.document.getElementById('echarts-revenue'), 'light');
       // 指定图表的配置项和数据
       var option = {
         title: {
           text: ''
+          // left: 'center'
         },
-        tooltip: {},
-        legend: {
-          data: ['儿童科', '妇科', '神经科']
+        tooltip: {
+          formatter: (params) => {
+            return `${params.name}的应收金额为￥${params.value}`;
+          }
         },
+        // legend: {
+        //   data: ['营收金额']
+        // },
         xAxis: {
-          data: ['2020-07', '2020-08', '2020-09', '2020-10', '2020-11', '2020-12']
+          name: '日期',
+          data: ['2020-12-01', '2020-12-02', '2020-12-03', '2020-12-04', '2020-12-05', '2020-12-06', '2020-12-07'],
+          nameTextStyle: {
+            color: 'black'
+          }
         },
         yAxis: {
-          // type: 'category',
+          name: '单位: ￥',
+          nameTextStyle: {
+            color: 'black'
+          }
         },
         series: [
           {
-            name: '儿童科',
-            type: 'bar',
-            data: [100, 80, 150, 200, 300, 260]
-          },
-          {
-            name: '妇科',
-            type: 'bar',
-            data: [1000, 900, 1200, 1800, 2300, 900]
-          },
-          {
-            name: '神经科',
-            type: 'bar',
-            data: [5000, 9000, 6700, 4500, 3600, 5000]
+            name: '金额',
+            type: 'line',
+            data: [1000, 800, 1100, 500, 700, 1500, 900]
           }
         ]
       };
       // 使用刚指定的配置项和数据显示图表。
-      echartsDepartment.setOption(option);
+      echartsRecords.setOption(option);
     },
-    echartsPurchasing() {
-      /**
-       * 报表功能
-       */
-      var echartsPurchasing = echart.init(document.getElementById('echarts-purchasing'), 'light');
-      // 指定图表的配置项和数据
+    revenueEcharts(echarts) {
+      var echartsRecords = echarts.init(window.document.getElementById('revenueEcharts'), 'light');
       var option = {
         title: {
-          text: '采购、销售对比'
+          text: '',
+          subtext: '',
+          textStyle: { fontFamily: 'serif' },
+          top: 50,
+          left: 'center'
         },
-        tooltip: {},
-        legend: {
-          data: ['采购', '销售']
+        tooltip: {
+          trigger: 'item',
+          formatter: '{a} <br/>{b}: {c} ({d}%)'
         },
-        xAxis: {
-          data: ['2020-07', '2020-08', '2020-09', '2020-10', '2020-11', '2020-12']
-        },
-        yAxis: {
-          // type: 'category',
-        },
+        // legend: {
+        //   orient: 'horizontal',
+        //   left: 10,
+        //   bottom: 20,
+        //   data: ['西药费', '中草药', '中成药', '材料费'],
+        //   selected: ['西药费', '中草药', '中成药', '材料费']
+        // },
         series: [
           {
-            name: '采购',
-            type: 'line',
-            data: [100, 80, 150, 200, 300, 260, 90]
-          },
-          {
-            name: '销售',
-            type: 'line',
-            data: [90, 90, 120, 180, 230, 90, 20]
+            name: '金额',
+            type: 'pie',
+            radius: ['50%', '70%'],
+            avoidLabelOverlap: true,
+            label: {
+              show: false,
+              position: 'outside'
+            },
+            emphasis: {
+              label: {
+                show: true,
+                fontSize: '30',
+                fontWeight: 'bold'
+              }
+            },
+            labelLine: {
+              show: false
+            },
+            data: [
+              { value: 80.5, name: '西药费' },
+              { value: 60.49, name: '中草药' },
+              { value: 630.0, name: '中成药' },
+              { value: 200.0, name: '材料费' }
+            ]
           }
         ]
       };
       // 使用刚指定的配置项和数据显示图表。
-      echartsPurchasing.setOption(option);
+      echartsRecords.setOption(option);
     }
+  },
+  mounted() {
+    this.echartsDoctor(echarts);
+    this.echartsRecords(echarts);
+    this.revenueEcharts(echarts);
   }
 };
 </script>
+
 <style lang="scss">
-.welcome {
-  width: 100%;
-  height: 100%;
-  background-color: white;
-}
-
-.el-row {
-  margin-bottom: 15px;
-  &:last-child {
-    margin-bottom: 0;
-  }
-}
-.el-col {
-  border-radius: 4px;
-}
-.bg-purple-dark {
-  background: #99a9bf;
-}
-.bg-purple {
-  background: #d3dce6;
-}
-.bg-purple-light {
-  background: #e5e9f2;
-}
-.grid-content {
-  border-radius: 4px;
-  min-height: 36px;
-}
-.row-bg {
-  padding: 10px 0;
-  background-color: #f9fafc;
-}
-
-.clearfix {
-  & > span {
-    color: #adafb3;
-  }
-  & > i {
-    float: right;
-    line-height: 21px;
-  }
-}
-.number {
-  font-size: 24px;
-  // text-indent: 4px;
-  padding: 5px;
-}
-
-.bread_crumb {
-  margin: -10px -10px 10px -10px !important;
-}
-
-.el-breadcrumb {
-  height: 30px;
-  line-height: 30px;
-}
-
-.box-card {
-  width: auto !important;
-  margin: 0 !important;
-}
-
-.el-card__body {
-  padding: 10px;
-  color: #adafb3;
-  text-indent: 10px;
-}
-
-.echarts {
-  width: 100%;
-  min-height: 300px;
-}
-
-.date-button {
-  text-align: right;
-  & > button {
-    margin-left: 0 !important;
-    border-radius: 0 !important;
-  }
-}
-
-.amount-size {
-  font-size: 30px;
-  font-weight: 400;
-  cursor: pointer;
-}
-.amount-size:hover {
-  color: #333;
-}
+@import '../scss/welcome.scss';
 </style>

@@ -12,13 +12,14 @@ interface ImenusItem {
 }
 
 export interface ImenusItemState {
-  menusInfo: ImenusItem[];
+  menusInfo: any;
 }
 
 export default () => {
   const menus: Module<ImenusItemState, IRootState> = {
     namespaced: true,
     state: {
+      // menusInfo
       menusInfo: []
     },
     mutations: {
@@ -29,11 +30,9 @@ export default () => {
     actions: {
       async getMenusData({ commit }) {
         try {
-          let data: any = [];
           await axios.get('menus').then((res) => {
-            data = res;
+            commit('getMenusData', res);
           });
-          commit('getMenusData', data);
         } catch (error) {
           console.log(error);
         }

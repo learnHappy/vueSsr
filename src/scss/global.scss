@@ -1,0 +1,55 @@
+#app,
+.container {
+    width: 100%;
+    overflow: auto;
+}
+
+.el-row {
+    margin-bottom: 10px;
+
+    &:last-child {
+        margin-bottom: 0;
+    }
+}
+
+.el-col {
+    border-radius: 4px;
+}
+
+
+.has-gutter th {
+    background-color: #F4F5F7 !important;
+    color: #426fa3;
+}
+
+// 二级菜单的布局样式
+.second-layout {
+    background-color: #F0F0F0;
+    padding: 10px 15px;
+}
+
+// 下拉选择框样圆角
+.el-input--suffix .el-input__inner {
+    background-color: #ffffff;
+    border-radius: 35px;
+    height: 30px;
+    line-height: 30px;
+}
+
+.el-select__caret.el-input__icon.el-icon-arrow-up {
+    line-height: 30px !important;
+}
+
+// 时间样式修改
+.el-range-editor.el-input__inner {
+    border-radius: 35px;
+    height: 30px;
+    padding-top: 0;
+    padding-bottom: 0;
+    width: auto !important;
+}
+
+.el-input__icon.el-range__icon.el-icon-date,
+.el-range-separator {
+    line-height: 22px !important;
+}

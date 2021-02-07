@@ -1,5 +1,4 @@
 import { UserConfig } from 'vite';
-// import echarts from 'echarts';
 
 const aliasConfig: Record<string, string> = {
   '@/': 'src/',
