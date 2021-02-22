@@ -208,7 +208,6 @@ export default {
       if (res.code === 0) {
         tableData = res.data;
       }
-      console.log(res);
     });
 
     const state = reactive({
