@@ -212,48 +212,6 @@ export default {
 
     const state = reactive({
       tableData
-      // tableData: [
-      //   {
-      //     xz: '自费',
-      //     sszje: '678.99',
-      //     ysje: '678.99',
-      //     ybje: '0.00',
-      //     zfbje: '0.00',
-      //     wxje: '0.00',
-      //     ylje: '0.00',
-      //     qtxjje: '0.00'
-      //   },
-      //   {
-      //     xz: '自费',
-      //     sszje: '678.99',
-      //     ysje: '678.99',
-      //     ybje: '0.00',
-      //     zfbje: '0.00',
-      //     wxje: '0.00',
-      //     ylje: '0.00',
-      //     qtxjje: '0.00'
-      //   },
-      //   {
-      //     xz: '医保',
-      //     sszje: '678.99',
-      //     ysje: '678.99',
-      //     ybje: '0.00',
-      //     zfbje: '0.00',
-      //     wxje: '0.00',
-      //     ylje: '0.00',
-      //     qtxjje: '0.00'
-      //   },
-      //   {
-      //     xz: '医保',
-      //     sszje: '678.99',
-      //     ysje: '678.99',
-      //     ybje: '0.00',
-      //     zfbje: '0.00',
-      //     wxje: '0.00',
-      //     ylje: '0.00',
-      //     qtxjje: '0.00'
-      //   }
-      // ]
     });
     return {
       ...toRefs(state)
