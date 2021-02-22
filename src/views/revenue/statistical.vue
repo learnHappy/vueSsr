@@ -38,11 +38,10 @@
                 </el-col>
                 <el-col :span="14">
                   <el-date-picker
-                    v-model="date"
+                    v-model="state.date"
                     type="daterange"
                     start-placeholder="开始日期"
                     end-placeholder="结束日期"
-                    :default-time="defaultTime"
                   ></el-date-picker>
                 </el-col>
               </el-row>
@@ -50,10 +49,10 @@
             <el-col :span="1" style="line-height: 31px">
               <el-row style="text-align: right">
                 <el-col :span="12">
-                  <i class="el-icon-upload" style="color: #2890fa" />
+                  <i class="iconfont icon-export" style="color: #2890fa" />
                 </el-col>
                 <el-col :span="12">
-                  <i class="el-icon-printer" style="color: #2890fa" />
+                  <i class="iconfont icon-dayin" style="color: #2890fa" />
                 </el-col>
               </el-row>
             </el-col>
@@ -65,7 +64,9 @@
               <div class="echart-header">
                 <el-row>
                   <el-col :span="4">
-                    <i class="el-icon-menu header-blue" />
+                    <el-avatar class="header-avatar-wzlb">
+                      <i class="iconfont icon-kucun1 icon-size" />
+                    </el-avatar>
                   </el-col>
                   <el-col :span="6">
                     <div>物资类别</div>
@@ -94,7 +95,9 @@
               <div class="echart-header">
                 <el-row>
                   <el-col :span="4">
-                    <i class="el-icon-menu header-green" />
+                    <el-avatar class="header-avatar-kpxm">
+                      <i class="iconfont icon-icon-test-copy icon-size" />
+                    </el-avatar>
                   </el-col>
                   <el-col :span="6">
                     <div>开票项目</div>
@@ -113,11 +116,11 @@
                 <el-carousel :autoplay="false" :initial-index="1" :height="state.height">
                   <el-carousel-item> 123 </el-carousel-item>
                   <el-carousel-item>
-                    <el-table :data="state.tableData" stripe style="width: 100%">
-                      <el-table-column prop="xy" label="西药" min-width="80" />
-                      <el-table-column prop="cy" label="草药" min-width="80" />
-                      <el-table-column prop="zcy" label="中成药" min-width="80" />
-                      <el-table-column prop="cl" label="材料" min-width="80" />
+                    <el-table :data="state.tableData" empty-text="无数据" stripe style="width: 100%">
+                      <el-table-column prop="xy" label="西药" min-width="90" />
+                      <el-table-column prop="cy" label="草药" min-width="90" />
+                      <el-table-column prop="zcy" label="中成药" min-width="90" />
+                      <el-table-column prop="cl" label="材料" min-width="90" />
                     </el-table>
                   </el-carousel-item>
                   <el-carousel-item> 123 </el-carousel-item>
@@ -128,7 +131,9 @@
               <div class="echart-header">
                 <el-row>
                   <el-col :span="4">
-                    <i class="el-icon-menu header-yellow" />
+                    <el-avatar class="header-avatar-srfx">
+                      <i class="iconfont icon-shezhigouwujizifei icon-size" />
+                    </el-avatar>
                   </el-col>
                   <el-col :span="6">
                     <div>收入分项</div>
@@ -149,8 +154,8 @@
                     <div>123</div>
                   </el-carousel-item>
                   <el-carousel-item> 123 </el-carousel-item>
-                  <el-carousel-item> 
-                      <div id="revenueEcharts" style="height: 400px"></div>
+                  <el-carousel-item>
+                    <div id="revenueEcharts" style="height: 400px"></div>
                   </el-carousel-item>
                 </el-carousel>
               </div>
@@ -199,7 +204,6 @@ export default {
       value2: '',
       // 时间参数
       date: '',
-      defaultTime: [new Date(2000, 1, 1, 0, 0, 0), new Date(2000, 2, 1, 23, 59, 59)],
       // 走马灯参数
       height: '400px',
       // 表格数据
@@ -299,69 +303,11 @@ export default {
 };
 </script>
 
-<style lang="scss">
-// tab标签样式
-.el-tabs__header {
-  margin: 0;
-}
-.el-tabs__nav {
-  margin-bottom: 5px;
-}
+<style scoped lang="scss">
+@import '../../scss/revenue/statistical.scss';
+</style>
+<style>
 .el-tabs__nav-wrap {
   padding: 0 20px;
-}
-
-// 今日,本月,本年的样式
-.date-ul li {
-  cursor: pointer;
-  display: inline;
-  list-style-type: none;
-  padding: 0 12px;
-  color: #9c9c9c;
-  line-height: 31px;
-}
-.is-select-li {
-  color: #5ca5fa !important;
-}
-
-// card
-.header-blue {
-  color: #1988fb;
-}
-.header-green {
-  color: #91cc77;
-}
-.header-yellow {
-  color: #f7c23a;
-}
-
-.echart-header {
-  background-color: #f8f9fb;
-  font-size: 20px;
-  font-weight: bold;
-  height: 80px;
-  line-height: 80px;
-  text-align: center;
-}
-
-.echart-body {
-  background-color: #ffffff;
-  & .el-carousel__container {
-    height: 400px;
-  }
-}
-
-// 修改走马灯样式
-.el-carousel__indicator {
-  & .el-carousel__button {
-    border-radius: 35px;
-    padding: 2px 3px;
-    background-color: #f0f0f0;
-  }
-}
-.is-active {
-  & .el-carousel__button {
-    background-color: #1989f9 !important;
-  }
 }
 </style>

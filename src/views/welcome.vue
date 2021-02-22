@@ -111,7 +111,7 @@
               <span class="header-title-native">营收报表</span>
             </div>
           </template>
-          <el-table :data="tableData" style="width: 100%">
+          <el-table :data="tableData" empty-text="无数据" style="width: 100%">
             <el-table-column label="险种" prop="xz" min-width="80" />
             <el-table-column label="实收总金额" prop="sszje" min-width="120" />
             <el-table-column label="应收金额" prop="ysje" min-width="100" />
@@ -180,7 +180,7 @@
             <div class="pending">
               <el-row v-for="o in 13" :key="o">
                 <el-col :span="4">
-                  <i class="el-icon-picture-outline-round" />
+                  <i class="iconfont icon-biaoqian-" />
                 </el-col>
                 <el-col :span="16">
                   <h5>待处理事项</h5>
@@ -364,6 +364,6 @@ export default {
 };
 </script>
 
-<style lang="scss">
+<style scoped lang="scss">
 @import '../scss/welcome.scss';
 </style>

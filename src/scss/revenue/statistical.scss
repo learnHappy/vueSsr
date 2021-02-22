@@ -1,0 +1,74 @@
+// tab标签样式
+.el-tabs__header {
+    margin: 0;
+}
+
+.el-tabs__nav {
+    margin-bottom: 5px;
+}
+
+.el-tabs__nav-wrap {
+    padding: 0 20px;
+}
+
+// 今日,本月,本年的样式
+.date-ul li {
+    cursor: pointer;
+    display: inline;
+    list-style-type: none;
+    padding: 0 12px;
+    color: #9c9c9c;
+    line-height: 31px;
+}
+
+.is-select-li {
+    color: #5ca5fa !important;
+}
+
+// card
+.header-blue {
+    color: #1988fb;
+}
+
+.header-green {
+    color: #91cc77;
+}
+
+.header-yellow {
+    color: #f7c23a;
+}
+
+.echart-header {
+    background-color: #f8f9fb;
+    font-size: 20px;
+    font-weight: bold;
+    height: 80px;
+    line-height: 80px;
+    text-align: center;
+}
+
+.echart-body {
+    background-color: #ffffff;
+
+    & .el-carousel__container {
+        height: 400px;
+    }
+}
+
+.header-avatar-wzlb {
+    margin: 20px 0;
+    background-color: #1988fb;
+}
+
+.header-avatar-kpxm {
+    margin: 20px 0;
+    background-color: #91cc77;
+}
+.header-avatar-srfx {
+    margin: 20px 0;
+    background-color: #f7c23a;
+}
+
+.icon-size {
+    font-size: 20px;
+}

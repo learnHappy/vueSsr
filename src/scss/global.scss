@@ -53,3 +53,23 @@
 .el-range-separator {
     line-height: 22px !important;
 }
+
+// 取消卡片背景色
+.revenue-money>div.el-card,
+.comprehensive-data>div.el-card {
+    background-color: unset;
+}
+
+// 修改走马灯样式
+.el-carousel__indicator {
+    & .el-carousel__button {
+      border-radius: 35px;
+      padding: 2px 3px;
+      background-color: #f0f0f0;
+    }
+  }
+  .is-active {
+    & .el-carousel__button {
+      background-color: #1989f9 !important;
+    }
+  }

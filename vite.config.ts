@@ -11,7 +11,7 @@ export default {
     {
       alias(id) {
         let path = '';
-        Object.keys(aliasConfig).find(key => {
+        Object.keys(aliasConfig).find((key) => {
           if (id.startsWith(key)) {
             const dir = '/' + aliasConfig[key];
             path = dir + id.slice(key.length);
@@ -23,6 +23,6 @@ export default {
     }
   ],
   optimizeDeps: {
-    include: ['echarts']
-  },
+    include: ['element-plus/lib/locale/lang/zh-cn', 'echarts']
+  }
 } as UserConfig;
