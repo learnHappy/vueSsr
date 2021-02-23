@@ -9,20 +9,17 @@
               <el-row :gutter="20">
                 <el-col :span="4">
                   <el-select v-model="state.value" placeholder="测试门店">
-                    <el-option v-for="item in state.options" :key="item.value" :label="item.label" :value="item.value">
-                    </el-option>
+                    <el-option v-for="item in state.options" :key="item.value" :label="item.label" :value="item.value" />
                   </el-select>
                 </el-col>
                 <el-col :span="4">
                   <el-select v-model="state.value1" placeholder="险种选择">
-                    <el-option v-for="item in state.options" :key="item.value" :label="item.label" :value="item.value">
-                    </el-option>
+                    <el-option v-for="item in state.options" :key="item.value" :label="item.label" :value="item.value" />
                   </el-select>
                 </el-col>
                 <el-col :span="4">
                   <el-select v-model="state.value2" placeholder="科室选择">
-                    <el-option v-for="item in state.options" :key="item.value" :label="item.label" :value="item.value">
-                    </el-option>
+                    <el-option v-for="item in state.options" :key="item.value" :label="item.label" :value="item.value" />
                   </el-select>
                 </el-col>
               </el-row>
@@ -37,12 +34,7 @@
                   </ul>
                 </el-col>
                 <el-col :span="14">
-                  <el-date-picker
-                    v-model="state.date"
-                    type="daterange"
-                    start-placeholder="开始日期"
-                    end-placeholder="结束日期"
-                  ></el-date-picker>
+                  <el-date-picker v-model="state.date" type="daterange" start-placeholder="开始日期" end-placeholder="结束日期" />
                 </el-col>
               </el-row>
             </el-col>
@@ -84,7 +76,7 @@
               <div class="echart-body">
                 <el-carousel :autoplay="false" :height="state.height">
                   <el-carousel-item>
-                    <div id="echarts-category" style="height: 400px"></div>
+                    <div id="echarts-category" style="height: 400px" />
                   </el-carousel-item>
                   <el-carousel-item> 123 </el-carousel-item>
                   <el-carousel-item> 123 </el-carousel-item>
@@ -155,7 +147,7 @@
                   </el-carousel-item>
                   <el-carousel-item> 123 </el-carousel-item>
                   <el-carousel-item>
-                    <div id="revenueEcharts" style="height: 400px"></div>
+                    <div id="revenueEcharts" style="height: 400px" />
                   </el-carousel-item>
                 </el-carousel>
               </div>
@@ -169,7 +161,7 @@
 </template>
 
 <script>
-import { reactive, toRef } from 'vue';
+import { reactive } from 'vue';
 import * as echart from 'echarts';
 export default {
   setup() {
@@ -212,6 +204,14 @@ export default {
     return {
       state
     };
+  },
+  mounted() {
+    let that = this;
+    setTimeout(() => {
+      console.log('echartsCategory');
+      that.echartsCategory(echart);
+      that.revenueEcharts(echart);
+    }, 100);
   },
   methods: {
     handleClick(tab, event) {
@@ -291,14 +291,6 @@ export default {
       // 使用刚指定的配置项和数据显示图表。
       echartsRecords.setOption(option);
     }
-  },
-  mounted() {
-    let that = this;
-    setTimeout(() => {
-      console.log('echartsCategory');
-      that.echartsCategory(echart);
-      that.revenueEcharts(echart);
-    }, 100);
   }
 };
 </script>

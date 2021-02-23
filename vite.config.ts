@@ -23,6 +23,6 @@ export default {
     }
   ],
   optimizeDeps: {
-    include: ['element-plus/lib/locale/lang/zh-cn', 'echarts']
+    include: ["element-plus/lib/locale/lang/zh-cn"],
   }
 } as UserConfig;

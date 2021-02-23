@@ -22,7 +22,7 @@
           <el-row>
             <el-col :sm="10" :xs="0"> logo </el-col>
             <el-col :sm="14" :xs="24" style="text-align: left; padding-top: 15px">
-              <el-avatar icon="el-icon-user-solid"></el-avatar>
+              <el-avatar icon="el-icon-user-solid" />
             </el-col>
           </el-row>
         </div>
@@ -142,7 +142,7 @@
                   <span class="header-title-native">柱状图</span>
                 </div>
               </template>
-              <div id="echarts-doctor" style="height: 300px"></div>
+              <div id="echarts-doctor" style="height: 300px" />
             </el-card>
           </el-col>
         </el-row>
@@ -154,7 +154,7 @@
                   <span class="header-title-native">折线图</span>
                 </div>
               </template>
-              <div id="echarts-revenue" style="height: 300px"></div>
+              <div id="echarts-revenue" style="height: 300px" />
             </el-card>
           </el-col>
           <el-col :sm="8" :xs="24">
@@ -164,7 +164,7 @@
                   <span class="header-title-native">饼图</span>
                 </div>
               </template>
-              <div id="revenueEcharts" style="height: 300px"></div>
+              <div id="revenueEcharts" style="height: 300px" />
             </el-card>
           </el-col>
         </el-row>
@@ -198,7 +198,7 @@
 </template>
 
 <script>
-import { onMounted, reactive, toRefs } from 'vue';
+import { reactive, toRefs } from 'vue';
 import * as echarts from 'echarts';
 import axios from '../axios/index';
 export default {
@@ -216,6 +216,11 @@ export default {
     return {
       ...toRefs(state)
     };
+  },
+  mounted() {
+    this.echartsDoctor(echarts);
+    this.echartsRecords(echarts);
+    this.revenueEcharts(echarts);
   },
   methods: {
     echartsDoctor(echarts) {
@@ -355,11 +360,6 @@ export default {
       // 使用刚指定的配置项和数据显示图表。
       echartsRecords.setOption(option);
     }
-  },
-  mounted() {
-    this.echartsDoctor(echarts);
-    this.echartsRecords(echarts);
-    this.revenueEcharts(echarts);
   }
 };
 </script>
