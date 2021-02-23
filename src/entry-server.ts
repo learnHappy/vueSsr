@@ -2,6 +2,8 @@ import { createSSRApp } from 'vue';
 import renderer from '@vue/server-renderer';
 import App from './app.vue';
 import el from 'element-plus';
+import locale from 'element-plus/lib/locale/lang/zh-cn';
+import 'dayjs/locale/zh-cn';
 import createRouter from './router/';
 import createStore from './store/';
 import { isPromise } from './utils';
@@ -13,12 +15,12 @@ const path = require('path');
 const server = express();
 
 server.use('/_assets', express.static(path.join(__dirname, '../client/_assets')));
-
+express
 server.get('*', (req: any, res: any) => {
   const router = createRouter();
   const store = createStore();
   const app = createSSRApp(App);
-  app.use(router).use(store).use(el);
+  app.use(router).use(store).use(el, { locale });
   router.push(req.url);
   router.isReady().then(() => {
     const to = router.currentRoute;

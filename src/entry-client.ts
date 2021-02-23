@@ -1,9 +1,12 @@
 import { createSSRApp } from 'vue';
 import App from './app.vue';
 import '@/assets/css/index.css';
+import '@/assets/icon/iconfont.css';
 import createRouter from './router/';
 import createStore from './store/';
 import el from 'element-plus';
+import locale from 'element-plus/lib/locale/lang/zh-cn';
+import 'dayjs/locale/zh-cn';
 import 'element-plus/lib/theme-chalk/index.css';
 import { isPromise } from './utils';
 
@@ -12,7 +15,7 @@ const store = createStore();
 
 const app = createSSRApp(App);
 app.use(router).use(store);
-app.use(el);
+app.use(el, { locale });
 
 // store.dispatch('menus/getMenusData');
 

@@ -23,6 +23,6 @@ export default {
     }
   ],
   optimizeDeps: {
-    include: ["element-plus/lib/locale/lang/zh-cn"],
+    include: ["element-plus/lib/locale/lang/zh-cn","dayjs/locale/zh-cn"],
   }
 } as UserConfig;
