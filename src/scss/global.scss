@@ -4,6 +4,13 @@
     overflow: auto;
 }
 
+html,
+body,
+#app,
+.container {
+    height: 100%;
+}
+
 .el-row {
     margin-bottom: 10px;
 
@@ -17,9 +24,14 @@
 }
 
 
+// 改变表头颜色
 .has-gutter th {
     background-color: #F4F5F7 !important;
     color: #426fa3;
+
+    // & .el-table .ascending .sort-caret.ascending,& .el-table .descending .sort-caret.descending {
+    //     border-top-color: #426FAB!important;
+    // }
 }
 
 // 二级菜单的布局样式
@@ -63,13 +75,84 @@
 // 修改走马灯样式
 .el-carousel__indicator {
     & .el-carousel__button {
-      border-radius: 35px;
-      padding: 2px 3px;
-      background-color: #f0f0f0;
+        border-radius: 35px;
+        padding: 2px 3px;
+        background-color: #f0f0f0;
     }
-  }
-  .is-active {
+}
+
+.is-active {
     & .el-carousel__button {
-      background-color: #1989f9 !important;
+        background-color: #1989f9 !important;
     }
-  }
+}
+
+// 今日,本月,本年的样式
+.date-ul li {
+    cursor: pointer;
+    display: inline;
+    list-style-type: none;
+    padding: 0 12px;
+    color: #9c9c9c;
+    line-height: 31px;
+}
+
+.is-select-li {
+    color: #5ca5fa !important;
+}
+
+
+//上传和打印图标样式
+.export-print {
+    line-height: 31px;
+    text-align: right;
+
+    & .iconfont {
+        color: #2890fa;
+    }
+}
+
+
+// 自定义卡片头
+.echart-header {
+    background-color: #f8f9fb;
+    font-size: 20px;
+    font-weight: bold;
+    height: 80px;
+    line-height: 80px;
+    text-align: center;
+}
+
+.echart-body {
+    background-color: #ffffff;
+
+    // & .el-carousel__container {
+    //     height: 429px;
+    // }
+}
+
+
+// 表格头部头像样式
+.header-avatar-table {
+    background-color: #f8c339 !important;
+    margin: 20px;
+}
+
+.header-table-copy {
+    text-align: left;
+
+    & div {
+        height: 20px;
+        line-height: 20px;
+    }
+
+    & div:first-child {
+        font-size: 13px;
+        padding-top: 20px;
+    }
+
+    & div:last-child {
+        font-size: 11px;
+        color: #848686;
+    }
+}

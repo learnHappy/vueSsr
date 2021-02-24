@@ -6,7 +6,7 @@ import locale from 'element-plus/lib/locale/lang/zh-cn';
 import 'dayjs/locale/zh-cn';
 import createRouter from './router/';
 import createStore from './store/';
-import { isPromise } from './utils';
+import { isPromise } from './utils/index';
 import axios from './axios/index';
 axios.defaults.adapter = require('axios/lib/adapters/http');
 const express = require('express');
@@ -15,7 +15,7 @@ const path = require('path');
 const server = express();
 
 server.use('/_assets', express.static(path.join(__dirname, '../client/_assets')));
-express
+
 server.get('*', (req: any, res: any) => {
   const router = createRouter();
   const store = createStore();

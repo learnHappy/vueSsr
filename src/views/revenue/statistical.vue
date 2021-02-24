@@ -1,173 +1,150 @@
+// 营收统计功能
 <template>
-  <div class="statistical">
-    <el-tabs v-model="state.activeName" @tab-click="handleClick">
-      <el-tab-pane label="当日营收统计" name="first">
-        <!-- 条件选择框 -->
-        <div class="second-layout">
-          <el-row>
-            <el-col :span="15">
-              <el-row :gutter="20">
-                <el-col :span="4">
-                  <el-select v-model="state.value" placeholder="测试门店">
-                    <el-option v-for="item in state.options" :key="item.value" :label="item.label" :value="item.value" />
-                  </el-select>
-                </el-col>
-                <el-col :span="4">
-                  <el-select v-model="state.value1" placeholder="险种选择">
-                    <el-option v-for="item in state.options" :key="item.value" :label="item.label" :value="item.value" />
-                  </el-select>
-                </el-col>
-                <el-col :span="4">
-                  <el-select v-model="state.value2" placeholder="科室选择">
-                    <el-option v-for="item in state.options" :key="item.value" :label="item.label" :value="item.value" />
-                  </el-select>
-                </el-col>
-              </el-row>
-            </el-col>
-            <el-col :span="8">
-              <el-row>
-                <el-col :span="10">
-                  <ul class="date-ul">
-                    <li class="is-select-li">今日</li>
-                    <li>本月</li>
-                    <li>本年</li>
-                  </ul>
-                </el-col>
-                <el-col :span="14">
-                  <el-date-picker v-model="state.date" type="daterange" start-placeholder="开始日期" end-placeholder="结束日期" />
-                </el-col>
-              </el-row>
-            </el-col>
-            <el-col :span="1" style="line-height: 31px">
-              <el-row style="text-align: right">
-                <el-col :span="12">
-                  <i class="iconfont icon-export" style="color: #2890fa" />
-                </el-col>
-                <el-col :span="12">
-                  <i class="iconfont icon-dayin" style="color: #2890fa" />
-                </el-col>
-              </el-row>
-            </el-col>
-          </el-row>
+  <div class="second-layout">
+    <el-row>
+      <el-col :span="15">
+        <el-row :gutter="20">
+          <el-col :span="4">
+            <el-select v-model="state.value" placeholder="测试门店">
+              <el-option v-for="item in state.options" :key="item.value" :label="item.label" :value="item.value" />
+            </el-select>
+          </el-col>
+          <el-col :span="4">
+            <el-select v-model="state.value1" placeholder="险种选择">
+              <el-option v-for="item in state.options" :key="item.value" :label="item.label" :value="item.value" />
+            </el-select>
+          </el-col>
+          <el-col :span="4">
+            <el-select v-model="state.value2" placeholder="科室选择">
+              <el-option v-for="item in state.options" :key="item.value" :label="item.label" :value="item.value" />
+            </el-select>
+          </el-col>
+        </el-row>
+      </el-col>
+      <el-col :span="8">
+        <el-row>
+          <el-col :span="10">
+            <ul class="date-ul">
+              <li class="is-select-li">今日</li>
+              <li>本月</li>
+              <li>本年</li>
+            </ul>
+          </el-col>
+          <el-col :span="14">
+            <el-date-picker v-model="state.date" type="daterange" start-placeholder="开始日期" end-placeholder="结束日期" />
+          </el-col>
+        </el-row>
+      </el-col>
+      <el-col :span="1" class="export-print">
+        <el-row>
+          <el-col :span="12">
+            <i class="iconfont icon-export" />
+          </el-col>
+          <el-col :span="12">
+            <i class="iconfont icon-dayin" />
+          </el-col>
+        </el-row>
+      </el-col>
+    </el-row>
 
-          <!-- echasts图表显示 -->
-          <el-row :gutter="20">
-            <el-col :span="8">
-              <div class="echart-header">
-                <el-row>
-                  <el-col :span="4">
-                    <el-avatar class="header-avatar-wzlb">
-                      <i class="iconfont icon-kucun1 icon-size" />
-                    </el-avatar>
-                  </el-col>
-                  <el-col :span="6">
-                    <div>物资类别</div>
-                  </el-col>
-                  <el-col :span="11">
-                    <div class="header-blue" style="text-align: right">¥133.00</div>
-                  </el-col>
-                  <el-col :span="3">
-                    <div style="text-align: center; color: #d6d6d6">
-                      <i class="el-icon-more" />
-                    </div>
-                  </el-col>
-                </el-row>
-              </div>
-              <div class="echart-body">
-                <el-carousel :autoplay="false" :height="state.height">
-                  <el-carousel-item>
-                    <div id="echarts-category" style="height: 400px" />
-                  </el-carousel-item>
-                  <el-carousel-item> 123 </el-carousel-item>
-                  <el-carousel-item> 123 </el-carousel-item>
-                </el-carousel>
-              </div>
+    <!-- echasts图表显示 -->
+    <el-row :gutter="20">
+      <el-col :span="8">
+        <div class="echart-header">
+          <el-row>
+            <el-col :span="4">
+              <el-avatar class="header-avatar-wzlb">
+                <i class="iconfont icon-kucun1 icon-size" />
+              </el-avatar>
             </el-col>
-            <el-col :span="8">
-              <div class="echart-header">
-                <el-row>
-                  <el-col :span="4">
-                    <el-avatar class="header-avatar-kpxm">
-                      <i class="iconfont icon-icon-test-copy icon-size" />
-                    </el-avatar>
-                  </el-col>
-                  <el-col :span="6">
-                    <div>开票项目</div>
-                  </el-col>
-                  <el-col :span="11">
-                    <div class="header-green" style="text-align: right">¥133.00</div>
-                  </el-col>
-                  <el-col :span="3">
-                    <div style="text-align: center; color: #d6d6d6">
-                      <i class="el-icon-more" />
-                    </div>
-                  </el-col>
-                </el-row>
-              </div>
-              <div class="echart-body">
-                <el-carousel :autoplay="false" :initial-index="1" :height="state.height">
-                  <el-carousel-item> 123 </el-carousel-item>
-                  <el-carousel-item>
-                    <el-table :data="state.tableData" empty-text="无数据" stripe style="width: 100%">
-                      <el-table-column prop="xy" label="西药" min-width="90" />
-                      <el-table-column prop="cy" label="草药" min-width="90" />
-                      <el-table-column prop="zcy" label="中成药" min-width="90" />
-                      <el-table-column prop="cl" label="材料" min-width="90" />
-                    </el-table>
-                  </el-carousel-item>
-                  <el-carousel-item> 123 </el-carousel-item>
-                </el-carousel>
-              </div>
+            <el-col :span="6">
+              <div>物资类别</div>
             </el-col>
-            <el-col :span="8">
-              <div class="echart-header">
-                <el-row>
-                  <el-col :span="4">
-                    <el-avatar class="header-avatar-srfx">
-                      <i class="iconfont icon-shezhigouwujizifei icon-size" />
-                    </el-avatar>
-                  </el-col>
-                  <el-col :span="6">
-                    <div>收入分项</div>
-                  </el-col>
-                  <el-col :span="11">
-                    <div class="header-yellow" style="text-align: right">¥133.00</div>
-                  </el-col>
-                  <el-col :span="3">
-                    <div style="text-align: center; color: #d6d6d6">
-                      <i class="el-icon-more" />
-                    </div>
-                  </el-col>
-                </el-row>
-              </div>
-              <div class="echart-body">
-                <el-carousel :autoplay="false" :initial-index="2" :height="state.height">
-                  <el-carousel-item>
-                    <div>123</div>
-                  </el-carousel-item>
-                  <el-carousel-item> 123 </el-carousel-item>
-                  <el-carousel-item>
-                    <div id="revenueEcharts" style="height: 400px" />
-                  </el-carousel-item>
-                </el-carousel>
-              </div>
+            <el-col :span="14">
+              <div class="header-blue header-position">¥133.00</div>
             </el-col>
           </el-row>
         </div>
-      </el-tab-pane>
-      <el-tab-pane label="营收数据分析" name="second">配置管理</el-tab-pane>
-    </el-tabs>
+        <div class="echart-body">
+          <el-carousel :autoplay="false" :height="state.height">
+            <el-carousel-item>
+              <div id="echarts-category" style="height: 429px" />
+            </el-carousel-item>
+            <el-carousel-item> 123 </el-carousel-item>
+            <el-carousel-item> 123 </el-carousel-item>
+          </el-carousel>
+        </div>
+      </el-col>
+      <el-col :span="8">
+        <div class="echart-header">
+          <el-row>
+            <el-col :span="4">
+              <el-avatar class="header-avatar-kpxm">
+                <i class="iconfont icon-icon-test-copy icon-size" />
+              </el-avatar>
+            </el-col>
+            <el-col :span="6">
+              <div>开票项目</div>
+            </el-col>
+            <el-col :span="14">
+              <div class="header-green header-position">¥133.00</div>
+            </el-col>
+          </el-row>
+        </div>
+        <div class="echart-body">
+          <el-carousel :autoplay="false" :initial-index="1" :height="state.height">
+            <el-carousel-item> 123 </el-carousel-item>
+            <el-carousel-item>
+              <el-table :data="state.tableData" empty-text="无数据" stripe style="width: 100%">
+                <el-table-column prop="xy" label="西药" min-width="90" />
+                <el-table-column prop="cy" label="草药" min-width="90" />
+                <el-table-column prop="zcy" label="中成药" min-width="90" />
+                <el-table-column prop="cl" label="材料" min-width="90" />
+              </el-table>
+            </el-carousel-item>
+            <el-carousel-item> 123 </el-carousel-item>
+          </el-carousel>
+        </div>
+      </el-col>
+      <el-col :span="8">
+        <div class="echart-header">
+          <el-row>
+            <el-col :span="4">
+              <el-avatar class="header-avatar-srfx">
+                <i class="iconfont icon-shezhigouwujizifei icon-size" />
+              </el-avatar>
+            </el-col>
+            <el-col :span="6">
+              <div>收入分项</div>
+            </el-col>
+            <el-col :span="14">
+              <div class="header-yellow header-position">¥133.00</div>
+            </el-col>
+          </el-row>
+        </div>
+        <div class="echart-body">
+          <el-carousel :autoplay="false" :initial-index="2" :height="state.height">
+            <el-carousel-item>
+              <div>123</div>
+            </el-carousel-item>
+            <el-carousel-item> 123 </el-carousel-item>
+            <el-carousel-item>
+              <div id="revenueEcharts" style="height: 429px" />
+            </el-carousel-item>
+          </el-carousel>
+        </div>
+      </el-col>
+    </el-row>
   </div>
 </template>
 
 <script>
+import { pageHeight } from '../../utils/publus';
 import { reactive } from 'vue';
 import * as echart from 'echarts';
 export default {
   setup() {
     const state = reactive({
-      // 二级菜单标签参数
-      activeName: 'first',
       // 日期参数
       options: [
         {
@@ -197,26 +174,28 @@ export default {
       // 时间参数
       date: '',
       // 走马灯参数
-      height: '400px',
+      height: '',
       // 表格数据
       tableData: []
     });
+
     return {
-      state
+      state,
+      pageHeight
     };
   },
   mounted() {
     let that = this;
+    this.pageHeight(that, 196);
+    window.onresize = () => {
+      that.pageHeight(that, 196);
+    };
     setTimeout(() => {
-      console.log('echartsCategory');
       that.echartsCategory(echart);
       that.revenueEcharts(echart);
     }, 100);
   },
   methods: {
-    handleClick(tab, event) {
-      console.log(tab, event);
-    },
     echartsCategory(echart) {
       /**
        * 报表功能

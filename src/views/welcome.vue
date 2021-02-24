@@ -6,7 +6,7 @@
         <el-carousel height="70px" :autoplay="false" trigger="click" indicator-position="outside">
           <el-carousel-item>
             <template v-for="o in 7" :key="o">
-              <router-link to="/statistical">
+              <router-link to="/revenue">
                 <button class="fun-entrance">
                   <el-row>
                     <el-col :span="6"><i class="el-icon-date" /></el-col>

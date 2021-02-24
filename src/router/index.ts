@@ -12,6 +12,11 @@ export default function (type?: 'client' | 'server') {
         component: () => import('@/views/welcome.vue')
       },
       {
+        path: '/revenue',
+        name: '营收',
+        component: () => import('@/views/revenue/index.vue')
+      },
+      {
         path: '/statistical',
         name: '营收统计',
         component: () => import('@/views/revenue/statistical.vue')
