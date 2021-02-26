@@ -27,11 +27,15 @@ body,
 // 改变表头颜色
 .has-gutter th {
     background-color: #F4F5F7 !important;
-    color: #426fa3;
+    color: #426fa3!important;
 
     // & .el-table .ascending .sort-caret.ascending,& .el-table .descending .sort-caret.descending {
     //     border-top-color: #426FAB!important;
     // }
+}
+//改变表格内容高度
+.el-table td {
+    padding: 3px 0!important;
 }
 
 // 二级菜单的布局样式
@@ -92,7 +96,7 @@ body,
     cursor: pointer;
     display: inline;
     list-style-type: none;
-    padding: 0 12px;
+    padding: 0 10px;
     color: #9c9c9c;
     line-height: 31px;
 }

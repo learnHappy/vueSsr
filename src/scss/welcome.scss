@@ -1,6 +1,5 @@
 .welcome {
     width: calc(100% - 30px);
-    height: 100%;
     background-color: #e9eef3;
     padding: 0 15px 15px 15px;
 }
@@ -105,14 +104,14 @@
 .time-range {
     float: right;
 
-    & button:first-child {
-        background-color: #38a6ff;
-    }
-
     & button {
         background-color: #52b4ff;
         color: white;
     }
+}
+
+.time-range-active {
+    background-color: #38a6ff!important;
 }
 
 .el-card__header {

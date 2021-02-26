@@ -2,45 +2,45 @@
 <template>
   <div class="second-layout">
     <el-row>
-      <el-col :span="15">
+      <el-col :md="14" :sm="24" class="sm-bottom">
         <el-row :gutter="20">
-          <el-col :span="4">
+          <el-col :lg="4" :md="6" :sm="6">
             <el-select v-model="state.value" placeholder="测试门店">
               <el-option v-for="item in state.options" :key="item.value" :label="item.label" :value="item.value" />
             </el-select>
           </el-col>
-          <el-col :span="4">
+          <el-col :lg="4" :md="6" :sm="6">
             <el-select v-model="state.value1" placeholder="险种选择">
               <el-option v-for="item in state.options" :key="item.value" :label="item.label" :value="item.value" />
             </el-select>
           </el-col>
-          <el-col :span="4">
+          <el-col :lg="4" :md="6" :sm="6">
             <el-select v-model="state.value2" placeholder="科室选择">
               <el-option v-for="item in state.options" :key="item.value" :label="item.label" :value="item.value" />
             </el-select>
           </el-col>
         </el-row>
       </el-col>
-      <el-col :span="8">
+      <el-col :md="9" :sm="22">
         <el-row>
-          <el-col :span="10">
+          <el-col :lg="8" :md="11" :sm="8">
             <ul class="date-ul">
-              <li class="is-select-li">今日</li>
-              <li>本月</li>
-              <li>本年</li>
+              <li :class="{ 'is-select-li': state.fastDateType === 'day' }" @click="fastDateHanderClick('day')">今日</li>
+              <li :class="{ 'is-select-li': state.fastDateType === 'month' }" @click="fastDateHanderClick('month')">本月</li>
+              <li :class="{ 'is-select-li': state.fastDateType === 'year' }" @click="fastDateHanderClick('year')">本年</li>
             </ul>
           </el-col>
-          <el-col :span="14">
+          <el-col :lg="16" :md="13" :sm="14">
             <el-date-picker v-model="state.date" type="daterange" start-placeholder="开始日期" end-placeholder="结束日期" />
           </el-col>
         </el-row>
       </el-col>
-      <el-col :span="1" class="export-print">
+      <el-col :md="1" :sm="2" class="export-print">
         <el-row>
-          <el-col :span="12">
+          <el-col :md="12" :sm="12">
             <i class="iconfont icon-export" />
           </el-col>
-          <el-col :span="12">
+          <el-col :md="12" :sm="12">
             <i class="iconfont icon-dayin" />
           </el-col>
         </el-row>
@@ -49,18 +49,18 @@
 
     <!-- echasts图表显示 -->
     <el-row :gutter="20">
-      <el-col :span="8">
+      <el-col :lg="8" :md="24" :sm="24" class="sm-bottom">
         <div class="echart-header">
           <el-row>
-            <el-col :span="4">
+            <el-col :md="4" :sm="2">
               <el-avatar class="header-avatar-wzlb">
                 <i class="iconfont icon-kucun1 icon-size" />
               </el-avatar>
             </el-col>
-            <el-col :span="6">
+            <el-col :md="6" :sm="4">
               <div>物资类别</div>
             </el-col>
-            <el-col :span="14">
+            <el-col :md="14" :sm="18">
               <div class="header-blue header-position">¥133.00</div>
             </el-col>
           </el-row>
@@ -75,18 +75,18 @@
           </el-carousel>
         </div>
       </el-col>
-      <el-col :span="8">
+      <el-col :lg="8" :md="24" :sm="24" class="sm-bottom">
         <div class="echart-header">
           <el-row>
-            <el-col :span="4">
+            <el-col :md="4" :sm="4">
               <el-avatar class="header-avatar-kpxm">
                 <i class="iconfont icon-icon-test-copy icon-size" />
               </el-avatar>
             </el-col>
-            <el-col :span="6">
+            <el-col :md="6" :sm="6">
               <div>开票项目</div>
             </el-col>
-            <el-col :span="14">
+            <el-col :md="14" :sm="14">
               <div class="header-green header-position">¥133.00</div>
             </el-col>
           </el-row>
@@ -106,18 +106,18 @@
           </el-carousel>
         </div>
       </el-col>
-      <el-col :span="8">
+      <el-col :lg="8" :md="24" :sm="24" class="sm-bottom">
         <div class="echart-header">
           <el-row>
-            <el-col :span="4">
+            <el-col :md="4">
               <el-avatar class="header-avatar-srfx">
                 <i class="iconfont icon-shezhigouwujizifei icon-size" />
               </el-avatar>
             </el-col>
-            <el-col :span="6">
+            <el-col :md="6">
               <div>收入分项</div>
             </el-col>
-            <el-col :span="14">
+            <el-col :md="14">
               <div class="header-yellow header-position">¥133.00</div>
             </el-col>
           </el-row>
@@ -171,6 +171,7 @@ export default {
       value: '',
       value1: '',
       value2: '',
+      fastDateType: 'day',
       // 时间参数
       date: '',
       // 走马灯参数
@@ -179,16 +180,25 @@ export default {
       tableData: []
     });
 
+    // 点击快速选择时间范围
+    let fastDateHanderClick = (val) => {
+      state.fastDateType = val;
+      if (val === 'day') {
+
+      }
+    };
+
     return {
       state,
-      pageHeight
+      pageHeight,
+      fastDateHanderClick
     };
   },
   mounted() {
     let that = this;
-    this.pageHeight(that, 196);
+    this.pageHeight(that, 228);
     window.onresize = () => {
-      that.pageHeight(that, 196);
+      that.pageHeight(that, 228);
     };
     setTimeout(() => {
       that.echartsCategory(echart);
@@ -280,5 +290,10 @@ export default {
 <style>
 .el-tabs__nav-wrap {
   padding: 0 20px;
+}
+@media only screen and (min-width: 768px) and (max-width: 1200px) {
+  .sm-bottom {
+    margin-bottom: 10px;
+  }
 }
 </style>

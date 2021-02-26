@@ -38,9 +38,26 @@
               <span class="header-title">营收金额</span>
               <div class="time-range">
                 <el-button-group>
-                  <el-button round size="small" plain>今日</el-button>
-                  <el-button size="small">本月</el-button>
-                  <el-button round size="small">本年</el-button>
+                  <el-button
+                    round
+                    size="small"
+                    :class="{ 'time-range-active': timeRangeType === 'day' }"
+                    @click="timeHandleClick('day')"
+                    >今日</el-button
+                  >
+                  <el-button
+                    size="small"
+                    :class="{ 'time-range-active': timeRangeType === 'month' }"
+                    @click="timeHandleClick('month')"
+                    >本月</el-button
+                  >
+                  <el-button
+                    round
+                    size="small"
+                    :class="{ 'time-range-active': timeRangeType === 'year' }"
+                    @click="timeHandleClick('year')"
+                    >本年</el-button
+                  >
                 </el-button-group>
               </div>
             </div>
@@ -49,19 +66,19 @@
             <el-row>
               <el-col :span="8">
                 <div class="text">
-                  <h2>900.00</h2>
+                  <h2>{{ parseFloat(amountSummaryData.bxje).toFixed(2) }}</h2>
                   <p>医保金额(元)</p>
                 </div>
               </el-col>
               <el-col :span="8">
                 <div class="text">
-                  <h2>100.00</h2>
+                  <h2>{{ parseFloat(amountSummaryData.xjje).toFixed(2) }}</h2>
                   <p>自费金额(元)</p>
                 </div>
               </el-col>
               <el-col :span="8">
                 <div class="text">
-                  <h2>1000.00</h2>
+                  <h2>{{ parseFloat(amountSummaryData.fsje).toFixed(2) }}</h2>
                   <p>总金额(元)</p>
                 </div>
               </el-col>
@@ -80,20 +97,20 @@
             <el-row>
               <el-col :span="8">
                 <div class="text">
-                  <h2>10</h2>
-                  <p>就诊人数</p>
+                  <h2>{{ comprehensiveData.seeSerialCount }}</h2>
+                  <p>就诊人次</p>
                 </div>
               </el-col>
               <el-col :span="8">
                 <div class="text">
-                  <h2>20</h2>
-                  <p>临期商品种类数量</p>
+                  <h2>{{ comprehensiveData.prescriptionCount }}</h2>
+                  <p>处方数</p>
                 </div>
               </el-col>
               <el-col :span="8">
                 <div class="text">
-                  <h2>15</h2>
-                  <p>库存不足种类数量</p>
+                  <h2>{{ comprehensiveData.settlementCount }}</h2>
+                  <p>结算次数</p>
                 </div>
               </el-col>
             </el-row>
@@ -108,25 +125,18 @@
         <el-card class="box-card">
           <template #header>
             <div>
-              <span class="header-title-native">营收报表</span>
+              <span class="header-title-native">最近五笔营收记录</span>
             </div>
           </template>
-          <el-table :data="tableData" empty-text="无数据" style="width: 100%">
-            <el-table-column label="险种" prop="xz" min-width="80" />
-            <el-table-column label="实收总金额" prop="sszje" min-width="120" />
-            <el-table-column label="应收金额" prop="ysje" min-width="100" />
-            <el-table-column label="医保金额" prop="ybje" min-width="100" />
-            <el-table-column label="支付宝金额" prop="zfbje" min-width="120" />
-            <el-table-column label="微信金额" prop="wxje" min-width="100" />
-            <el-table-column label="银联金额" prop="ylje" min-width="100" />
-            <el-table-column label="其他现金金额" prop="qtxjje" min-width="140" />
-            <el-table-column label="操作" min-width="180">
-              <template #default="scope">
-                <el-button round size="mini" type="success" class="el-icon-circle-plus" />
-                <el-button round size="mini" type="warning" class="el-icon-circle-plus-outline" />
-                <el-button round size="mini" type="danger" class="el-icon-delete" />
-              </template>
-            </el-table-column>
+          <el-table :data="latelyRevenueData" empty-text="无数据" style="width: 100%">
+            <el-table-column label="结算编号" prop="jsbh" min-width="100" align="center" />
+            <el-table-column label="就诊人员" prop="jkry" min-width="100" align="center" />
+            <el-table-column label="险种代码" prop="xzdm" min-width="100" align="center" />
+            <el-table-column label="现金金额" prop="xjje" min-width="100" align="center" :formatter="moneyFormatter" />
+            <el-table-column label="医保金额" prop="bxje" min-width="100" align="center" :formatter="moneyFormatter" />
+            <el-table-column label="总金额" prop="fsje" min-width="100" align="center" :formatter="moneyFormatter" />
+            <el-table-column label="结算状态" prop="fyfslx" min-width="100" align="center" :formatter="jsztFormatter" />
+            <el-table-column label="发生时间" prop="fssj" min-width="100" align="center" :formatter="dateTimeFormatter" />
           </el-table>
         </el-card>
       </el-col>
@@ -139,7 +149,7 @@
             <el-card class="box-card">
               <template #header>
                 <div>
-                  <span class="header-title-native">柱状图</span>
+                  <span class="header-title-native">近七天营收变化</span>
                 </div>
               </template>
               <div id="echarts-doctor" style="height: 300px" />
@@ -151,7 +161,7 @@
             <el-card class="box-card">
               <template #header>
                 <div>
-                  <span class="header-title-native">折线图</span>
+                  <span class="header-title-native">近七天人次变化</span>
                 </div>
               </template>
               <div id="echarts-revenue" style="height: 300px" />
@@ -173,23 +183,26 @@
         <el-card class="box-card">
           <template #header>
             <div>
-              <span class="header-title-native">待处理事项</span>
+              <span class="header-title-native">近效期提醒</span>
             </div>
           </template>
           <div>
             <div class="pending">
-              <el-row v-for="o in 13" :key="o">
+              <el-row v-for="o in 1" :key="o">
                 <el-col :span="4">
                   <i class="iconfont icon-biaoqian-" />
                 </el-col>
                 <el-col :span="16">
                   <h5>待处理事项</h5>
-                  <p :class="o === 1 ? 'bule' : ''">待处理事项待处理事项待处理事项</p>
+                  <p :class="o === 1 ? 'bule' : ''">快过期药品品种数量</p>
                 </el-col>
-                <el-col :span="4"> <div class="date-buttom">2020.02.04</div> </el-col>
+                <el-col :span="4">
+                  <div class="date-buttom">{{ shortTermReminderData.nearlyEffectiveCount }}</div>
+                </el-col>
               </el-row>
             </div>
-            <el-button type="primary" style="width: 100%">更多</el-button>
+            <!-- <el-button type="primary" style="width: 100%">更多</el-button> -->
+            <div style="height: 40px"></div>
           </div>
         </el-card>
       </el-col>
@@ -199,22 +212,179 @@
 
 <script>
 import { reactive, toRefs } from 'vue';
+import { ElMessage } from 'element-plus';
 import * as echarts from 'echarts';
 import axios from '../axios/index';
+import welcomeApi from '../api/welcome';
+import moment from 'moment';
 export default {
   async setup() {
-    let tableData = [];
-    await axios.get('tableData').then((res) => {
-      if (res.code === 0) {
-        tableData = res.data;
+    const state = reactive({
+      tableData: [],
+      // 快速时间
+      timeRangeType: 'day',
+      timeRangeParas: {},
+      amountSummaryData: {},
+      comprehensiveData: {},
+      latelyRevenueData: [],
+      latelyRevenueChangeX: [],
+      latelyRevenueChangeY: [],
+      latelyMChangeX: [],
+      latelyMChangeY: [],
+      latelyMChangeData: [],
+      shortTermReminderData: {}
+    });
+
+    // 点击快速时间范围
+    let timeHandleClick = async (val) => {
+      state.timeRangeType = val;
+      if (val === 'day') {
+        let day = moment(new Date()).format('YYYYMMDD');
+        state.timeRangeParas = { tenantId: '3305231132', startDate: day, endDate: day };
+      } else if (val === 'month') {
+        let monthFirstDay = moment(new Date()).format('YYYYMM') + '01';
+        let monthLastDay = moment(new Date()).endOf('month').format('YYYYMMDD');
+        state.timeRangeParas = { tenantId: '3305231132', startDate: monthFirstDay, endDate: monthLastDay };
+      } else if (val === 'year') {
+        let yearFirstDay = moment().startOf('year').format('YYYYMMDD');
+        let yearLastDay = moment().endOf('year').format('YYYYMMDD');
+        state.timeRangeParas = { tenantId: '3305231132', startDate: yearFirstDay, endDate: yearLastDay };
+      } else {
+        console.log(`没有获取对应的时间范围 ${val}`);
+        return;
+      }
+      // 1.1首页收入金额汇总
+      axios.post(welcomeApi.amountSummary, state.timeRangeParas, { loading: false }).then((res) => {
+        if (res.code === '1') {
+          state.amountSummaryData = res.data;
+        } else {
+          ElMessage({ message: res.message, duration: 0, showClose: true, offset: 200 });
+        }
+      });
+      // 1.2首页人次,处方数,结算次数汇总数据
+      axios.post(welcomeApi.comprehensive, state.timeRangeParas, { loading: false }).then((res) => {
+        if (res.code === '1') {
+          state.comprehensiveData = res.data;
+        } else {
+          ElMessage({ message: res.message, duration: 0, showClose: true, offset: 200 });
+        }
+      });
+    };
+
+    // 1.3首页最近五笔营收记录
+    let day = moment(new Date()).format('YYYYMMDD');
+    let latelyRevenueParams = {
+      tenantId: '3305231132',
+      // startDate: day,
+      startDate: '20210223',
+      // endDate: day,
+      endDate: '20210223',
+      pageNum: 0,
+      pageSize: 5
+    };
+    axios.post(welcomeApi.latelyRevenue, latelyRevenueParams).then((res) => {
+      if (res.code === '1') {
+        state.latelyRevenueData = res.data;
+      } else {
+        ElMessage({ message: res.message, duration: 0, showClose: true, offset: 200 });
       }
     });
 
-    const state = reactive({
-      tableData
+    // 1.4首页近七天营收变化
+    let latelyRevenueChangeParams = {
+      tenantId: '3305231132',
+      startDate: '20210217',
+      endDate: '20210223'
+    };
+    await axios.post(welcomeApi.latelyRevenueChange, latelyRevenueChangeParams).then((res) => {
+      if (res.code === '1') {
+        state.latelyRevenueChangeX = res.data.map((item) => {
+          return item.fyrq;
+        });
+        state.latelyRevenueChangeY = res.data.map((item) => {
+          return item.incomeAmount;
+        });
+      } else {
+        ElMessage({ message: res.message, duration: 0, showClose: true, offset: 200 });
+      }
     });
+
+    // 1.5首页近七天人次变化
+    let latelyMChangeParams = {
+      tenantId: '3305231132',
+      startDate: '20210217',
+      endDate: '20210223'
+    };
+    await axios.post(welcomeApi.latelyMChange, latelyMChangeParams).then((res) => {
+      if (res.code === '1') {
+        state.latelyMChangeX = res.data.map((item) => item.fyrq);
+        state.latelyMChangeY = res.data.map((item) => item.personTimesNum);
+      } else {
+        ElMessage({ message: res.message, duration: 0, showClose: true, offset: 200 });
+      }
+    });
+
+    // 1.6首页当天开票项目营收情况
+    let dayMakeRevenueParams = {
+      tenantId: '3305231132',
+      startDate: '20210223',
+      endDate: '20210223'
+    };
+    await axios.post(welcomeApi.dayMakeRevenue, dayMakeRevenueParams).then((res) => {
+      console.log(res);
+      if (res.code === '1') {
+        state.latelyMChangeData = res.data;
+      } else {
+        ElMessage({ message: res.message, duration: 0, showClose: true, offset: 200 });
+      }
+    });
+
+    // 1.7首页近效期提醒 //未来30天
+    let shortTermReminderParams = {
+      tenantId: '3305231132',
+      startDate: '20210201',
+      endDate: '20210223'
+    };
+    await axios.post(welcomeApi.shortTermReminder, shortTermReminderParams).then((res) => {
+      if (res.code === '1') {
+        state.shortTermReminderData = res.data;
+      } else {
+        ElMessage({ message: res.message, duration: 0, showClose: true, offset: 200 });
+      }
+    });
+
+    // 发生日期格式化
+    let dateTimeFormatter = (row, column, cellValue) => {
+      if (!cellValue) {
+        return cellValue;
+      }
+      return moment(cellValue).format('YYYY-MM-DD HH:mm:ss');
+    };
+    // 费用结算类型
+    let jsztFormatter = (row, column, cellValue) => {
+      if (cellValue === '1') {
+        return '已结算';
+      } else if (cellValue === '8') {
+        return '已退费';
+      }
+      return cellValue;
+    };
+    // 金额格式化
+    let moneyFormatter = (row, column, cellValue) => {
+      if (!cellValue) {
+        return cellValue;
+      }
+      return parseFloat(cellValue).toFixed(2);
+    };
+
+    timeHandleClick(state.timeRangeType);
+
     return {
-      ...toRefs(state)
+      ...toRefs(state),
+      timeHandleClick,
+      dateTimeFormatter,
+      jsztFormatter,
+      moneyFormatter
     };
   },
   mounted() {
@@ -234,30 +404,17 @@ export default {
           text: ''
         },
         tooltip: {},
-        // legend: {
-        //   data: ['新手', '主任', '院长']
-        // },
         xAxis: {
-          data: ['2020-07', '2020-08', '2020-09', '2020-10', '2020-11', '2020-12']
+          data: this.latelyRevenueChangeX
         },
         yAxis: {
           // type: 'category',
         },
         series: [
           {
-            name: '新手',
+            name: '当日营收',
             type: 'bar',
-            data: [100, 80, 150, 200, 300, 260]
-          },
-          {
-            name: '主任',
-            type: 'bar',
-            data: [1000, 900, 1200, 1800, 2300, 900]
-          },
-          {
-            name: '院长',
-            type: 'bar',
-            data: [5000, 9000, 6700, 4500, 3600, 5000]
+            data: this.latelyRevenueChangeY
           }
         ]
       };
@@ -277,15 +434,12 @@ export default {
         },
         tooltip: {
           formatter: (params) => {
-            return `${params.name}的应收金额为￥${params.value}`;
+            return `${params.name}的就诊人次为${params.value}次`;
           }
         },
-        // legend: {
-        //   data: ['营收金额']
-        // },
         xAxis: {
           name: '日期',
-          data: ['2020-12-01', '2020-12-02', '2020-12-03', '2020-12-04', '2020-12-05', '2020-12-06', '2020-12-07'],
+          data: this.latelyMChangeX,
           nameTextStyle: {
             color: 'black'
           }
@@ -300,7 +454,7 @@ export default {
           {
             name: '金额',
             type: 'line',
-            data: [1000, 800, 1100, 500, 700, 1500, 900]
+            data: this.latelyMChangeY
           }
         ]
       };
@@ -321,13 +475,6 @@ export default {
           trigger: 'item',
           formatter: '{a} <br/>{b}: {c} ({d}%)'
         },
-        // legend: {
-        //   orient: 'horizontal',
-        //   left: 10,
-        //   bottom: 20,
-        //   data: ['西药费', '中草药', '中成药', '材料费'],
-        //   selected: ['西药费', '中草药', '中成药', '材料费']
-        // },
         series: [
           {
             name: '金额',
@@ -348,12 +495,7 @@ export default {
             labelLine: {
               show: false
             },
-            data: [
-              { value: 80.5, name: '西药费' },
-              { value: 60.49, name: '中草药' },
-              { value: 630.0, name: '中成药' },
-              { value: 200.0, name: '材料费' }
-            ]
+            data: this.latelyMChangeData
           }
         ]
       };
@@ -366,4 +508,12 @@ export default {
 
 <style scoped lang="scss">
 @import '../scss/welcome.scss';
+</style>
+<style>
+.el-carousel__indicators {
+  width: 117.647%;
+}
+.el-carousel__indicator.el-carousel__button{
+  background-color: #C3C6CA;
+}
 </style>

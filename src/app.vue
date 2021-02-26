@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div class="container" v-cloak>
     <router-view v-slot="{ Component }">
       <Suspense>
         <component :is="Component" />
@@ -18,4 +18,9 @@ export default defineComponent({
 </script>
 <style lang="scss">
 @import './scss/global.scss';
+</style>
+<style  type="text/css">
+	[v-cloak] {
+		display: none;
+	}
 </style>

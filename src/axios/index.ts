@@ -1,25 +1,26 @@
 import axios from 'axios';
 import { ElMessage, ElLoading } from 'element-plus';
 
-const configBaseUrl = 'http://localhost:5656/';
-// const configBaseUrl = process.env.URL;
-
 let elMessage = ElMessage;
 let elLoading = ElLoading;
 let loadingInstance: any = null;
 
-console.log(configBaseUrl);
-
 //create方法创建axios实例
 export const axiosService = axios.create({
   timeout: 10000,
-  baseURL: configBaseUrl,
+  // baseURL: configBaseUrl,
   headers: {
     'Content-Type': 'application/json;charset=UTF-8'
   }
 });
 
 axiosService.interceptors.request.use((config) => {
+  let configLoading: any = config;
+  if (typeof configLoading.loading === 'boolean') {
+    if (!configLoading.loading) {
+      return config;
+    }
+  }
   loadingInstance = elLoading.service({
     lock: true,
     text: 'loading...'

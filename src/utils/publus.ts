@@ -4,4 +4,7 @@
 export const pageHeight = (that: any, reduceHeight: number) => {
   let height = window.document.body.scrollHeight;
   that.state.height = height - reduceHeight + 'px';
+  if (that.state.tableHeight) {
+    that.state.tableHeight = height - reduceHeight - 32 + 'px';
+  }
 };
