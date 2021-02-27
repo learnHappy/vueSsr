@@ -367,7 +367,10 @@ export default {
       if (!cellValue) {
         return cellValue;
       }
-      return moment(cellValue).format('YYYY-MM-DD HH:mm:ss');
+      console.log(cellValue);
+      console.log(moment(cellValue).utcOffset(8));
+      // return moment(cellValue).utc().tz("America/New_York").format();
+      return moment.utc(cellValue).format('YYYY-MM-DD HH:mm:ss');
     };
     // 费用结算类型
     let jsztFormatter = (row, column, cellValue) => {
