@@ -5,18 +5,18 @@
       <el-col :span="24">
         <el-carousel height="70px" :autoplay="false" trigger="click" indicator-position="outside">
           <el-carousel-item>
-            <template v-for="o in 7" :key="o">
-              <router-link to="/revenue">
-                <button class="fun-entrance">
-                  <el-row>
-                    <el-col :span="6"><i class="el-icon-date" /></el-col>
-                    <el-col :span="18" style="line-height: 30px">当日营收统计</el-col>
-                  </el-row>
-                </button>
-              </router-link>
-            </template>
+            <router-link to="/revenue">
+              <button class="fun-entrance">
+                <el-row>
+                  <el-col :span="6">
+                    <i class="el-icon-date" />
+                  </el-col>
+                  <el-col :span="18" style="line-height: 30px">营收统计</el-col>
+                </el-row>
+              </button>
+            </router-link>
           </el-carousel-item>
-          <el-carousel-item> 1231313 </el-carousel-item>
+          <!-- <el-carousel-item> 1231313 </el-carousel-item> -->
         </el-carousel>
         <div class="head-portrait">
           <el-row>
@@ -171,7 +171,7 @@
             <el-card class="box-card">
               <template #header>
                 <div>
-                  <span class="header-title-native">饼图</span>
+                  <span class="header-title-native">当天开票项目营收情况</span>
                 </div>
               </template>
               <div id="revenueEcharts" style="height: 300px" />
@@ -190,7 +190,7 @@
             <div class="pending">
               <el-row v-for="o in 1" :key="o">
                 <el-col :span="4">
-                  <i class="iconfont icon-biaoqian-" />
+                  <i class="iconfont icon-biaoqian--copy-copy" style="color: #f8c239" />
                 </el-col>
                 <el-col :span="16">
                   <h5>待处理事项</h5>
@@ -212,14 +212,19 @@
 
 <script>
 import { reactive, toRefs } from 'vue';
-import { ElMessage } from 'element-plus';
+import { ElMessage, ElLoading } from 'element-plus';
 import * as echarts from 'echarts';
 import axios from '../axios/index';
 import welcomeApi from '../api/welcome';
 import moment from 'moment';
 export default {
   async setup() {
+    const loading = ElLoading.service({
+      lock: true,
+      text: 'loading...'
+    });
     const state = reactive({
+      loading,
       tableData: [],
       // 快速时间
       timeRangeType: 'day',
@@ -240,15 +245,15 @@ export default {
       state.timeRangeType = val;
       if (val === 'day') {
         let day = moment(new Date()).format('YYYYMMDD');
-        state.timeRangeParas = { tenantId: '3305231132', startDate: day, endDate: day };
+        state.timeRangeParas = { tenantId: '3308021324', startDate: day, endDate: day };
       } else if (val === 'month') {
         let monthFirstDay = moment(new Date()).format('YYYYMM') + '01';
         let monthLastDay = moment(new Date()).endOf('month').format('YYYYMMDD');
-        state.timeRangeParas = { tenantId: '3305231132', startDate: monthFirstDay, endDate: monthLastDay };
+        state.timeRangeParas = { tenantId: '3308021324', startDate: monthFirstDay, endDate: monthLastDay };
       } else if (val === 'year') {
         let yearFirstDay = moment().startOf('year').format('YYYYMMDD');
         let yearLastDay = moment().endOf('year').format('YYYYMMDD');
-        state.timeRangeParas = { tenantId: '3305231132', startDate: yearFirstDay, endDate: yearLastDay };
+        state.timeRangeParas = { tenantId: '3308021324', startDate: yearFirstDay, endDate: yearLastDay };
       } else {
         console.log(`没有获取对应的时间范围 ${val}`);
         return;
@@ -274,7 +279,7 @@ export default {
     // 1.3首页最近五笔营收记录
     let day = moment(new Date()).format('YYYYMMDD');
     let latelyRevenueParams = {
-      tenantId: '3305231132',
+      tenantId: '3308021324',
       // startDate: day,
       startDate: '20210223',
       // endDate: day,
@@ -282,7 +287,7 @@ export default {
       pageNum: 0,
       pageSize: 5
     };
-    axios.post(welcomeApi.latelyRevenue, latelyRevenueParams).then((res) => {
+    axios.post(welcomeApi.latelyRevenue, latelyRevenueParams, { loading: false }).then((res) => {
       if (res.code === '1') {
         state.latelyRevenueData = res.data;
       } else {
@@ -291,12 +296,16 @@ export default {
     });
 
     // 1.4首页近七天营收变化
+    let latelyDate = moment(new Date()).subtract(6, 'days').format('YYYYMMDD');
+    console.log(latelyDate);
     let latelyRevenueChangeParams = {
-      tenantId: '3305231132',
-      startDate: '20210217',
-      endDate: '20210223'
+      tenantId: '3308021324',
+      startDate: latelyDate,
+      // startDate: '20210217',
+      endDate: day
+      // endDate: '20210223'
     };
-    await axios.post(welcomeApi.latelyRevenueChange, latelyRevenueChangeParams).then((res) => {
+    await axios.post(welcomeApi.latelyRevenueChange, latelyRevenueChangeParams, { loading: false }).then((res) => {
       if (res.code === '1') {
         state.latelyRevenueChangeX = res.data.map((item) => {
           return item.fyrq;
@@ -311,11 +320,11 @@ export default {
 
     // 1.5首页近七天人次变化
     let latelyMChangeParams = {
-      tenantId: '3305231132',
-      startDate: '20210217',
-      endDate: '20210223'
+      tenantId: '3308021324',
+      startDate: latelyDate,
+      endDate: day
     };
-    await axios.post(welcomeApi.latelyMChange, latelyMChangeParams).then((res) => {
+    await axios.post(welcomeApi.latelyMChange, latelyMChangeParams, { loading: false }).then((res) => {
       if (res.code === '1') {
         state.latelyMChangeX = res.data.map((item) => item.fyrq);
         state.latelyMChangeY = res.data.map((item) => item.personTimesNum);
@@ -326,11 +335,11 @@ export default {
 
     // 1.6首页当天开票项目营收情况
     let dayMakeRevenueParams = {
-      tenantId: '3305231132',
+      tenantId: '3308021324',
       startDate: '20210223',
       endDate: '20210223'
     };
-    await axios.post(welcomeApi.dayMakeRevenue, dayMakeRevenueParams).then((res) => {
+    await axios.post(welcomeApi.dayMakeRevenue, dayMakeRevenueParams, { loading: false }).then((res) => {
       console.log(res);
       if (res.code === '1') {
         state.latelyMChangeData = res.data;
@@ -341,11 +350,11 @@ export default {
 
     // 1.7首页近效期提醒 //未来30天
     let shortTermReminderParams = {
-      tenantId: '3305231132',
+      tenantId: '3308021324',
       startDate: '20210201',
       endDate: '20210223'
     };
-    await axios.post(welcomeApi.shortTermReminder, shortTermReminderParams).then((res) => {
+    await axios.post(welcomeApi.shortTermReminder, shortTermReminderParams, { loading: false }).then((res) => {
       if (res.code === '1') {
         state.shortTermReminderData = res.data;
       } else {
@@ -391,6 +400,7 @@ export default {
     this.echartsDoctor(echarts);
     this.echartsRecords(echarts);
     this.revenueEcharts(echarts);
+    this.loading.close();
   },
   methods: {
     echartsDoctor(echarts) {
@@ -510,10 +520,10 @@ export default {
 @import '../scss/welcome.scss';
 </style>
 <style>
-.el-carousel__indicators {
+.fun-style .el-carousel__indicators {
   width: 117.647%;
 }
-.el-carousel__indicator.el-carousel__button{
-  background-color: #C3C6CA;
+.el-carousel__indicator .el-carousel__button {
+  background-color: #7f8081;
 }
 </style>
