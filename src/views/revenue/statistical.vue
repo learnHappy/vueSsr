@@ -167,7 +167,7 @@
 </template>
 
 <script>
-import { pageHeight } from '../../utils/publus';
+import { pageHeight , tenantId} from '../../utils/publus';
 import { watchEffect, reactive } from 'vue';
 import axios from '../../axios/index';
 import statisticalApi from '../../api/revenue/statistical';
@@ -211,7 +211,7 @@ export default {
     let day = moment(new Date()).format('YYYYMMDD');
     // 参数条件
     const params = reactive({
-      tenantId: '3308021324',
+      tenantId,
       plantCode: '',
       competentDepartment: '',
       startDate: day,
@@ -391,16 +391,6 @@ export default {
       });
       // 请求开票项目
       await axios.post(statisticalApi.makeOutAnInvoice, params, { loading: false }).then((res) => {
-        if (res.code === '1') {
-          dataReslut.makeOutAnInvoiceData = res.data;
-          echartsStatistical('makeOutBarEcharts', echart, dataReslut.makeOutAnInvoiceData);
-          revenueEcharts('makeOutPieEcharts', echart, dataReslut.makeOutAnInvoiceData);
-        } else {
-          ElMessage({ message: res.message, duration: 0, showClose: true, offset: 200 });
-        }
-      });
-      // 请求开票项目
-      await axios.post(statisticalApi.methodOfPayment, params, { loading: false }).then((res) => {
         if (res.code === '1') {
           dataReslut.makeOutAnInvoiceData = res.data;
           echartsStatistical('makeOutBarEcharts', echart, dataReslut.makeOutAnInvoiceData);

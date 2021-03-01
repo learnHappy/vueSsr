@@ -23,10 +23,10 @@
           </el-col>
           <el-col :lg="6" :md="7" :sm="7">
             <div v-show="state.fastDateType === 'thisMonth'">
-              <el-date-picker v-model="state.month" type="month" placeholder="选择月" />
+              <el-date-picker v-model="state.month" type="month" placeholder="选择月" @change="monthRange" />
             </div>
             <div v-show="state.fastDateType === 'thisYear'">
-              <el-date-picker v-model="state.year" type="year" placeholder="选择年" />
+              <el-date-picker v-model="state.year" type="year" placeholder="选择年" @change="monthRange" />
             </div>
           </el-col>
         </el-row>
@@ -67,24 +67,80 @@
         v-for="(item, index) in menu.fourMenus"
         :key="index"
         :span="2"
-        :class="{ 'is-active-four': menu.fourShow.indexOf(item) > -1 }"
+        :class="{ 'is-active-four': menu.fourShow.indexOf(item.value) > -1 }"
         class="fout-style"
-        @click="fourHandleClick(item)"
+        @click="fourHandleClick(item.value)"
       >
-        {{ item }}
+        {{ item.label }}
       </el-col>
     </el-row>
-    <component :is="state.componentName" />
+    <!-- <component :is="state.componentName" :datas="reslutData.coverageAnalysisData"/> -->
+    <!-- coverage组件 -->
+    <div v-show="state.componentName === 'coverage'">
+      <div class="paycost">
+        <el-row>
+          <el-col :span="24">
+            <div class="echart-body table-layout">
+              <el-carousel :autoplay="false" :height="state.height">
+                <el-carousel-item>
+                  <div id="plantBarEcharts" :style="{ height: state.height }" />
+                </el-carousel-item>
+                <el-carousel-item>
+                  <el-table
+                    border
+                    :max-height="state.tableHeight"
+                    :data="
+                      coverageData.tableData.slice(
+                        (coverageData.currpage - 1) * coverageData.pagesize,
+                        coverageData.currpage * coverageData.pagesize
+                      )
+                    "
+                    empty-text="无数据"
+                    stripe
+                    style="width: 100%"
+                  >
+                    <el-table-column type="selection" align="center" width="55" />
+                    <el-table-column prop="happenTime" label="日期" align="center" min-width="120" />
+                    <el-table-column prop="ybAmount" label="医保金额" align="right" header-align="center" min-width="120" />
+                    <el-table-column prop="zfAmount" label="自费金额" align="right" header-align="center" min-width="120" />
+                  </el-table>
+                  <el-pagination
+                    :current-page="coverageData.currpage"
+                    :page-sizes="[10, 20, 50, 100, 200]"
+                    :page-size="coverageData.pagesize"
+                    layout="total, sizes, prev, pager, next, jumper"
+                    :total="coverageData.tableData.length"
+                    :hide-on-single-page="coverageData.tableData.length === 0"
+                    @size-change="handleSizeChange"
+                    @current-change="handleCurrentChange"
+                  />
+                </el-carousel-item>
+                <el-carousel-item>
+                  <div id="plantPieEcharts" :style="{ height: state.height }" />
+                  <div></div>
+                </el-carousel-item>
+              </el-carousel>
+            </div>
+          </el-col>
+        </el-row>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
-import coverage from './coverage.vue';
+import { tenantId } from '../../../utils/publus';
+import analyze from '../../../api/revenue/analyze';
+import axios from '../../../axios/index';
+// import coverage from './coverage.vue';
 import payment from './payment.vue';
-import { onMounted, reactive } from 'vue';
+import * as echart from 'echarts';
+import { onMounted, reactive, watch, watchEffect } from 'vue';
+import { ElMessage } from 'element-plus';
+import moment from 'moment';
 export default {
   components: {
-    coverage,
+    // coverage,
     payment
   },
   setup() {
@@ -100,8 +156,8 @@ export default {
       value: '',
       fastDateType: 'thisMonth',
       // 时间参数
-      month: '',
-      year: '',
+      month: moment(new Date()).format('YYYYMM'),
+      year: moment(new Date()).format('YYYY'),
       // 走马灯参数
       height: '400px',
       // 表格数据
@@ -110,21 +166,48 @@ export default {
 
     const menu = reactive({
       menus: [
-        { tabName: 'coverage', threeMenus: '险种方式', fourMenus: ['自费', '台州医保'] },
-        { tabName: 'payment', threeMenus: '支付渠道方式', fourMenus: ['文案1', '文案', '文案'] },
-        { threeMenus: '所有科室', fourMenus: ['文案2', '文案', '文案'] },
-        { threeMenus: '物资类别', fourMenus: ['文案3', '文案', '文案'] },
-        { threeMenus: '开票项目', fourMenus: ['文案4', '文案', '文案'] }
+        {
+          tabName: 'coverage',
+          threeMenus: '险种方式',
+          fourMenus: [
+            { label: '自费', value: '00000000' },
+            { label: '医保', value: '33080001' }
+          ]
+        },
+        {
+          tabName: 'payment',
+          threeMenus: '支付渠道方式',
+          fourMenus: [
+            { label: '自费', value: '00000000' },
+            { label: '医保', value: '33080001' }
+          ]
+        },
+        { threeMenus: '所有科室', fourMenus: [] },
+        { threeMenus: '物资类别', fourMenus: [] },
+        { threeMenus: '开票项目', fourMenus: [] }
       ],
-      fourMenus: ['自费', '台州医保'],
+      fourMenus: [
+        { label: '自费', value: '00000000' },
+        { label: '医保', value: '33080001' }
+      ],
       threeShow: 0,
-      fourShow: []
+      fourShow: [],
+      fourDataShow0: [],
+      fourDataShow1: [],
+      fourDataShow2: [],
+      fourDataShow3: [],
+      fourDataShow4: []
     });
 
     // 点击快速选择时间范围
     let fastDateHanderClick = (val) => {
       state.fastDateType = val;
-      console.log(val);
+      params.dateType = val;
+      if (val === 'thisMonth') {
+        monthRange(state.month);
+      } else if (val === 'thisYear') {
+        monthRange(state.year);
+      }
     };
 
     // 点击三级菜单事件
@@ -133,6 +216,12 @@ export default {
       menu.fourMenus = JSON.parse(JSON.stringify(menu.menus[index]['fourMenus']));
       menu.fourShow = [];
       state.componentName = tabName;
+      state.month = moment(new Date()).format("YYYY-MM");
+      state.year = moment(new Date()).format("YYYY");
+      params.startDate = moment(month).startOf('month').format('YYYYMMDD');
+      params.endDate = moment(month).endOf('month').format('YYYYMMDD');
+      params.prarm2 = [];
+      params.dateType = 'thisMonth';
     };
 
     // 点击四级菜单事件
@@ -145,20 +234,198 @@ export default {
         // 不存在则添加
         menu.fourShow.push(val);
       }
+      params.prarm2 = menu.fourShow;
     };
 
     // 四级菜单选择所有
     let selectAll = (vals) => {
-      console.log(menu.fourShow.length);
       if (menu.fourShow.length === vals.length) {
         menu.fourShow = [];
       } else {
-        menu.fourShow = JSON.parse(JSON.stringify(vals));
+        menu.fourShow = JSON.parse(JSON.stringify(vals.map((val) => val.value)));
       }
+      params.prarm2 = menu.fourShow;
     };
 
-    onMounted(() => {
-      console.log('-------onMounted');
+    /**
+     * 加载生成柱状图
+     * id: dom的id
+     * echarts: 引入echarts插件
+     * datas: 需要加载的数据
+     */
+    let echartsStatistical = (id, echart, datas) => {
+      /**
+       * 报表功能
+       */
+      var echartsCategory = echart.init(window.document.getElementById(id), 'light');
+      // 指定图表的配置项和数据
+      var option = {
+        title: {
+          text: ''
+        },
+        tooltip: {},
+        // 防止左侧数据
+        grid: {
+          left: '2%',
+          right: '2%',
+          bottom: '10%',
+          containLabel: true,
+          show: 'true',
+          borderWidth: '0'
+        },
+        xAxis: {
+          data: datas.map((item) => {
+            return item.happenTime;
+          })
+        },
+        yAxis: {
+          // type: 'category',
+        },
+        series: [
+          {
+            name: '医保',
+            type: 'bar',
+            data: datas.map((item) => item.ybAmount)
+          },
+          {
+            name: '自费',
+            type: 'bar',
+            data: datas.map((item) => item.zfAmount)
+          }
+        ]
+      };
+      // 使用刚指定的配置项和数据显示图表。
+      echartsCategory.setOption(option);
+    };
+
+    /**
+     * 加载生成饼图
+     * id: dom的id
+     * echarts: 引入echarts插件
+     * datas: 需要加载的数据
+     */
+    let revenueEcharts = (id, echarts, datas) => {
+      var echartsRecords = echarts.init(window.document.getElementById(id), 'light');
+      var option = {
+        title: {
+          text: '',
+          subtext: '',
+          textStyle: { fontFamily: 'serif' },
+          top: 50,
+          left: 'center'
+        },
+        tooltip: {
+          trigger: 'item',
+          formatter: '<br/>{b} 营收金额: {c} ({d}%)'
+        },
+        series: [
+          {
+            name: '金额',
+            type: 'pie',
+            radius: ['50%', '70%'],
+            avoidLabelOverlap: true,
+            label: {
+              show: false,
+              position: 'outside'
+            },
+            emphasis: {
+              label: {
+                show: true,
+                fontSize: '30',
+                fontWeight: 'bold'
+              }
+            },
+            labelLine: {
+              show: false
+            },
+            data: datas.map((item) => {
+              return {
+                name: item.happenTime,
+                value: item.ybAmount + item.zfAmount
+              };
+            })
+          }
+        ]
+      };
+      // 使用刚指定的配置项和数据显示图表。
+      echartsRecords.setOption(option);
+    };
+
+    // 条件入参
+    const params = reactive({
+      tenantId,
+      startDate: moment(state.month).startOf('month').format('YYYYMMDD'),
+      endDate: moment(state.month).endOf('month').format('YYYYMMDD'),
+      prarm2: [],
+      dateType: 'thisMonth'
+    });
+
+    // 获取开始时间和结束时间
+    let monthRange = (date) => {
+      let dateType = '';
+      if (state.fastDateType === 'thisMonth') {
+        dateType = 'month';
+      } else if (state.fastDateType === 'thisYear') {
+        dateType = 'year';
+      }
+      params.startDate = moment(date).startOf(dateType).format('YYYYMMDD');
+      params.endDate = moment(date).endOf(dateType).format('YYYYMMDD');
+    };
+
+    /**************************coverage组件 start************************************/
+    const coverageData = reactive({
+      datas: [],
+      tableData: [],
+      currpage: 1,
+      pagesize: 10
+    });
+    // 分页-每页条数
+    let handleSizeChange = (val) => {
+      coverageData.pagesize = val;
+    };
+    // 当前分页
+    let handleCurrentChange = (val) => {
+      coverageData.currpage = val;
+    };
+    /**************************coverage组件 end************************************/
+
+    /**************************payment组件 start************************************/
+
+    /**************************payment组件 end************************************/
+
+    watchEffect(async () => {
+      // 3.1营收险种分析
+      await axios.post(analyze.coverageAnalysis, params, { loading: false }).then((res) => {
+        if (res.code === '1') {
+          coverageData.datas = res.data;
+          coverageData.tableData = res.data.map((item) => {
+            let happenTime = item.happenTime;
+            let zfAmount = 0;
+            let ybAmount = 0;
+            if (item.revenueAnalyzeList[0].aggregationElement === '00000000') {
+              zfAmount = item.revenueAnalyzeList[0]['amount'];
+            } else {
+              ybAmount = item.revenueAnalyzeList[0]['amount'];
+            }
+            if (item.revenueAnalyzeList.length === 2 && item.revenueAnalyzeList[1].aggregationElement === '00000000') {
+              zfAmount = item.revenueAnalyzeList[0]['amount'];
+            } else {
+              ybAmount = item.revenueAnalyzeList[0]['amount'];
+            }
+            return {
+              happenTime,
+              ybAmount,
+              zfAmount
+            };
+          });
+          // 加载柱状图
+          echartsStatistical('plantBarEcharts', echart, coverageData.tableData);
+          // 加载饼图
+          revenueEcharts('plantPieEcharts', echart, coverageData.tableData);
+        } else {
+          ElMessage({ message: res.message, duration: 0, showClose: true, offset: 200 });
+        }
+      });
     });
 
     return {
@@ -167,7 +434,12 @@ export default {
       fastDateHanderClick,
       threeHandleClick,
       fourHandleClick,
-      selectAll
+      selectAll,
+      // reslutData,
+      monthRange,
+      handleSizeChange,
+      handleCurrentChange,
+      coverageData
     };
   }
 };
@@ -178,6 +450,10 @@ export default {
 .level-three-menu {
   background-color: white;
   border-radius: 5px;
+  & div {
+    user-select: none;
+    -webkit-user-select: none; /*webkit浏览器*/
+  }
   & .el-tabs__nav-wrap.is-top {
     border-bottom: 1px solid #5db1ff;
     position: relative;
@@ -251,5 +527,9 @@ export default {
   & .el-input.el-input--prefix {
     width: 100%;
   }
+}
+
+.table-layout {
+  padding: 10px;
 }
 </style>

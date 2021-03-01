@@ -11,5 +11,5 @@ export default {
   // 3.4营收物资类别分析
   suppliesAnalysis: `${url}/api/costInfoRedundant/getRevenueAnalyzeSuppliesCategory`,
   // 3.5营收开票项目分析
-  makeOutAnInvoiceAnalysis: `${url}/api/costInfoRedundant/getRevenueAnalyzeInvoiceProject`
+  makeOutAnInvoiceAnalysis: `${url}/api/costInfoRedundant/getRevenueAnalyzeInvoiceProject`,
 };

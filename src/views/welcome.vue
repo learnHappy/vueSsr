@@ -217,6 +217,7 @@ import * as echarts from 'echarts';
 import axios from '../axios/index';
 import welcomeApi from '../api/welcome';
 import moment from 'moment';
+import { tenantId } from '../utils/publus'
 export default {
   async setup() {
     const loading = ElLoading.service({
@@ -246,15 +247,15 @@ export default {
       state.timeRangeType = val;
       if (val === 'day') {
         let day = moment(new Date()).format('YYYYMMDD');
-        state.timeRangeParas = { tenantId: '3308021324', startDate: day, endDate: day };
+        state.timeRangeParas = { tenantId: tenantId, startDate: day, endDate: day };
       } else if (val === 'month') {
         let monthFirstDay = moment(new Date()).format('YYYYMM') + '01';
         let monthLastDay = moment(new Date()).endOf('month').format('YYYYMMDD');
-        state.timeRangeParas = { tenantId: '3308021324', startDate: monthFirstDay, endDate: monthLastDay };
+        state.timeRangeParas = { tenantId: tenantId, startDate: monthFirstDay, endDate: monthLastDay };
       } else if (val === 'year') {
         let yearFirstDay = moment().startOf('year').format('YYYYMMDD');
         let yearLastDay = moment().endOf('year').format('YYYYMMDD');
-        state.timeRangeParas = { tenantId: '3308021324', startDate: yearFirstDay, endDate: yearLastDay };
+        state.timeRangeParas = { tenantId: tenantId, startDate: yearFirstDay, endDate: yearLastDay };
       } else {
         console.log(`没有获取对应的时间范围 ${val}`);
         return;
@@ -288,7 +289,7 @@ export default {
     // 1.3首页最近五笔营收记录
     let day = moment(new Date()).format('YYYYMMDD');
     let latelyRevenueParams = {
-      tenantId: '3308021324',
+      tenantId: tenantId,
       // startDate: day,
       startDate: '20210223',
       // endDate: day,
@@ -307,7 +308,7 @@ export default {
     // 1.4首页近七天营收变化
     let latelyDate = moment(new Date()).subtract(6, 'days').format('YYYYMMDD');
     let latelyRevenueChangeParams = {
-      tenantId: '3308021324',
+      tenantId: tenantId,
       startDate: latelyDate,
       // startDate: '20210217',
       endDate: day
@@ -328,7 +329,7 @@ export default {
 
     // 1.5首页近七天人次变化
     let latelyMChangeParams = {
-      tenantId: '3308021324',
+      tenantId: tenantId,
       startDate: latelyDate,
       endDate: day
     };
@@ -343,7 +344,7 @@ export default {
 
     // 1.6首页当天开票项目营收情况
     let dayMakeRevenueParams = {
-      tenantId: '3308021324',
+      tenantId: tenantId,
       startDate: '20210223',
       endDate: '20210223'
     };
@@ -357,7 +358,7 @@ export default {
 
     // 1.7首页近效期提醒 //未来30天
     let shortTermReminderParams = {
-      tenantId: '3308021324',
+      tenantId: tenantId,
       startDate: '20210201',
       endDate: '20210223'
     };
