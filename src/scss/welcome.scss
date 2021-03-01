@@ -70,6 +70,11 @@
     }
 }
 
+.fun-style-child {
+    line-height: 30px;
+    padding: 0 5px;
+}
+
 .el-carousel__item .fun-entrance:hover {
     cursor: pointer;
     box-shadow: 10px 0px 10px #f7f7f7, -10px 0px 10px #f7f7f7;
@@ -111,7 +116,7 @@
 }
 
 .time-range-active {
-    background-color: #38a6ff!important;
+    background-color: #38a6ff !important;
 }
 
 .el-card__header {

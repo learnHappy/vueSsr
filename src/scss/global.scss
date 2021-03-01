@@ -70,6 +70,11 @@ body,
     line-height: 22px !important;
 }
 
+.el-input__prefix .el-input__icon.el-icon-date{
+    line-height: 32px;
+}
+
+
 // 取消卡片背景色
 .revenue-money>div.el-card,
 .comprehensive-data>div.el-card {

@@ -4,8 +4,10 @@ import url from './url';
 export default {
   // 1.1首页收入金额汇总
   amountSummary: `${url}/api/esFyFyls/getIncomeSum`,
-  // 1.2首页人次,处方数,结算次数汇总数据
+  // 1.2.1人次,结算次数汇总数据
   comprehensive: `${url}/api/costInfoRedundant/getsTheTotalOfPrescriptionsAndSettlementAndVisits`,
+  // 1.2.2处方数汇总数据
+  comprehensiveSummary: `${url}/api/esZlCf/getsTheTotalOfPrescription`,
   // 1.3首页最近五笔营收记录
   latelyRevenue: `${url}/api/esFyFyls/getLastFiveRevenueRecords`,
   // 1.4首页近七天营收变化

@@ -11,7 +11,7 @@
                   <el-col :span="6">
                     <i class="el-icon-date" />
                   </el-col>
-                  <el-col :span="18" style="line-height: 30px">营收统计</el-col>
+                  <el-col :span="18" class="fun-style-child">营收统计</el-col>
                 </el-row>
               </button>
             </router-link>
@@ -103,7 +103,7 @@
               </el-col>
               <el-col :span="8">
                 <div class="text">
-                  <h2>{{ comprehensiveData.prescriptionCount }}</h2>
+                  <h2>{{ comprehensiveTwoData.prescriptionCount }}</h2>
                   <p>处方数</p>
                 </div>
               </el-col>
@@ -230,7 +230,8 @@ export default {
       timeRangeType: 'day',
       timeRangeParas: {},
       amountSummaryData: {},
-      comprehensiveData: {},
+      comprehensiveData: { seeSerialCount: '0', settlementCount: '0' },
+      comprehensiveTwoData: {prescriptionCount: '0'},
       latelyRevenueData: [],
       latelyRevenueChangeX: [],
       latelyRevenueChangeY: [],
@@ -266,10 +267,18 @@ export default {
           ElMessage({ message: res.message, duration: 0, showClose: true, offset: 200 });
         }
       });
-      // 1.2首页人次,处方数,结算次数汇总数据
+      // 1.2.1人次,结算次数汇总数据
       axios.post(welcomeApi.comprehensive, state.timeRangeParas, { loading: false }).then((res) => {
         if (res.code === '1') {
           state.comprehensiveData = res.data;
+        } else {
+          ElMessage({ message: res.message, duration: 0, showClose: true, offset: 200 });
+        }
+      });
+      // 1.2.2处方数汇总数据
+      axios.post(welcomeApi.comprehensiveSummary, state.timeRangeParas, { loading: false }).then((res) => {
+        if (res.code === '1') {
+          state.comprehensiveTwoData = res.data;
         } else {
           ElMessage({ message: res.message, duration: 0, showClose: true, offset: 200 });
         }
@@ -297,7 +306,6 @@ export default {
 
     // 1.4首页近七天营收变化
     let latelyDate = moment(new Date()).subtract(6, 'days').format('YYYYMMDD');
-    console.log(latelyDate);
     let latelyRevenueChangeParams = {
       tenantId: '3308021324',
       startDate: latelyDate,
@@ -340,7 +348,6 @@ export default {
       endDate: '20210223'
     };
     await axios.post(welcomeApi.dayMakeRevenue, dayMakeRevenueParams, { loading: false }).then((res) => {
-      console.log(res);
       if (res.code === '1') {
         state.latelyMChangeData = res.data;
       } else {
@@ -367,8 +374,6 @@ export default {
       if (!cellValue) {
         return cellValue;
       }
-      console.log(cellValue);
-      console.log(moment(cellValue).utcOffset(8));
       // return moment(cellValue).utc().tz("America/New_York").format();
       return moment.utc(cellValue).format('YYYY-MM-DD HH:mm:ss');
     };

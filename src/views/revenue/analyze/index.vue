@@ -2,26 +2,32 @@
 <template>
   <div class="analyze second-layout">
     <el-row>
-      <el-col :md="14" :sm="24" class="sm-bottom">
+      <el-col :md="14" :sm="9" class="sm-bottom">
         <el-row :gutter="20">
-          <el-col :lg="4" :md="6" :sm="6">
+          <el-col :lg="4" :md="6" :sm="12">
             <el-select v-model="state.value" placeholder="测试门店">
               <el-option v-for="item in state.options" :key="item.value" :label="item.label" :value="item.value" />
             </el-select>
           </el-col>
         </el-row>
       </el-col>
-      <el-col :md="9" :sm="22">
-        <el-row>
-          <el-col :lg="8" :md="11" :sm="8">
+      <el-col :md="9" :sm="13">
+        <el-row class="date-param">
+          <el-col :lg="18" :md="17" :sm="16">
             <ul class="date-ul">
-              <li :class="{ 'is-select-li': state.fastDateType === 'day' }" @click="fastDateHanderClick('day')">今日</li>
-              <li :class="{ 'is-select-li': state.fastDateType === 'month' }" @click="fastDateHanderClick('month')">本月</li>
-              <li :class="{ 'is-select-li': state.fastDateType === 'year' }" @click="fastDateHanderClick('year')">本年</li>
+              <li :class="{ 'is-select-li': state.fastDateType === 'thisMonth' }" @click="fastDateHanderClick('thisMonth')">
+                月
+              </li>
+              <li :class="{ 'is-select-li': state.fastDateType === 'thisYear' }" @click="fastDateHanderClick('thisYear')">年</li>
             </ul>
           </el-col>
-          <el-col :lg="16" :md="13" :sm="14">
-            <el-date-picker v-model="state.date" type="daterange" start-placeholder="开始日期" end-placeholder="结束日期" />
+          <el-col :lg="6" :md="7" :sm="7">
+            <div v-show="state.fastDateType === 'thisMonth'">
+              <el-date-picker v-model="state.month" type="month" placeholder="选择月" />
+            </div>
+            <div v-show="state.fastDateType === 'thisYear'">
+              <el-date-picker v-model="state.year" type="year" placeholder="选择年" />
+            </div>
           </el-col>
         </el-row>
       </el-col>
@@ -51,12 +57,19 @@
         </div>
       </el-col>
       <el-col
+        :span="2"
+        class="fout-style"
+        :class="{ 'is-active-four': menu.fourShow.length === menu.fourMenus.length }"
+        @click="selectAll(menu.fourMenus)"
+        >所有</el-col
+      >
+      <el-col
         v-for="(item, index) in menu.fourMenus"
         :key="index"
         :span="2"
-        :class="{ 'is-active-four': menu.fourShow == index }"
+        :class="{ 'is-active-four': menu.fourShow.indexOf(item) > -1 }"
         class="fout-style"
-        @click="fourHandleClick(index)"
+        @click="fourHandleClick(item)"
       >
         {{ item }}
       </el-col>
@@ -66,44 +79,29 @@
 </template>
 
 <script>
-import paycost from './paycost.vue';
+import coverage from './coverage.vue';
 import payment from './payment.vue';
 import { onMounted, reactive } from 'vue';
 export default {
   components: {
-    paycost,
+    coverage,
     payment
   },
   setup() {
     const state = reactive({
-      componentName: 'paycost',
+      componentName: 'coverage',
       // 日期参数
       options: [
         {
           value: '选项1',
           label: '黄金糕'
-        },
-        {
-          value: '选项2',
-          label: '双皮奶'
-        },
-        {
-          value: '选项3',
-          label: '蚵仔煎'
-        },
-        {
-          value: '选项4',
-          label: '龙须面'
-        },
-        {
-          value: '选项5',
-          label: '北京烤鸭'
         }
       ],
       value: '',
-      fastDateType: 'day',
+      fastDateType: 'thisMonth',
       // 时间参数
-      date: '',
+      month: '',
+      year: '',
       // 走马灯参数
       height: '400px',
       // 表格数据
@@ -112,34 +110,51 @@ export default {
 
     const menu = reactive({
       menus: [
-        { tabName: 'paycost', threeMenus: '缴费方式', fourMenus: ['所有', '文案', '文案', '文案'] },
-        { tabName: 'payment', threeMenus: '支付渠道方式', fourMenus: ['所有', '文案1', '文案', '文案'] },
-        { threeMenus: '所有科室', fourMenus: ['所有', '文案2', '文案', '文案'] },
-        { threeMenus: '物资类别', fourMenus: ['所有', '文案3', '文案', '文案'] },
-        { threeMenus: '开票项目', fourMenus: ['所有', '文案4', '文案', '文案'] }
+        { tabName: 'coverage', threeMenus: '险种方式', fourMenus: ['自费', '台州医保'] },
+        { tabName: 'payment', threeMenus: '支付渠道方式', fourMenus: ['文案1', '文案', '文案'] },
+        { threeMenus: '所有科室', fourMenus: ['文案2', '文案', '文案'] },
+        { threeMenus: '物资类别', fourMenus: ['文案3', '文案', '文案'] },
+        { threeMenus: '开票项目', fourMenus: ['文案4', '文案', '文案'] }
       ],
-      fourMenus: ['所有', '文案', '文案', '文案'],
+      fourMenus: ['自费', '台州医保'],
       threeShow: 0,
-      fourShow: 0
+      fourShow: []
     });
 
     // 点击快速选择时间范围
     let fastDateHanderClick = (val) => {
       state.fastDateType = val;
-      if (val === 'day') {
-      }
+      console.log(val);
     };
 
     // 点击三级菜单事件
     let threeHandleClick = (index, tabName) => {
       menu.threeShow = index;
-      menu.fourMenus = menu.menus[index]['fourMenus'];
+      menu.fourMenus = JSON.parse(JSON.stringify(menu.menus[index]['fourMenus']));
+      menu.fourShow = [];
       state.componentName = tabName;
     };
 
     // 点击四级菜单事件
-    let fourHandleClick = (index) => {
-      menu.fourShow = index;
+    let fourHandleClick = (val) => {
+      // 已存在则删除
+      let index = menu.fourShow.indexOf(val);
+      if (index > -1) {
+        menu.fourShow.splice(index, 1);
+      } else {
+        // 不存在则添加
+        menu.fourShow.push(val);
+      }
+    };
+
+    // 四级菜单选择所有
+    let selectAll = (vals) => {
+      console.log(menu.fourShow.length);
+      if (menu.fourShow.length === vals.length) {
+        menu.fourShow = [];
+      } else {
+        menu.fourShow = JSON.parse(JSON.stringify(vals));
+      }
     };
 
     onMounted(() => {
@@ -151,7 +166,8 @@ export default {
       menu,
       fastDateHanderClick,
       threeHandleClick,
-      fourHandleClick
+      fourHandleClick,
+      selectAll
     };
   }
 };
@@ -224,5 +240,16 @@ export default {
 // 激活四级菜单
 .is-active-four {
   color: #1e91fe;
+}
+
+// 时间参数样式
+.date-param {
+  text-align: right;
+  & .date-ul {
+    margin-right: 5px;
+  }
+  & .el-input.el-input--prefix {
+    width: 100%;
+  }
 }
 </style>

@@ -72,7 +72,7 @@
         <div class="echart-body">
           <el-carousel :autoplay="false" :height="state.height">
             <el-carousel-item>
-              <div id="suppliesBarEcharts" :style="{ height: state.height }" />
+              <div id="suppliesBarEcharts" style="width: 100%" :style="{ height: state.height }" />
             </el-carousel-item>
             <el-carousel-item>
               <el-table :data="dataReslut.suppliesCategoryData" border empty-text="无数据" stripe style="width: 100%">
@@ -286,6 +286,15 @@ export default {
           text: ''
         },
         tooltip: {},
+        // 防止左侧数据
+        grid: {
+          left: '2%',
+          right: '2%',
+          bottom: '10%',
+          containLabel: true,
+          show: 'true',
+          borderWidth: '0'
+        },
         xAxis: {
           data: datas.map((item) => {
             if (formatter) {

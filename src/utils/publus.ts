@@ -8,3 +8,4 @@ export const pageHeight = (that: any, reduceHeight: number) => {
     that.state.tableHeight = height - reduceHeight - 32 + 'px';
   }
 };
+
