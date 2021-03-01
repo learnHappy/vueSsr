@@ -191,12 +191,7 @@ export default {
         { label: '医保', value: '33080001' }
       ],
       threeShow: 0,
-      fourShow: [],
-      fourDataShow0: [],
-      fourDataShow1: [],
-      fourDataShow2: [],
-      fourDataShow3: [],
-      fourDataShow4: []
+      fourShow: []
     });
 
     // 点击快速选择时间范围
@@ -214,12 +209,14 @@ export default {
     let threeHandleClick = (index, tabName) => {
       menu.threeShow = index;
       menu.fourMenus = JSON.parse(JSON.stringify(menu.menus[index]['fourMenus']));
+      // 初始化参数条件
       menu.fourShow = [];
       state.componentName = tabName;
-      state.month = moment(new Date()).format("YYYY-MM");
-      state.year = moment(new Date()).format("YYYY");
-      params.startDate = moment(month).startOf('month').format('YYYYMMDD');
-      params.endDate = moment(month).endOf('month').format('YYYYMMDD');
+      state.fastDateType = 'thisMonth';
+      state.month = moment(new Date()).format('YYYY-MM');
+      state.year = moment(new Date()).format('YYYY');
+      params.startDate = moment(state.month).startOf('month').format('YYYYMMDD');
+      params.endDate = moment(state.month).endOf('month').format('YYYYMMDD');
       params.prarm2 = [];
       params.dateType = 'thisMonth';
     };
@@ -394,38 +391,41 @@ export default {
     /**************************payment组件 end************************************/
 
     watchEffect(async () => {
-      // 3.1营收险种分析
-      await axios.post(analyze.coverageAnalysis, params, { loading: false }).then((res) => {
-        if (res.code === '1') {
-          coverageData.datas = res.data;
-          coverageData.tableData = res.data.map((item) => {
-            let happenTime = item.happenTime;
-            let zfAmount = 0;
-            let ybAmount = 0;
-            if (item.revenueAnalyzeList[0].aggregationElement === '00000000') {
-              zfAmount = item.revenueAnalyzeList[0]['amount'];
-            } else {
-              ybAmount = item.revenueAnalyzeList[0]['amount'];
-            }
-            if (item.revenueAnalyzeList.length === 2 && item.revenueAnalyzeList[1].aggregationElement === '00000000') {
-              zfAmount = item.revenueAnalyzeList[0]['amount'];
-            } else {
-              ybAmount = item.revenueAnalyzeList[0]['amount'];
-            }
-            return {
-              happenTime,
-              ybAmount,
-              zfAmount
-            };
-          });
-          // 加载柱状图
-          echartsStatistical('plantBarEcharts', echart, coverageData.tableData);
-          // 加载饼图
-          revenueEcharts('plantPieEcharts', echart, coverageData.tableData);
-        } else {
-          ElMessage({ message: res.message, duration: 0, showClose: true, offset: 200 });
-        }
-      });
+      console.log(params);
+      if (state.componentName === 'coverage') {
+        // 3.1营收险种分析
+        await axios.post(analyze.coverageAnalysis, params, { loading: false }).then((res) => {
+          if (res.code === '1') {
+            coverageData.datas = res.data;
+            coverageData.tableData = res.data.map((item) => {
+              let happenTime = item.happenTime;
+              let zfAmount = 0;
+              let ybAmount = 0;
+              if (item.revenueAnalyzeList[0].aggregationElement === '00000000') {
+                zfAmount = item.revenueAnalyzeList[0]['amount'];
+              } else {
+                ybAmount = item.revenueAnalyzeList[0]['amount'];
+              }
+              if (item.revenueAnalyzeList.length === 2 && item.revenueAnalyzeList[1].aggregationElement === '00000000') {
+                zfAmount = item.revenueAnalyzeList[0]['amount'];
+              } else {
+                ybAmount = item.revenueAnalyzeList[0]['amount'];
+              }
+              return {
+                happenTime,
+                ybAmount,
+                zfAmount
+              };
+            });
+            // 加载柱状图
+            echartsStatistical('plantBarEcharts', echart, coverageData.tableData);
+            // 加载饼图
+            revenueEcharts('plantPieEcharts', echart, coverageData.tableData);
+          } else {
+            ElMessage({ message: res.message, duration: 0, showClose: true, offset: 200 });
+          }
+        });
+      }
     });
 
     return {
