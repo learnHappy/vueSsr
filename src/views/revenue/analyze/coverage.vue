@@ -1,102 +1,100 @@
 // 缴费方式
 <template>
-  <div class="paycost">
-    <el-row>
-      <el-col :span="24">
-        <!-- <div class="echart-header">
-          <el-row>
-            <el-avatar class="header-avatar-table">
-              <i class="iconfont icon-shezhigouwujizifei icon-size" />
-            </el-avatar>
-            <el-col class="header-table-copy" :span="20">
-              <div>标题文案</div>
-              <div>站位符站位符站位符站位符站位符站位符站位符站位符站位符站位符</div>
-            </el-col>
-          </el-row>
-        </div> -->
-        <div class="echart-body table-layout">
-          <el-carousel :autoplay="false" :height="state.height">
-            <el-carousel-item>
-              <el-table
-                border
-                :max-height="state.tableHeight"
-                :data="state.tableData.slice((state.currpage - 1) * state.pagesize, state.currpage * state.pagesize)"
-                empty-text="无数据"
-                stripe
-                style="width: 100%"
-              >
-                <el-table-column type="selection" align="center" width="55" />
-                <el-table-column prop="xy" label="西药" align="center" min-width="90" sortable />
-                <el-table-column prop="cy" label="草药" align="center" min-width="90" />
-                <el-table-column prop="zcy" label="中成药" align="center" min-width="90" />
-                <el-table-column prop="cl" label="材料" align="center" min-width="90" />
-              </el-table>
-              <el-pagination
-                :current-page="state.currpage"
-                :page-sizes="[10, 20, 50, 100, 200]"
-                :page-size="state.pagesize"
-                layout="total, sizes, prev, pager, next, jumper"
-                :total="state.tableData.length"
-                :hide-on-single-page="state.tableData.length === 0"
-                @size-change="handleSizeChange"
-                @current-change="handleCurrentChange"
-              />
-            </el-carousel-item>
-            <el-carousel-item> 123 </el-carousel-item>
-            <el-carousel-item> 123 </el-carousel-item>
-          </el-carousel>
-        </div>
-      </el-col>
-    </el-row>
-  </div>
+  
 </template>
 
 <script>
 import { pageHeight } from '../../../utils/publus';
-import { reactive } from 'vue';
+import { onMounted, reactive, toRef, watch, watchEffect } from 'vue';
+import * as echart from 'echarts';
 import axios from '../../../axios/index';
 export default {
-  async setup() {
+  props: {
+    datas: Array
+  },
+  async setup(props, { emit }) {
     const state = reactive({
       height: '',
       tableHeight: '200px',
-      tableData: [
-        { xy: '123' },
-        { xy: '123' },
-        { xy: '123' },
-        { xy: '123' },
-        { xy: '123' },
-        { xy: '123' },
-        { xy: '123' },
-        { xy: '123' },
-        { xy: '123' },
-        { xy: '123' },
-        { xy: '123' },
-        { xy: '123' },
-        { xy: '123' },
-        { xy: '123' },
-        { xy: '123' },
-        { xy: '123' }
-      ],
+      tableData: props.datas,
       currpage: 1,
       pagesize: 10
     });
 
-    // 分页-每页条数
-    let handleSizeChange = (val) => {
-      state.pagesize = val;
+    // if (props.datas.length > 0) {
+    //   state.tableHeight = props.datas.map((item) => {
+    //     let data = {
+    //       happenTime: item.happenTime,
+    //       ybAmount: item.revenueAnalyzeList[0].amount,
+    //       zfAmount: item.revenueAnalyzeList[1].amount
+    //     };
+    //   });
+    // }
+
+    watchEffect(() => {
+      console.log(state.tableData);
+    });
+
+
+    /**
+     * 加载生成柱状图
+     * id: dom的id
+     * echarts: 引入echarts插件
+     * datas: 需要加载的数据
+     */
+    let echartsStatistical = (id, echart, datas, formatter) => {
+      /**
+       * 报表功能
+       */
+      var echartsCategory = echart.init(window.document.getElementById(id), 'light');
+      // 指定图表的配置项和数据
+      var option = {
+        title: {
+          text: ''
+        },
+        tooltip: {},
+        // 防止左侧数据
+        grid: {
+          left: '2%',
+          right: '2%',
+          bottom: '10%',
+          containLabel: true,
+          show: 'true',
+          borderWidth: '0'
+        },
+        xAxis: {
+          data: datas.map((item) => {
+            if (formatter) {
+              return materialCategoryConversion(item.aggregationElement);
+            }
+            return item.aggregationElement;
+          })
+        },
+        yAxis: {
+          // type: 'category',
+        },
+        series: [
+          {
+            name: '新手',
+            type: 'bar',
+            data: datas.map((item) => item.amount)
+          }
+        ]
+      };
+      // 使用刚指定的配置项和数据显示图表。
+      echartsCategory.setOption(option);
     };
 
-    // 当前分页
-    let handleCurrentChange = (val) => {
-      state.currpage = val;
-    };
+    onMounted(() => {
+      echartsStatistical('plantBarEcharts', echart, state.tableData);
+    });
 
     return {
       state,
       pageHeight,
       handleSizeChange,
       handleCurrentChange
+      // echartsStatistical
     };
   },
   mounted() {
@@ -110,7 +108,5 @@ export default {
 </script>
 
 <style lang="scss">
-.table-layout {
-  padding: 10px;
-}
+
 </style>
