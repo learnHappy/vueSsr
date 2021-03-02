@@ -101,8 +101,16 @@
                   >
                     <el-table-column type="selection" align="center" width="55" />
                     <el-table-column prop="happenTime" label="日期" align="center" min-width="120" />
-                    <el-table-column prop="ybAmount" label="医保金额" align="right" header-align="center" min-width="120" />
-                    <el-table-column prop="zfAmount" label="自费金额" align="right" header-align="center" min-width="120" />
+                    <el-table-column
+                      v-for="(item, index) in state.plantGinsengTable"
+                      :prop="item.value"
+                      :label="item.label"
+                      :formatter="moneyFormatter"
+                      align="right"
+                      header-align="center"
+                      min-width="120"
+                      :key="index"
+                    />
                   </el-table>
                   <el-pagination
                     :current-page="coverageData.currpage"
@@ -288,7 +296,7 @@
       </div>
     </div>
     <!-- invoice开票项目组件 -->
-    <!-- <div v-show="state.componentName === 'invoice' || state.allLoading">
+    <div v-show="state.componentName === 'invoice' || state.allLoading">
       <div class="block">
         <el-row>
           <el-col :span="24">
@@ -345,7 +353,7 @@
           </el-col>
         </el-row>
       </div>
-    </div> -->
+    </div>
 
     <!-- 结 -->
   </div>
@@ -355,13 +363,62 @@
 import { tenantId } from '../../../utils/publus';
 import { SuppliesCategory, Payment } from '../../../enum/index';
 import analyze from '../../../api/revenue/analyze';
+import baseApi from '../../../api/base';
 import axios from '../../../axios/index';
 import * as echart from 'echarts';
 import { onMounted, reactive, watch, watchEffect } from 'vue';
 import { ElMessage } from 'element-plus';
 import moment from 'moment';
 export default {
-  setup() {
+  async setup() {
+    // 4.1租户部门科室
+    let baseParams = {
+      tenantId,
+      fplb: '0'
+    };
+    let departmentGinseng = [];
+    await axios.post(baseApi.tenantDepartment, baseParams, { loading: false }).then((res) => {
+      if (res.code === '1') {
+        departmentGinseng = res.data.map((item) => {
+          return {
+            label: item.ksmc,
+            value: item.ksdm
+          };
+        });
+      } else {
+        ElMessage({ message: res.message, duration: 0, showClose: true, offset: 200 });
+      }
+    });
+
+    // 4.2租户开票项目
+    let invoiceGinseng = [];
+    await axios.post(baseApi.tenantInvoiceProject, baseParams, { loading: false }).then((res) => {
+      if (res.code === '1') {
+        invoiceGinseng = res.data.map((item) => {
+          return {
+            label: item.xmmc,
+            value: item.xmdm
+          };
+        });
+      } else {
+        ElMessage({ message: res.message, duration: 0, showClose: true, offset: 200 });
+      }
+    });
+    // 4.3租户结算险种
+    let plantGinseng = [];
+    await axios.post(baseApi.tenantPlantCode, baseParams, { loading: false }).then((res) => {
+      if (res.code === '1') {
+        plantGinseng = res.data.map((item) => {
+          return {
+            label: item.xzmc,
+            value: item.xzdm
+          };
+        });
+      } else {
+        ElMessage({ message: res.message, duration: 0, showClose: true, offset: 200 });
+      }
+    });
+
     const state = reactive({
       componentName: 'coverage',
       allLoading: true,
@@ -380,7 +437,9 @@ export default {
       // 走马灯参数
       height: '400px',
       // 表格数据
-      tableData: []
+      tableData: [],
+      plantGinsengTable: plantGinseng,
+      departmentGinsengTable: departmentGinseng
     });
 
     const menu = reactive({
@@ -388,27 +447,18 @@ export default {
         {
           tabName: 'coverage',
           threeMenus: '险种方式',
-          fourMenus: [
-            { label: '自费', value: '00000000' },
-            { label: '医保', value: '33080001' }
-          ]
+          fourMenus: plantGinseng
         },
         {
           tabName: 'payment',
           threeMenus: '支付渠道方式',
-          fourMenus: [
-            { label: '自费', value: '00000000' },
-            { label: '医保', value: '33080001' }
-          ]
+          fourMenus: []
         },
-        { tabName: 'department', threeMenus: '所有科室', fourMenus: [] },
+        { tabName: 'department', threeMenus: '所有科室', fourMenus: departmentGinseng },
         { tabName: 'supplies', threeMenus: '物资类别', fourMenus: [] },
-        { tabName: 'invoice', threeMenus: '开票项目', fourMenus: [] }
+        { tabName: 'invoice', threeMenus: '开票项目', fourMenus: invoiceGinseng }
       ],
-      fourMenus: [
-        { label: '自费', value: '00000000' },
-        { label: '医保', value: '33080001' }
-      ],
+      fourMenus: plantGinseng,
       threeShow: 0,
       fourShow: []
     });
@@ -551,6 +601,14 @@ export default {
       echartsRecords.setOption(option);
     };
 
+    // 金额格式化
+    let moneyFormatter = (row, column, cellValue) => {
+      if (!cellValue) {
+        return cellValue;
+      }
+      return parseFloat(cellValue).toFixed(2);
+    };
+
     // 条件入参
     const params = reactive({
       tenantId,
@@ -631,68 +689,60 @@ export default {
     /**************************supplies组件 end************************************/
 
     /**************************invoice组件 start************************************/
-    // const invoiceData = reactive({
-    //   datas: [],
-    //   tableData: [],
-    //   currpage: 1,
-    //   pagesize: 10
-    // });
+    const invoiceData = reactive({
+      datas: [],
+      tableData: [],
+      currpage: 1,
+      pagesize: 10
+    });
 
-    // // 分页-每页条数
-    // let handleSizeChange3 = (val) => {
-    //   invoiceData.pagesize = val;
-    // };
-    // // 当前分页
-    // let handleCurrentChange3 = (val) => {
-    //   invoiceData.currpage = val;
-    // };
+    // 分页-每页条数
+    let handleSizeChange4 = (val) => {
+      invoiceData.pagesize = val;
+    };
+    // 当前分页
+    let handleCurrentChange4 = (val) => {
+      invoiceData.currpage = val;
+    };
     /**************************invoice组件 end************************************/
 
     watchEffect(async () => {
       if (state.componentName === 'coverage') {
         // 3.1营收险种分析
-        await axios.post(analyze.makeOutAnInvoiceAnalysis, params, { loading: false }).then((res) => {
+        await axios.post(analyze.coverageAnalysis, params, { loading: false }).then((res) => {
+          console.log(res.code);
           if (res.code === '1') {
             coverageData.datas = res.data;
             coverageData.tableData = res.data.map((item) => {
               let happenTime = item.happenTime;
-              let zfAmount = 0;
-              let ybAmount = 0;
-              if (item.revenueAnalyzeList[0].aggregationElement === '00000000') {
-                zfAmount = item.revenueAnalyzeList[0]['amount'];
-              } else {
-                ybAmount = item.revenueAnalyzeList[0]['amount'];
-              }
-              if (item.revenueAnalyzeList.length === 2 && item.revenueAnalyzeList[1].aggregationElement === '00000000') {
-                zfAmount = item.revenueAnalyzeList[0]['amount'];
-              } else {
-                ybAmount = item.revenueAnalyzeList[0]['amount'];
-              }
-              return {
-                happenTime,
-                ybAmount,
-                zfAmount
-              };
+              let tableJson = { happenTime: item.happenTime };
+              item.revenueAnalyzeList.map((itemChild) => {
+                tableJson[itemChild.aggregationElement] = itemChild.amount;
+              });
+              return tableJson;
             });
             // 加载柱状图
-            let series = [
-              {
-                name: '医保',
+            let series = plantGinseng.map((item) => {
+              // let serie = {};
+              // serie.name = item.label
+              return {
+                name: item.label,
                 type: 'bar',
-                data: coverageData.tableData.map((item) => item.ybAmount)
-              },
-              {
-                name: '自费',
-                type: 'bar',
-                data: coverageData.tableData.map((item) => item.zfAmount)
-              }
-            ];
+                data: coverageData.tableData.map((itemChild) => itemChild[item.value])
+              };
+            });
             echartsStatistical('plantBarEcharts', echart, coverageData.tableData, series);
             // 加载饼图
             let datasPie = coverageData.tableData.map((item) => {
+              let amount = 0;
+              for (let key in item) {
+                if (key != 'happenTime') {
+                  amount += item[key];
+                }
+              }
               return {
                 name: item.happenTime,
-                value: item.ybAmount + item.zfAmount
+                value: amount
               };
             });
             revenueEcharts('plantPieEcharts', echart, datasPie);
@@ -734,7 +784,6 @@ export default {
                 qtAmonut
               };
             });
-            console.log(paymentData.tableData);
             // 加载柱状图
             let series = [
               {
@@ -814,7 +863,6 @@ export default {
                 treatmentAmount
               };
             });
-            console.log(suppliesData.tableData);
             // 加载柱状图
             let series = [
               {
@@ -870,12 +918,6 @@ export default {
       }
     });
 
-    onMounted(() => {
-      setTimeout(() => {
-        state.allLoading = false;
-      }, 500);
-    });
-
     return {
       state,
       menu,
@@ -885,18 +927,24 @@ export default {
       selectAll,
       // reslutData,
       monthRange,
+      moneyFormatter,
       handleSizeChange,
       handleSizeChange1,
       handleSizeChange3,
-      // handleSizeChange4,
+      handleSizeChange4,
       handleCurrentChange,
       handleCurrentChange1,
-      // handleCurrentChange4,
+      handleCurrentChange4,
       coverageData,
       paymentData,
       suppliesData,
-      // invoiceData
+      invoiceData
     };
+  },
+  mounted() {
+    setTimeout(() => {
+      this.state.allLoading = false;
+    }, 500);
   }
 };
 </script>
@@ -963,8 +1011,8 @@ export default {
 // 四级菜单样式
 .fout-style {
   text-align: center;
-  height: 60px;
-  line-height: 60px;
+  height: 40px;
+  line-height: 40px;
   font-size: 12px;
   cursor: pointer;
 }
