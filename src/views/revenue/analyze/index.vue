@@ -158,11 +158,21 @@
                   >
                     <el-table-column type="selection" align="center" width="55" />
                     <el-table-column prop="happenTime" label="日期" align="center" min-width="120" />
-                    <el-table-column prop="xjAmount" label="现金金额" align="right" header-align="center" min-width="120" />
+                    <el-table-column
+                      v-for="(item, index) in state.paymentGinsengData"
+                      :prop="item.value"
+                      :label="item.label"
+                      :formatter="moneyFormatter"
+                      align="right"
+                      header-align="center"
+                      min-width="120"
+                      :key="index"
+                    />
+                    <!-- <el-table-column prop="xjAmount" label="现金金额" align="right" header-align="center" min-width="120" />
                     <el-table-column prop="zfbAmonut" label="支付宝金额" align="right" header-align="center" min-width="120" />
                     <el-table-column prop="wxAmonut" label="微信金额" align="right" header-align="center" min-width="120" />
                     <el-table-column prop="ylAmonut" label="银联金额" align="right" header-align="center" min-width="120" />
-                    <el-table-column prop="qtAmonut" label="其他金额" align="right" header-align="center" min-width="120" />
+                    <el-table-column prop="qtAmonut" label="其他金额" align="right" header-align="center" min-width="120" /> -->
                   </el-table>
                   <el-pagination
                     :current-page="paymentData.currpage"
@@ -267,8 +277,17 @@
                   >
                     <el-table-column type="selection" align="center" width="55" />
                     <el-table-column prop="happenTime" label="日期" align="center" min-width="120" />
-                    <el-table-column prop="drugAmount" label="药品" align="right" header-align="center" min-width="120" />
-                    <el-table-column prop="materialbAmount" label="材料" align="right" header-align="center" min-width="120" />
+                    <el-table-column
+                      v-for="(item, index) in state.suppliesGinsengData"
+                      :prop="item.value"
+                      :label="item.label"
+                      :formatter="moneyFormatter"
+                      align="right"
+                      header-align="center"
+                      min-width="120"
+                      :key="index"
+                    />
+                    <!-- <el-table-column prop="materialbAmount" label="材料" align="right" header-align="center" min-width="120" />
                     <el-table-column prop="instrumentAmount" label="器械" align="right" header-align="center" min-width="120" />
                     <el-table-column
                       prop="healthProductsAmount"
@@ -278,7 +297,7 @@
                       min-width="120"
                     />
                     <el-table-column prop="theDrugAmount" label="非药品" align="right" header-align="center" min-width="120" />
-                    <el-table-column prop="treatmentAmount" label="诊疗" align="right" header-align="center" min-width="120" />
+                    <el-table-column prop="treatmentAmount" label="诊疗" align="right" header-align="center" min-width="120" /> -->
                   </el-table>
                   <el-pagination
                     :current-page="suppliesData.currpage"
@@ -422,6 +441,24 @@ export default {
       }
     });
 
+    // 支付方式入参
+    let paymentGinseng = [
+      { label: '现金', value: '01' },
+      { label: '支付宝', value: '02' },
+      { label: '微信', value: '03' },
+      { label: '银联', value: '05' },
+      { label: '其他', value: '99' }
+    ];
+    // 物资类别入参
+    let suppliesGinseng = [
+      { label: '药品', value: '0' },
+      { label: '材料', value: '1' },
+      { label: '器械', value: '2' },
+      { label: '保健品', value: '3' },
+      { label: '非药品', value: '4' },
+      { label: '诊疗', value: '99' }
+    ];
+
     const state = reactive({
       componentName: 'coverage',
       // 日期参数
@@ -442,26 +479,11 @@ export default {
       tableData: [],
       plantGinsengTable: plantGinseng,
       departmentGinsengTable: departmentGinseng,
-      invoiceGinsengTable: invoiceGinseng
+      invoiceGinsengTable: invoiceGinseng,
+      paymentGinsengData: paymentGinseng,
+      suppliesGinsengData: suppliesGinseng
     });
 
-    // 支付方式入参
-    let paymentGinseng = [
-      { label: '现金', value: '01' },
-      { label: '支付宝', value: '02' },
-      { label: '微信', value: '03' },
-      { label: '银联', value: '05' },
-      { label: '其他', value: '99' }
-    ];
-    // 物资类别入参
-    let suppliesGinseng = [
-      { label: '药品', value: '0' },
-      { label: '材料', value: '1' },
-      { label: '器械', value: '2' },
-      { label: '保健品', value: '3' },
-      { label: '非药品', value: '4' },
-      { label: '诊疗', value: '99' }
-    ];
     const menu = reactive({
       menus: [
         {
@@ -801,75 +823,36 @@ export default {
             paymentData.datas = res.data;
             paymentData.tableData = res.data.map((item) => {
               let happenTime = item.happenTime;
-              let xjAmount = 0,
-                zfbAmonut = 0,
-                wxAmonut = 0,
-                ylAmonut = 0,
-                qtAmonut = 0;
-              item.revenueAnalyzeList.forEach((item) => {
-                if (item.aggregationElement === Payment.Cash) {
-                  xjAmount = item.amount;
-                } else if (item.aggregationElement === Payment.Alipay) {
-                  zfbAmonut = item.amount;
-                } else if (item.aggregationElement === Payment.WeChat) {
-                  wxAmonut = item.amount;
-                } else if (item.aggregationElement === Payment.Unionpay) {
-                  wxAmonut = item.amount;
-                } else if (item.aggregationElement === Payment.Other) {
-                  qtAmonut = item.amount;
-                }
+              let tableJson = { happenTime: item.happenTime };
+              item.revenueAnalyzeList.map((itemChild) => {
+                tableJson[itemChild.aggregationElement] = itemChild.amount;
               });
-              return {
-                happenTime,
-                xjAmount,
-                zfbAmonut,
-                wxAmonut,
-                ylAmonut,
-                qtAmonut
-              };
+              return tableJson;
             });
             // 加载柱状图
-            let series = [
-              {
-                name: '现金',
+            let series = paymentGinseng.map((item) => {
+              return {
+                name: item.label,
                 type: 'bar',
                 stack: 'total',
                 label: {
                   show: true
                 },
-                data: paymentData.tableData.map((item) => item.xjAmount)
-              },
-              {
-                name: '支付宝',
-                type: 'bar',
-                stack: 'total',
-                data: paymentData.tableData.map((item) => item.zfbAmonut)
-              },
-              {
-                name: '微信',
-                type: 'bar',
-                stack: 'total',
-                data: paymentData.tableData.map((item) => item.wxAmonut)
-              },
-              {
-                name: '银联',
-                type: 'bar',
-                stack: 'total',
-                data: paymentData.tableData.map((item) => item.ylAmonut)
-              },
-              {
-                name: '其他',
-                type: 'bar',
-                stack: 'total',
-                data: paymentData.tableData.map((item) => item.qtAmonut)
-              }
-            ];
+                data: paymentData.tableData.map((itemChild) => itemChild[item.value])
+              };
+            });
             echartsStatistical('paymentBarEcharts', echart, paymentData.tableData, series);
             // 加载饼图
             let datasPie = paymentData.tableData.map((item) => {
+              let amount = 0;
+              for (let key in item) {
+                if (key != 'happenTime') {
+                  amount += item[key];
+                }
+              }
               return {
                 name: item.happenTime,
-                value: item.xjAmount + item.zfbAmonut + item.wxAmonut + item.ylAmonut + item.qtAmonut
+                value: amount
               };
             });
             revenueEcharts('paymentPieEcharts', echart, datasPie);
@@ -929,91 +912,35 @@ export default {
             suppliesData.datas = res.data;
             suppliesData.tableData = res.data.map((item) => {
               let happenTime = item.happenTime;
-              let drugAmount = 0,
-                materialbAmount = 0,
-                instrumentAmount = 0,
-                healthProductsAmount = 0,
-                theDrugAmount = 0,
-                treatmentAmount = 0;
-              item.revenueAnalyzeList.forEach((item) => {
-                if (item.aggregationElement === SuppliesCategory.Drug) {
-                  drugAmount = item.amount;
-                } else if (item.aggregationElement === SuppliesCategory.Material) {
-                  materialbAmount = item.amount;
-                } else if (item.aggregationElement === SuppliesCategory.Instrument) {
-                  instrumentAmount = item.amount;
-                } else if (item.aggregationElement === SuppliesCategory.HealthProducts) {
-                  healthProductsAmount = item.amount;
-                } else if (item.aggregationElement === SuppliesCategory.TheDrug) {
-                  theDrugAmount = item.amount;
-                } else if (item.aggregationElement === SuppliesCategory.Treatment) {
-                  treatmentAmount = item.amount;
-                }
+              let tableJson = { happenTime: item.happenTime };
+              item.revenueAnalyzeList.map((itemChild) => {
+                tableJson[itemChild.aggregationElement] = itemChild.amount;
               });
-              return {
-                happenTime,
-                drugAmount,
-                materialbAmount,
-                instrumentAmount,
-                healthProductsAmount,
-                theDrugAmount,
-                treatmentAmount
-              };
+              return tableJson;
             });
-            // 加载柱状图
-            let series = [
-              {
-                name: '药品',
+            let series = suppliesGinseng.map((item) => {
+              return {
+                name: item.label,
                 type: 'bar',
                 stack: 'total',
                 label: {
                   show: true
                 },
-                data: suppliesData.tableData.map((item) => item.drugAmount)
-              },
-              {
-                name: '材料',
-                type: 'bar',
-                stack: 'total',
-                data: suppliesData.tableData.map((item) => item.materialbAmount)
-              },
-              {
-                name: '器械',
-                type: 'bar',
-                stack: 'total',
-                data: suppliesData.tableData.map((item) => item.instrumentAmount)
-              },
-              {
-                name: '保健品',
-                type: 'bar',
-                stack: 'total',
-                data: suppliesData.tableData.map((item) => item.healthProductsAmount)
-              },
-              {
-                name: '非药品',
-                type: 'bar',
-                stack: 'total',
-                data: suppliesData.tableData.map((item) => item.theDrugAmount)
-              },
-              {
-                name: '诊疗',
-                type: 'bar',
-                stack: 'total',
-                data: suppliesData.tableData.map((item) => item.treatmentAmount)
-              }
-            ];
+                data: suppliesData.tableData.map((itemChild) => itemChild[item.value])
+              };
+            });
             echartsStatistical('suppliesBarEcharts', echart, suppliesData.tableData, series);
             // 加载饼图
             let datasPie = suppliesData.tableData.map((item) => {
+              let amount = 0;
+              for (let key in item) {
+                if (key != 'happenTime') {
+                  amount += item[key];
+                }
+              }
               return {
                 name: item.happenTime,
-                value:
-                  item.drugAmount +
-                  item.materialbAmount +
-                  item.instrumentAmount +
-                  item.healthProductsAmount +
-                  item.theDrugAmount +
-                  item.treatmentAmount
+                value: amount
               };
             });
             revenueEcharts('suppliesPieEcharts', echart, datasPie);
