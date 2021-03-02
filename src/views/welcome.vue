@@ -3,7 +3,7 @@
     <!-- 功能入口 -->
     <el-row class="fun-style">
       <el-col :span="24">
-        <el-carousel height="70px" :autoplay="false" trigger="click" indicator-position="outside">
+        <el-carousel height="70px" arrow="never" :autoplay="false" trigger="click" indicator-position="outside">
           <el-carousel-item>
             <router-link to="/revenue">
               <button class="fun-entrance">

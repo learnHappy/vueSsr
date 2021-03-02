@@ -1,6 +1,6 @@
 // 营收数据分析功能
 <template>
-  <div class="analyze second-layout">
+  <div class="analyze second-layout" style="overflow: auto">
     <el-row>
       <el-col :md="14" :sm="9" class="sm-bottom">
         <el-row :gutter="20">
@@ -22,10 +22,10 @@
             </ul>
           </el-col>
           <el-col :lg="6" :md="7" :sm="7">
-            <div v-show="state.fastDateType === 'thisMonth'">
+            <div v-if="state.fastDateType === 'thisMonth'">
               <el-date-picker v-model="state.month" type="month" placeholder="选择月" @change="monthRange" />
             </div>
-            <div v-show="state.fastDateType === 'thisYear'">
+            <div v-if="state.fastDateType === 'thisYear'">
               <el-date-picker v-model="state.year" type="year" placeholder="选择年" @change="monthRange" />
             </div>
           </el-col>
@@ -76,8 +76,8 @@
     </el-row>
     <!-- <component :is="state.componentName" :datas="reslutData.coverageAnalysisData"/> -->
     <!-- coverage组件 -->
-    <div v-show="state.componentName === 'coverage' || state.allLoading">
-      <div class="block">
+    <div v-if="state.componentName === 'coverage'">
+      <div class="payment">
         <el-row>
           <el-col :span="24">
             <div class="echart-body table-layout">
@@ -133,8 +133,8 @@
       </div>
     </div>
     <!-- payment组件 -->
-    <div v-show="state.componentName === 'payment' || state.allLoading">
-      <div class="block">
+    <div v-if="state.componentName === 'payment'">
+      <div class="payment">
         <el-row>
           <el-col :span="24">
             <div class="echart-body table-layout">
@@ -185,8 +185,8 @@
       </div>
     </div>
     <!-- department组件 -->
-    <div v-show="state.componentName === 'department' || state.allLoading">
-      <div class="block">
+    <div v-if="state.componentName === 'department'">
+      <div class="payment">
         <el-row>
           <el-col :span="24">
             <div class="echart-body table-layout">
@@ -242,8 +242,8 @@
       </div>
     </div>
     <!-- supplies组件 -->
-    <div v-show="state.componentName === 'supplies' || state.allLoading">
-      <div class="block">
+    <div v-if="state.componentName === 'supplies'">
+      <div class="payment">
         <el-row>
           <el-col :span="24">
             <div class="echart-body table-layout">
@@ -301,8 +301,8 @@
       </div>
     </div>
     <!-- invoice开票项目组件 -->
-    <div v-show="state.componentName === 'invoice' || state.allLoading">
-      <div class="block">
+    <div v-if="state.componentName === 'invoice'">
+      <div class="payment">
         <el-row>
           <el-col :span="24">
             <div class="echart-body table-layout">
@@ -363,7 +363,7 @@
 </template>
 
 <script>
-import { tenantId } from '../../../utils/publus';
+import { tenantId, pageHeight } from '../../../utils/publus';
 import { SuppliesCategory, Payment } from '../../../enum/index';
 import analyze from '../../../api/revenue/analyze';
 import baseApi from '../../../api/base';
@@ -424,7 +424,6 @@ export default {
 
     const state = reactive({
       componentName: 'coverage',
-      allLoading: true,
       // 日期参数
       options: [
         {
@@ -562,7 +561,7 @@ export default {
         },
         legend: {
           data: series.map((item) => item.name),
-          selectedMode:false,
+          selectedMode: false,
           orient: 'vertical',
           left: 'right'
         },
@@ -769,6 +768,10 @@ export default {
               return {
                 name: item.label,
                 type: 'bar',
+                stack: 'total',
+                label: {
+                  show: true
+                },
                 data: coverageData.tableData.map((itemChild) => itemChild[item.value])
               };
             });
@@ -830,26 +833,34 @@ export default {
               {
                 name: '现金',
                 type: 'bar',
+                stack: 'total',
+                label: {
+                  show: true
+                },
                 data: paymentData.tableData.map((item) => item.xjAmount)
               },
               {
                 name: '支付宝',
                 type: 'bar',
+                stack: 'total',
                 data: paymentData.tableData.map((item) => item.zfbAmonut)
               },
               {
                 name: '微信',
                 type: 'bar',
+                stack: 'total',
                 data: paymentData.tableData.map((item) => item.wxAmonut)
               },
               {
                 name: '银联',
                 type: 'bar',
+                stack: 'total',
                 data: paymentData.tableData.map((item) => item.ylAmonut)
               },
               {
                 name: '其他',
                 type: 'bar',
+                stack: 'total',
                 data: paymentData.tableData.map((item) => item.qtAmonut)
               }
             ];
@@ -885,6 +896,10 @@ export default {
               return {
                 name: item.label,
                 type: 'bar',
+                stack: 'total',
+                label: {
+                  show: true
+                },
                 data: departmentData.tableData.map((itemChild) => itemChild[item.value])
               };
             });
@@ -950,31 +965,40 @@ export default {
               {
                 name: '药品',
                 type: 'bar',
+                stack: 'total',
+                label: {
+                  show: true
+                },
                 data: suppliesData.tableData.map((item) => item.drugAmount)
               },
               {
                 name: '材料',
                 type: 'bar',
+                stack: 'total',
                 data: suppliesData.tableData.map((item) => item.materialbAmount)
               },
               {
                 name: '器械',
                 type: 'bar',
+                stack: 'total',
                 data: suppliesData.tableData.map((item) => item.instrumentAmount)
               },
               {
                 name: '保健品',
                 type: 'bar',
+                stack: 'total',
                 data: suppliesData.tableData.map((item) => item.healthProductsAmount)
               },
               {
                 name: '非药品',
                 type: 'bar',
+                stack: 'total',
                 data: suppliesData.tableData.map((item) => item.theDrugAmount)
               },
               {
                 name: '诊疗',
                 type: 'bar',
+                stack: 'total',
                 data: suppliesData.tableData.map((item) => item.treatmentAmount)
               }
             ];
@@ -1015,6 +1039,10 @@ export default {
               return {
                 name: item.label,
                 type: 'bar',
+                stack: 'total',
+                label: {
+                  show: true
+                },
                 data: invoiceData.tableData.map((itemChild) => itemChild[item.value])
               };
             });
@@ -1043,6 +1071,7 @@ export default {
     return {
       state,
       menu,
+      pageHeight,
       fastDateHanderClick,
       threeHandleClick,
       fourHandleClick,
@@ -1067,9 +1096,12 @@ export default {
     };
   },
   mounted() {
-    setTimeout(() => {
-      this.state.allLoading = false;
-    }, 2000);
+    // 设置内容高度
+    let that = this;
+    this.pageHeight(that, 228);
+    window.onresize = () => {
+      that.pageHeight(that, 228);
+    };
   }
 };
 </script>
@@ -1161,4 +1193,9 @@ export default {
 .table-layout {
   padding: 10px;
 }
+
+.revenue {
+  overflow: hidden;
+}
 </style>
+
