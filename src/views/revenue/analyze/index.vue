@@ -243,9 +243,9 @@
                     border
                     :max-height="state.tableHeight"
                     :data="
-                      paymentData.tableData.slice(
-                        (paymentData.currpage - 1) * paymentData.pagesize,
-                        paymentData.currpage * paymentData.pagesize
+                      suppliesData.tableData.slice(
+                        (suppliesData.currpage - 1) * suppliesData.pagesize,
+                        suppliesData.currpage * suppliesData.pagesize
                       )
                     "
                     empty-text="无数据"
@@ -254,21 +254,28 @@
                   >
                     <el-table-column type="selection" align="center" width="55" />
                     <el-table-column prop="happenTime" label="日期" align="center" min-width="120" />
-                    <el-table-column prop="xjAmount" label="现金金额" align="right" header-align="center" min-width="120" />
-                    <el-table-column prop="zfbAmonut" label="支付宝金额" align="right" header-align="center" min-width="120" />
-                    <el-table-column prop="wxAmonut" label="微信金额" align="right" header-align="center" min-width="120" />
-                    <el-table-column prop="ylAmonut" label="银联金额" align="right" header-align="center" min-width="120" />
-                    <el-table-column prop="qtAmonut" label="其他金额" align="right" header-align="center" min-width="120" />
+                    <el-table-column prop="drugAmount" label="药品" align="right" header-align="center" min-width="120" />
+                    <el-table-column prop="materialbAmount" label="材料" align="right" header-align="center" min-width="120" />
+                    <el-table-column prop="instrumentAmount" label="器械" align="right" header-align="center" min-width="120" />
+                    <el-table-column
+                      prop="healthProductsAmount"
+                      label="保健品"
+                      align="right"
+                      header-align="center"
+                      min-width="120"
+                    />
+                    <el-table-column prop="theDrugAmount" label="非药品" align="right" header-align="center" min-width="120" />
+                    <el-table-column prop="treatmentAmount" label="诊疗" align="right" header-align="center" min-width="120" />
                   </el-table>
                   <el-pagination
-                    :current-page="paymentData.currpage"
+                    :current-page="suppliesData.currpage"
                     :page-sizes="[10, 20, 50, 100, 200]"
-                    :page-size="paymentData.pagesize"
+                    :page-size="suppliesData.pagesize"
                     layout="total, sizes, prev, pager, next, jumper"
-                    :total="paymentData.tableData.length"
-                    :hide-on-single-page="paymentData.tableData.length === 0"
-                    @size-change="handleSizeChange1"
-                    @current-change="handleCurrentChange1"
+                    :total="suppliesData.tableData.length"
+                    :hide-on-single-page="suppliesData.tableData.length === 0"
+                    @size-change="handleSizeChange3"
+                    @current-change="handleCurrentChange3"
                   />
                 </el-carousel-item>
                 <el-carousel-item>
@@ -280,6 +287,65 @@
         </el-row>
       </div>
     </div>
+    <!-- invoice开票项目组件 -->
+    <!-- <div v-show="state.componentName === 'invoice' || state.allLoading">
+      <div class="block">
+        <el-row>
+          <el-col :span="24">
+            <div class="echart-body table-layout">
+              <el-carousel :autoplay="false" :height="state.height">
+                <el-carousel-item>
+                  <div id="invoiceBarEcharts" :style="{ height: state.height }" />
+                </el-carousel-item>
+                <el-carousel-item>
+                  <el-table
+                    border
+                    :max-height="state.tableHeight"
+                    :data="
+                      invoiceData.tableData.slice(
+                        (invoiceData.currpage - 1) * invoiceData.pagesize,
+                        invoiceData.currpage * invoiceData.pagesize
+                      )
+                    "
+                    empty-text="无数据"
+                    stripe
+                    style="width: 100%"
+                  >
+                    <el-table-column type="selection" align="center" width="55" />
+                    <el-table-column prop="happenTime" label="日期" align="center" min-width="120" />
+                    <el-table-column prop="drugAmount" label="药品" align="right" header-align="center" min-width="120" />
+                    <el-table-column prop="materialbAmount" label="材料" align="right" header-align="center" min-width="120" />
+                    <el-table-column prop="instrumentAmount" label="器械" align="right" header-align="center" min-width="120" />
+                    <el-table-column
+                      prop="healthProductsAmount"
+                      label="保健品"
+                      align="right"
+                      header-align="center"
+                      min-width="120"
+                    />
+                    <el-table-column prop="theDrugAmount" label="非药品" align="right" header-align="center" min-width="120" />
+                    <el-table-column prop="treatmentAmount" label="诊疗" align="right" header-align="center" min-width="120" />
+                  </el-table>
+                  <el-pagination
+                    :current-page="invoiceData.currpage"
+                    :page-sizes="[10, 20, 50, 100, 200]"
+                    :page-size="invoiceData.pagesize"
+                    layout="total, sizes, prev, pager, next, jumper"
+                    :total="invoiceData.tableData.length"
+                    :hide-on-single-page="invoiceData.tableData.length === 0"
+                    @size-change="handleSizeChange4"
+                    @current-change="handleCurrentChange4"
+                  />
+                </el-carousel-item>
+                <el-carousel-item>
+                  <div id="invoicePieEcharts" :style="{ height: state.height }" />
+                </el-carousel-item>
+              </el-carousel>
+            </div>
+          </el-col>
+        </el-row>
+      </div>
+    </div> -->
 
     <!-- 结 -->
   </div>
@@ -287,7 +353,7 @@
 
 <script>
 import { tenantId } from '../../../utils/publus';
-import { Payment } from '../../../enum/index';
+import { SuppliesCategory, Payment } from '../../../enum/index';
 import analyze from '../../../api/revenue/analyze';
 import axios from '../../../axios/index';
 import * as echart from 'echarts';
@@ -336,8 +402,8 @@ export default {
           ]
         },
         { tabName: 'department', threeMenus: '所有科室', fourMenus: [] },
-        { threeMenus: '物资类别', fourMenus: [] },
-        { threeMenus: '开票项目', fourMenus: [] }
+        { tabName: 'supplies', threeMenus: '物资类别', fourMenus: [] },
+        { tabName: 'invoice', threeMenus: '开票项目', fourMenus: [] }
       ],
       fourMenus: [
         { label: '自费', value: '00000000' },
@@ -545,10 +611,47 @@ export default {
     /**************************department组件 start************************************/
     /**************************department组件 end************************************/
 
+    /**************************supplies组件 start************************************/
+    const suppliesData = reactive({
+      datas: [],
+      tableData: [],
+      currpage: 1,
+      pagesize: 10
+    });
+
+    // 分页-每页条数
+    let handleSizeChange3 = (val) => {
+      suppliesData.pagesize = val;
+    };
+    // 当前分页
+    let handleCurrentChange3 = (val) => {
+      suppliesData.currpage = val;
+    };
+
+    /**************************supplies组件 end************************************/
+
+    /**************************invoice组件 start************************************/
+    // const invoiceData = reactive({
+    //   datas: [],
+    //   tableData: [],
+    //   currpage: 1,
+    //   pagesize: 10
+    // });
+
+    // // 分页-每页条数
+    // let handleSizeChange3 = (val) => {
+    //   invoiceData.pagesize = val;
+    // };
+    // // 当前分页
+    // let handleCurrentChange3 = (val) => {
+    //   invoiceData.currpage = val;
+    // };
+    /**************************invoice组件 end************************************/
+
     watchEffect(async () => {
       if (state.componentName === 'coverage') {
         // 3.1营收险种分析
-        await axios.post(analyze.coverageAnalysis, params, { loading: false }).then((res) => {
+        await axios.post(analyze.makeOutAnInvoiceAnalysis, params, { loading: false }).then((res) => {
           if (res.code === '1') {
             coverageData.datas = res.data;
             coverageData.tableData = res.data.map((item) => {
@@ -673,6 +776,97 @@ export default {
             ElMessage({ message: res.message, duration: 0, showClose: true, offset: 200 });
           }
         });
+      } else if (state.componentName === 'supplies') {
+        // 3.4营收物资类别分析
+        await axios.post(analyze.suppliesAnalysis, params, { loading: false }).then((res) => {
+          if (res.code === '1') {
+            suppliesData.datas = res.data;
+            suppliesData.tableData = res.data.map((item) => {
+              let happenTime = item.happenTime;
+              let drugAmount = 0,
+                materialbAmount = 0,
+                instrumentAmount = 0,
+                healthProductsAmount = 0,
+                theDrugAmount = 0,
+                treatmentAmount = 0;
+              item.revenueAnalyzeList.forEach((item) => {
+                if (item.aggregationElement === SuppliesCategory.Drug) {
+                  drugAmount = item.amount;
+                } else if (item.aggregationElement === SuppliesCategory.Material) {
+                  materialbAmount = item.amount;
+                } else if (item.aggregationElement === SuppliesCategory.Instrument) {
+                  instrumentAmount = item.amount;
+                } else if (item.aggregationElement === SuppliesCategory.HealthProducts) {
+                  healthProductsAmount = item.amount;
+                } else if (item.aggregationElement === SuppliesCategory.TheDrug) {
+                  theDrugAmount = item.amount;
+                } else if (item.aggregationElement === SuppliesCategory.Treatment) {
+                  treatmentAmount = item.amount;
+                }
+              });
+              return {
+                happenTime,
+                drugAmount,
+                materialbAmount,
+                instrumentAmount,
+                healthProductsAmount,
+                theDrugAmount,
+                treatmentAmount
+              };
+            });
+            console.log(suppliesData.tableData);
+            // 加载柱状图
+            let series = [
+              {
+                name: '药品',
+                type: 'bar',
+                data: suppliesData.tableData.map((item) => item.drugAmount)
+              },
+              {
+                name: '材料',
+                type: 'bar',
+                data: suppliesData.tableData.map((item) => item.materialbAmount)
+              },
+              {
+                name: '器械',
+                type: 'bar',
+                data: suppliesData.tableData.map((item) => item.instrumentAmount)
+              },
+              {
+                name: '保健品',
+                type: 'bar',
+                data: suppliesData.tableData.map((item) => item.healthProductsAmount)
+              },
+              {
+                name: '非药品',
+                type: 'bar',
+                data: suppliesData.tableData.map((item) => item.theDrugAmount)
+              },
+              {
+                name: '诊疗',
+                type: 'bar',
+                data: suppliesData.tableData.map((item) => item.treatmentAmount)
+              }
+            ];
+            echartsStatistical('suppliesBarEcharts', echart, suppliesData.tableData, series);
+            // 加载饼图
+            let datasPie = suppliesData.tableData.map((item) => {
+              return {
+                name: item.happenTime,
+                value:
+                  item.drugAmount +
+                  item.materialbAmount +
+                  item.instrumentAmount +
+                  item.healthProductsAmount +
+                  item.theDrugAmount +
+                  item.treatmentAmount
+              };
+            });
+            revenueEcharts('suppliesPieEcharts', echart, datasPie);
+          } else {
+            ElMessage({ message: res.message, duration: 0, showClose: true, offset: 200 });
+          }
+        });
       }
     });
 
@@ -693,10 +887,15 @@ export default {
       monthRange,
       handleSizeChange,
       handleSizeChange1,
+      handleSizeChange3,
+      // handleSizeChange4,
       handleCurrentChange,
       handleCurrentChange1,
+      // handleCurrentChange4,
       coverageData,
-      paymentData
+      paymentData,
+      suppliesData,
+      // invoiceData
     };
   }
 };
