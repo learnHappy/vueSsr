@@ -199,9 +199,9 @@
                     border
                     :max-height="state.tableHeight"
                     :data="
-                      paymentData.tableData.slice(
-                        (paymentData.currpage - 1) * paymentData.pagesize,
-                        paymentData.currpage * paymentData.pagesize
+                      departmentData.tableData.slice(
+                        (departmentData.currpage - 1) * departmentData.pagesize,
+                        departmentData.currpage * departmentData.pagesize
                       )
                     "
                     empty-text="无数据"
@@ -210,21 +210,26 @@
                   >
                     <el-table-column type="selection" align="center" width="55" />
                     <el-table-column prop="happenTime" label="日期" align="center" min-width="120" />
-                    <el-table-column prop="xjAmount" label="现金金额" align="right" header-align="center" min-width="120" />
-                    <el-table-column prop="zfbAmonut" label="支付宝金额" align="right" header-align="center" min-width="120" />
-                    <el-table-column prop="wxAmonut" label="微信金额" align="right" header-align="center" min-width="120" />
-                    <el-table-column prop="ylAmonut" label="银联金额" align="right" header-align="center" min-width="120" />
-                    <el-table-column prop="qtAmonut" label="其他金额" align="right" header-align="center" min-width="120" />
+                    <el-table-column
+                      :prop="item.value"
+                      v-for="(item, index) in state.departmentGinsengTable"
+                      :label="item.label"
+                      :formatter="moneyFormatter"
+                      align="right"
+                      header-align="center"
+                      min-width="120"
+                      :key="index"
+                    />
                   </el-table>
                   <el-pagination
-                    :current-page="paymentData.currpage"
+                    :current-page="departmentData.currpage"
                     :page-sizes="[10, 20, 50, 100, 200]"
-                    :page-size="paymentData.pagesize"
+                    :page-size="departmentData.pagesize"
                     layout="total, sizes, prev, pager, next, jumper"
-                    :total="paymentData.tableData.length"
-                    :hide-on-single-page="paymentData.tableData.length === 0"
-                    @size-change="handleSizeChange1"
-                    @current-change="handleCurrentChange1"
+                    :total="departmentData.tableData.length"
+                    :hide-on-single-page="departmentData.tableData.length === 0"
+                    @size-change="handleSizeChange2"
+                    @current-change="handleCurrentChange2"
                   />
                 </el-carousel-item>
                 <el-carousel-item>
@@ -321,18 +326,16 @@
                   >
                     <el-table-column type="selection" align="center" width="55" />
                     <el-table-column prop="happenTime" label="日期" align="center" min-width="120" />
-                    <el-table-column prop="drugAmount" label="药品" align="right" header-align="center" min-width="120" />
-                    <el-table-column prop="materialbAmount" label="材料" align="right" header-align="center" min-width="120" />
-                    <el-table-column prop="instrumentAmount" label="器械" align="right" header-align="center" min-width="120" />
                     <el-table-column
-                      prop="healthProductsAmount"
-                      label="保健品"
+                      v-for="(item, index) in state.invoiceGinsengTable"
+                      :prop="item.value"
+                      :label="item.label"
+                      :formatter="moneyFormatter"
                       align="right"
                       header-align="center"
                       min-width="120"
+                      :key="index"
                     />
-                    <el-table-column prop="theDrugAmount" label="非药品" align="right" header-align="center" min-width="120" />
-                    <el-table-column prop="treatmentAmount" label="诊疗" align="right" header-align="center" min-width="120" />
                   </el-table>
                   <el-pagination
                     :current-page="invoiceData.currpage"
@@ -439,9 +442,27 @@ export default {
       // 表格数据
       tableData: [],
       plantGinsengTable: plantGinseng,
-      departmentGinsengTable: departmentGinseng
+      departmentGinsengTable: departmentGinseng,
+      invoiceGinsengTable: invoiceGinseng
     });
 
+    // 支付方式入参
+    let paymentGinseng = [
+      { label: '现金', value: '01' },
+      { label: '支付宝', value: '02' },
+      { label: '微信', value: '03' },
+      { label: '银联', value: '05' },
+      { label: '其他', value: '99' }
+    ];
+    // 物资类别入参
+    let suppliesGinseng = [
+      { label: '药品', value: '0' },
+      { label: '材料', value: '1' },
+      { label: '器械', value: '2' },
+      { label: '保健品', value: '3' },
+      { label: '非药品', value: '4' },
+      { label: '诊疗', value: '99' }
+    ];
     const menu = reactive({
       menus: [
         {
@@ -452,10 +473,10 @@ export default {
         {
           tabName: 'payment',
           threeMenus: '支付渠道方式',
-          fourMenus: []
+          fourMenus: paymentGinseng
         },
         { tabName: 'department', threeMenus: '所有科室', fourMenus: departmentGinseng },
-        { tabName: 'supplies', threeMenus: '物资类别', fourMenus: [] },
+        { tabName: 'supplies', threeMenus: '物资类别', fourMenus: suppliesGinseng },
         { tabName: 'invoice', threeMenus: '开票项目', fourMenus: invoiceGinseng }
       ],
       fourMenus: plantGinseng,
@@ -539,6 +560,12 @@ export default {
           show: 'true',
           borderWidth: '0'
         },
+        legend: {
+          data: series.map((item) => item.name),
+          selectedMode:false,
+          orient: 'vertical',
+          left: 'right'
+        },
         xAxis: {
           data: datas.map((item) => {
             return item.happenTime;
@@ -571,7 +598,7 @@ export default {
         },
         tooltip: {
           trigger: 'item',
-          formatter: '<br/>{b} 营收金额: {c} ({d}%)'
+          formatter: '<br/>{b} 的营收金额: {c} ({d}%)'
         },
         series: [
           {
@@ -666,7 +693,24 @@ export default {
 
     /**************************payment组件 end************************************/
 
-    /**************************department组件 start************************************/
+    /**************************department组件 start************************************/ departmentGinseng;
+
+    const departmentData = reactive({
+      datas: [],
+      tableData: [],
+      currpage: 1,
+      pagesize: 10
+    });
+
+    // 分页-每页条数
+    let handleSizeChange2 = (val) => {
+      departmentData.pagesize = val;
+    };
+    // 当前分页
+    let handleCurrentChange2 = (val) => {
+      departmentData.currpage = val;
+    };
+
     /**************************department组件 end************************************/
 
     /**************************supplies组件 start************************************/
@@ -710,7 +754,6 @@ export default {
       if (state.componentName === 'coverage') {
         // 3.1营收险种分析
         await axios.post(analyze.coverageAnalysis, params, { loading: false }).then((res) => {
-          console.log(res.code);
           if (res.code === '1') {
             coverageData.datas = res.data;
             coverageData.tableData = res.data.map((item) => {
@@ -723,8 +766,6 @@ export default {
             });
             // 加载柱状图
             let series = plantGinseng.map((item) => {
-              // let serie = {};
-              // serie.name = item.label
               return {
                 name: item.label,
                 type: 'bar',
@@ -825,6 +866,47 @@ export default {
             ElMessage({ message: res.message, duration: 0, showClose: true, offset: 200 });
           }
         });
+      } else if (state.componentName === 'department') {
+        // 3.3营收主管科室分析
+        await axios.post(analyze.directorAnalysis, params, { loading: false }).then((res) => {
+          if (res.code === '1') {
+            console.log(res.data);
+            departmentData.datas = res.data;
+            departmentData.tableData = res.data.map((item) => {
+              let happenTime = item.happenTime;
+              let tableJson = { happenTime: item.happenTime };
+              item.revenueAnalyzeList.map((itemChild) => {
+                tableJson[itemChild.aggregationElement] = itemChild.amount;
+              });
+              return tableJson;
+            });
+            // 加载柱状图
+            let series = departmentGinseng.map((item) => {
+              return {
+                name: item.label,
+                type: 'bar',
+                data: departmentData.tableData.map((itemChild) => itemChild[item.value])
+              };
+            });
+            echartsStatistical('departmentBarEcharts', echart, departmentData.tableData, series);
+            // 加载饼图
+            let datasPie = departmentData.tableData.map((item) => {
+              let amount = 0;
+              for (let key in item) {
+                if (key != 'happenTime') {
+                  amount += item[key];
+                }
+              }
+              return {
+                name: item.happenTime,
+                value: amount
+              };
+            });
+            revenueEcharts('departmentPieEcharts', echart, datasPie);
+          } else {
+            ElMessage({ message: res.message, duration: 0, showClose: true, offset: 200 });
+          }
+        });
       } else if (state.componentName === 'supplies') {
         // 3.4营收物资类别分析
         await axios.post(analyze.suppliesAnalysis, params, { loading: false }).then((res) => {
@@ -915,6 +997,46 @@ export default {
             ElMessage({ message: res.message, duration: 0, showClose: true, offset: 200 });
           }
         });
+      } else if (state.componentName === 'invoice') {
+        // 3.5营收开票项目分析
+        await axios.post(analyze.makeOutAnInvoiceAnalysis, params, { loading: false }).then((res) => {
+          if (res.code === '1') {
+            invoiceData.datas = res.data;
+            invoiceData.tableData = res.data.map((item) => {
+              let happenTime = item.happenTime;
+              let tableJson = { happenTime: item.happenTime };
+              item.revenueAnalyzeList.map((itemChild) => {
+                tableJson[itemChild.aggregationElement] = itemChild.amount;
+              });
+              return tableJson;
+            });
+            // 加载柱状图
+            let series = invoiceGinseng.map((item) => {
+              return {
+                name: item.label,
+                type: 'bar',
+                data: invoiceData.tableData.map((itemChild) => itemChild[item.value])
+              };
+            });
+            echartsStatistical('invoiceBarEcharts', echart, invoiceData.tableData, series);
+            // 加载饼图
+            let datasPie = invoiceData.tableData.map((item) => {
+              let amount = 0;
+              for (let key in item) {
+                if (key != 'happenTime') {
+                  amount += item[key];
+                }
+              }
+              return {
+                name: item.happenTime,
+                value: amount
+              };
+            });
+            revenueEcharts('invoicePieEcharts', echart, datasPie);
+          } else {
+            ElMessage({ message: res.message, duration: 0, showClose: true, offset: 200 });
+          }
+        });
       }
     });
 
@@ -925,18 +1047,21 @@ export default {
       threeHandleClick,
       fourHandleClick,
       selectAll,
-      // reslutData,
       monthRange,
       moneyFormatter,
       handleSizeChange,
       handleSizeChange1,
+      handleSizeChange2,
       handleSizeChange3,
       handleSizeChange4,
       handleCurrentChange,
       handleCurrentChange1,
+      handleCurrentChange2,
+      handleCurrentChange3,
       handleCurrentChange4,
       coverageData,
       paymentData,
+      departmentData,
       suppliesData,
       invoiceData
     };
@@ -944,7 +1069,7 @@ export default {
   mounted() {
     setTimeout(() => {
       this.state.allLoading = false;
-    }, 500);
+    }, 2000);
   }
 };
 </script>
