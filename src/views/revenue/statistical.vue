@@ -169,6 +169,7 @@
 <script>
 import { pageHeight , tenantId} from '../../utils/publus';
 import { watchEffect, reactive } from 'vue';
+import { ElMessage } from 'element-plus';
 import axios from '../../axios/index';
 import statisticalApi from '../../api/revenue/statistical';
 import * as echart from 'echarts';

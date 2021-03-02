@@ -7,5 +7,5 @@ export default {
   // 2.2营收统计开票项目汇总
   makeOutAnInvoice: `${url}/api/costInfoRedundant/getRevenueStatisticsInvoiceProject`,
   // 2.3营收统计支付方式汇总
-  methodOfPayment: `${url}/api/costInfoRedundant/getRevenueStatisticsPaymentMethod`
+  methodOfPayment: `${url}/api/esFyFyls/getRevenueStatisticsPaymentMethod`
 };

@@ -18,3 +18,26 @@ export enum SuppliesCategory {
 
   Treatment = '99'
 }
+
+// 支付方式枚举类
+
+export enum Payment {
+  // 现金
+  Cash = '01',
+  // 支付宝
+  Alipay = '02',
+  // 微信
+  WeChat = '03',
+  // 单位记账
+  Unit = '04',
+  // 银联
+  Unionpay = '05',
+  // 会员卡
+  members = '06',
+  // 聚合
+  Aggregation = '07',
+  // 智能POSD
+  SmartPOSD = '08',
+  // 其他
+  Other = '99'
+}

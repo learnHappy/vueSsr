@@ -76,8 +76,8 @@
     </el-row>
     <!-- <component :is="state.componentName" :datas="reslutData.coverageAnalysisData"/> -->
     <!-- coverage组件 -->
-    <div v-show="state.componentName === 'coverage'">
-      <div class="paycost">
+    <div v-show="state.componentName === 'coverage' || state.allLoading">
+      <div class="block">
         <el-row>
           <el-col :span="24">
             <div class="echart-body table-layout">
@@ -117,7 +117,6 @@
                 </el-carousel-item>
                 <el-carousel-item>
                   <div id="plantPieEcharts" :style="{ height: state.height }" />
-                  <div></div>
                 </el-carousel-item>
               </el-carousel>
             </div>
@@ -125,27 +124,129 @@
         </el-row>
       </div>
     </div>
+    <!-- payment组件 -->
+    <div v-show="state.componentName === 'payment' || state.allLoading">
+      <div class="block">
+        <el-row>
+          <el-col :span="24">
+            <div class="echart-body table-layout">
+              <el-carousel :autoplay="false" :height="state.height">
+                <el-carousel-item>
+                  <div id="paymentBarEcharts" :style="{ height: state.height }" />
+                </el-carousel-item>
+                <el-carousel-item>
+                  <el-table
+                    border
+                    :max-height="state.tableHeight"
+                    :data="
+                      paymentData.tableData.slice(
+                        (paymentData.currpage - 1) * paymentData.pagesize,
+                        paymentData.currpage * paymentData.pagesize
+                      )
+                    "
+                    empty-text="无数据"
+                    stripe
+                    style="width: 100%"
+                  >
+                    <el-table-column type="selection" align="center" width="55" />
+                    <el-table-column prop="happenTime" label="日期" align="center" min-width="120" />
+                    <el-table-column prop="xjAmount" label="现金金额" align="right" header-align="center" min-width="120" />
+                    <el-table-column prop="zfbAmount" label="支付宝金额" align="right" header-align="center" min-width="120" />
+                    <el-table-column prop="wxAmount" label="微信金额" align="right" header-align="center" min-width="120" />
+                    <el-table-column prop="ylAmount" label="银联金额" align="right" header-align="center" min-width="120" />
+                    <el-table-column prop="qtAmount" label="其他金额" align="right" header-align="center" min-width="120" />
+                  </el-table>
+                  <el-pagination
+                    :current-page="paymentData.currpage"
+                    :page-sizes="[10, 20, 50, 100, 200]"
+                    :page-size="paymentData.pagesize"
+                    layout="total, sizes, prev, pager, next, jumper"
+                    :total="paymentData.tableData.length"
+                    :hide-on-single-page="paymentData.tableData.length === 0"
+                    @size-change="handleSizeChange1"
+                    @current-change="handleCurrentChange1"
+                  />
+                </el-carousel-item>
+                <el-carousel-item>
+                  <div id="paymentPieEcharts" :style="{ height: state.height }" />
+                </el-carousel-item>
+              </el-carousel>
+            </div>
+          </el-col>
+        </el-row>
+      </div>
+    </div>
+    <!-- department组件 -->
+    <div v-show="state.componentName === 'department' || state.allLoading">
+      <div class="block">
+        <el-row>
+          <el-col :span="24">
+            <div class="echart-body table-layout">
+              <el-carousel :autoplay="false" :height="state.height">
+                <el-carousel-item>
+                  <div id="departmentBarEcharts" :style="{ height: state.height }" />
+                </el-carousel-item>
+                <el-carousel-item>
+                  <el-table
+                    border
+                    :max-height="state.tableHeight"
+                    :data="
+                      paymentData.tableData.slice(
+                        (paymentData.currpage - 1) * paymentData.pagesize,
+                        paymentData.currpage * paymentData.pagesize
+                      )
+                    "
+                    empty-text="无数据"
+                    stripe
+                    style="width: 100%"
+                  >
+                    <el-table-column type="selection" align="center" width="55" />
+                    <el-table-column prop="happenTime" label="日期" align="center" min-width="120" />
+                    <el-table-column prop="xjAmount" label="现金金额" align="right" header-align="center" min-width="120" />
+                    <el-table-column prop="zfbAmount" label="支付宝金额" align="right" header-align="center" min-width="120" />
+                    <el-table-column prop="wxAmount" label="微信金额" align="right" header-align="center" min-width="120" />
+                    <el-table-column prop="ylAmount" label="银联金额" align="right" header-align="center" min-width="120" />
+                    <el-table-column prop="qtAmount" label="其他金额" align="right" header-align="center" min-width="120" />
+                  </el-table>
+                  <el-pagination
+                    :current-page="paymentData.currpage"
+                    :page-sizes="[10, 20, 50, 100, 200]"
+                    :page-size="paymentData.pagesize"
+                    layout="total, sizes, prev, pager, next, jumper"
+                    :total="paymentData.tableData.length"
+                    :hide-on-single-page="paymentData.tableData.length === 0"
+                    @size-change="handleSizeChange1"
+                    @current-change="handleCurrentChange1"
+                  />
+                </el-carousel-item>
+                <el-carousel-item>
+                  <div id="departmentPieEcharts" :style="{ height: state.height }" />
+                </el-carousel-item>
+              </el-carousel>
+            </div>
+          </el-col>
+        </el-row>
+      </div>
+    </div>
+
+    <!-- 结 -->
   </div>
 </template>
 
 <script>
 import { tenantId } from '../../../utils/publus';
+import { Payment } from '../../../enum/index';
 import analyze from '../../../api/revenue/analyze';
 import axios from '../../../axios/index';
-// import coverage from './coverage.vue';
-import payment from './payment.vue';
 import * as echart from 'echarts';
 import { onMounted, reactive, watch, watchEffect } from 'vue';
 import { ElMessage } from 'element-plus';
 import moment from 'moment';
 export default {
-  components: {
-    // coverage,
-    payment
-  },
   setup() {
     const state = reactive({
       componentName: 'coverage',
+      allLoading: true,
       // 日期参数
       options: [
         {
@@ -182,7 +283,7 @@ export default {
             { label: '医保', value: '33080001' }
           ]
         },
-        { threeMenus: '所有科室', fourMenus: [] },
+        { tabName: 'department', threeMenus: '所有科室', fourMenus: [] },
         { threeMenus: '物资类别', fourMenus: [] },
         { threeMenus: '开票项目', fourMenus: [] }
       ],
@@ -250,7 +351,7 @@ export default {
      * echarts: 引入echarts插件
      * datas: 需要加载的数据
      */
-    let echartsStatistical = (id, echart, datas) => {
+    let echartsStatistical = (id, echart, datas, series) => {
       /**
        * 报表功能
        */
@@ -278,18 +379,7 @@ export default {
         yAxis: {
           // type: 'category',
         },
-        series: [
-          {
-            name: '医保',
-            type: 'bar',
-            data: datas.map((item) => item.ybAmount)
-          },
-          {
-            name: '自费',
-            type: 'bar',
-            data: datas.map((item) => item.zfAmount)
-          }
-        ]
+        series: series
       };
       // 使用刚指定的配置项和数据显示图表。
       echartsCategory.setOption(option);
@@ -335,12 +425,7 @@ export default {
             labelLine: {
               show: false
             },
-            data: datas.map((item) => {
-              return {
-                name: item.happenTime,
-                value: item.ybAmount + item.zfAmount
-              };
-            })
+            data: datas
           }
         ]
       };
@@ -387,11 +472,28 @@ export default {
     /**************************coverage组件 end************************************/
 
     /**************************payment组件 start************************************/
+    const paymentData = reactive({
+      datas: [],
+      tableData: [],
+      currpage: 1,
+      pagesize: 10
+    });
+
+    // 分页-每页条数
+    let handleSizeChange1 = (val) => {
+      paymentData.pagesize = val;
+    };
+    // 当前分页
+    let handleCurrentChange1 = (val) => {
+      paymentData.currpage = val;
+    };
 
     /**************************payment组件 end************************************/
 
+    /**************************department组件 start************************************/
+    /**************************department组件 end************************************/
+
     watchEffect(async () => {
-      console.log(params);
       if (state.componentName === 'coverage') {
         // 3.1营收险种分析
         await axios.post(analyze.coverageAnalysis, params, { loading: false }).then((res) => {
@@ -418,14 +520,113 @@ export default {
               };
             });
             // 加载柱状图
-            echartsStatistical('plantBarEcharts', echart, coverageData.tableData);
+            let series = [
+              {
+                name: '医保',
+                type: 'bar',
+                data: coverageData.tableData.map((item) => item.ybAmount)
+              },
+              {
+                name: '自费',
+                type: 'bar',
+                data: coverageData.tableData.map((item) => item.zfAmount)
+              }
+            ];
+            echartsStatistical('plantBarEcharts', echart, coverageData.tableData, series);
             // 加载饼图
-            revenueEcharts('plantPieEcharts', echart, coverageData.tableData);
+            let datasPie = coverageData.tableData.map((item) => {
+              return {
+                name: item.happenTime,
+                value: item.ybAmount + item.zfAmount
+              };
+            });
+            revenueEcharts('plantPieEcharts', echart, datasPie);
+          } else {
+            ElMessage({ message: res.message, duration: 0, showClose: true, offset: 200 });
+          }
+        });
+      } else if (state.componentName === 'payment') {
+        // 3.2营收支付方式分析
+        await axios.post(analyze.paymentAnalysis, params, { loading: false }).then((res) => {
+          if (res.code === '1') {
+            paymentData.datas = res.data;
+            paymentData.tableData = res.data.map((item) => {
+              let happenTime = item.happenTime;
+              let xjAmount = 0,
+                zfbAmonut = 0,
+                wxAmonut = 0,
+                ylAmonut = 0,
+                qtAmonut = 0;
+              item.revenueAnalyzeList.forEach((item) => {
+                if (item.aggregationElement === Payment.Cash) {
+                  xjAmount = item.amount;
+                } else if (item.aggregationElement === Payment.Alipay) {
+                  zfbAmonut = item.amount;
+                } else if (item.aggregationElement === Payment.WeChat) {
+                  wxAmonut = item.amount;
+                } else if (item.aggregationElement === Payment.Unionpay) {
+                  wxAmonut = item.amount;
+                } else if (item.aggregationElement === Payment.Other) {
+                  qtAmonut = item.amount;
+                }
+              });
+              return {
+                happenTime,
+                xjAmount,
+                zfbAmonut,
+                wxAmonut,
+                ylAmonut,
+                qtAmonut
+              };
+            });
+            // 加载柱状图
+            let series = [
+              {
+                name: '现金',
+                type: 'bar',
+                data: paymentData.tableData.map((item) => item.xjAmount)
+              },
+              {
+                name: '支付宝',
+                type: 'bar',
+                data: paymentData.tableData.map((item) => item.zfbAmount)
+              },
+              {
+                name: '微信',
+                type: 'bar',
+                data: paymentData.tableData.map((item) => item.wxAmount)
+              },
+              {
+                name: '银联',
+                type: 'bar',
+                data: paymentData.tableData.map((item) => item.ylAmount)
+              },
+              {
+                name: '其他',
+                type: 'bar',
+                data: paymentData.tableData.map((item) => item.qtAmount)
+              }
+            ];
+            echartsStatistical('paymentBarEcharts', echart, paymentData.tableData, series);
+            // 加载饼图
+            let datasPie = paymentData.tableData.map((item) => {
+              return {
+                name: item.happenTime,
+                value: item.xjAmount + item.zfbAmount + item.wxAmonut + item.ylAmonut + item.qtAmonut
+              };
+            });
+            revenueEcharts('paymentPieEcharts', echart, datasPie);
           } else {
             ElMessage({ message: res.message, duration: 0, showClose: true, offset: 200 });
           }
         });
       }
+    });
+
+    onMounted(() => {
+      setTimeout(() => {
+        state.allLoading = false;
+      }, 500);
     });
 
     return {
@@ -438,8 +639,11 @@ export default {
       // reslutData,
       monthRange,
       handleSizeChange,
+      handleSizeChange1,
       handleCurrentChange,
-      coverageData
+      handleCurrentChange1,
+      coverageData,
+      paymentData
     };
   }
 };
