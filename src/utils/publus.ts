@@ -10,4 +10,5 @@ export const pageHeight = (that: any, reduceHeight: number) => {
 };
 
 // 租户编号
-export const tenantId = '3305231132';
+// export const tenantId = '3305231132';
+export const tenantId = '3305021187';

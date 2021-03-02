@@ -151,10 +151,10 @@
                     <el-table-column type="selection" align="center" width="55" />
                     <el-table-column prop="happenTime" label="日期" align="center" min-width="120" />
                     <el-table-column prop="xjAmount" label="现金金额" align="right" header-align="center" min-width="120" />
-                    <el-table-column prop="zfbAmount" label="支付宝金额" align="right" header-align="center" min-width="120" />
-                    <el-table-column prop="wxAmount" label="微信金额" align="right" header-align="center" min-width="120" />
-                    <el-table-column prop="ylAmount" label="银联金额" align="right" header-align="center" min-width="120" />
-                    <el-table-column prop="qtAmount" label="其他金额" align="right" header-align="center" min-width="120" />
+                    <el-table-column prop="zfbAmonut" label="支付宝金额" align="right" header-align="center" min-width="120" />
+                    <el-table-column prop="wxAmonut" label="微信金额" align="right" header-align="center" min-width="120" />
+                    <el-table-column prop="ylAmonut" label="银联金额" align="right" header-align="center" min-width="120" />
+                    <el-table-column prop="qtAmonut" label="其他金额" align="right" header-align="center" min-width="120" />
                   </el-table>
                   <el-pagination
                     :current-page="paymentData.currpage"
@@ -203,10 +203,10 @@
                     <el-table-column type="selection" align="center" width="55" />
                     <el-table-column prop="happenTime" label="日期" align="center" min-width="120" />
                     <el-table-column prop="xjAmount" label="现金金额" align="right" header-align="center" min-width="120" />
-                    <el-table-column prop="zfbAmount" label="支付宝金额" align="right" header-align="center" min-width="120" />
-                    <el-table-column prop="wxAmount" label="微信金额" align="right" header-align="center" min-width="120" />
-                    <el-table-column prop="ylAmount" label="银联金额" align="right" header-align="center" min-width="120" />
-                    <el-table-column prop="qtAmount" label="其他金额" align="right" header-align="center" min-width="120" />
+                    <el-table-column prop="zfbAmonut" label="支付宝金额" align="right" header-align="center" min-width="120" />
+                    <el-table-column prop="wxAmonut" label="微信金额" align="right" header-align="center" min-width="120" />
+                    <el-table-column prop="ylAmonut" label="银联金额" align="right" header-align="center" min-width="120" />
+                    <el-table-column prop="qtAmonut" label="其他金额" align="right" header-align="center" min-width="120" />
                   </el-table>
                   <el-pagination
                     :current-page="paymentData.currpage"
@@ -221,6 +221,58 @@
                 </el-carousel-item>
                 <el-carousel-item>
                   <div id="departmentPieEcharts" :style="{ height: state.height }" />
+                </el-carousel-item>
+              </el-carousel>
+            </div>
+          </el-col>
+        </el-row>
+      </div>
+    </div>
+    <!-- supplies组件 -->
+    <div v-show="state.componentName === 'supplies' || state.allLoading">
+      <div class="block">
+        <el-row>
+          <el-col :span="24">
+            <div class="echart-body table-layout">
+              <el-carousel :autoplay="false" :height="state.height">
+                <el-carousel-item>
+                  <div id="suppliesBarEcharts" :style="{ height: state.height }" />
+                </el-carousel-item>
+                <el-carousel-item>
+                  <el-table
+                    border
+                    :max-height="state.tableHeight"
+                    :data="
+                      paymentData.tableData.slice(
+                        (paymentData.currpage - 1) * paymentData.pagesize,
+                        paymentData.currpage * paymentData.pagesize
+                      )
+                    "
+                    empty-text="无数据"
+                    stripe
+                    style="width: 100%"
+                  >
+                    <el-table-column type="selection" align="center" width="55" />
+                    <el-table-column prop="happenTime" label="日期" align="center" min-width="120" />
+                    <el-table-column prop="xjAmount" label="现金金额" align="right" header-align="center" min-width="120" />
+                    <el-table-column prop="zfbAmonut" label="支付宝金额" align="right" header-align="center" min-width="120" />
+                    <el-table-column prop="wxAmonut" label="微信金额" align="right" header-align="center" min-width="120" />
+                    <el-table-column prop="ylAmonut" label="银联金额" align="right" header-align="center" min-width="120" />
+                    <el-table-column prop="qtAmonut" label="其他金额" align="right" header-align="center" min-width="120" />
+                  </el-table>
+                  <el-pagination
+                    :current-page="paymentData.currpage"
+                    :page-sizes="[10, 20, 50, 100, 200]"
+                    :page-size="paymentData.pagesize"
+                    layout="total, sizes, prev, pager, next, jumper"
+                    :total="paymentData.tableData.length"
+                    :hide-on-single-page="paymentData.tableData.length === 0"
+                    @size-change="handleSizeChange1"
+                    @current-change="handleCurrentChange1"
+                  />
+                </el-carousel-item>
+                <el-carousel-item>
+                  <div id="suppliesPieEcharts" :style="{ height: state.height }" />
                 </el-carousel-item>
               </el-carousel>
             </div>
@@ -579,6 +631,7 @@ export default {
                 qtAmonut
               };
             });
+            console.log(paymentData.tableData);
             // 加载柱状图
             let series = [
               {
@@ -589,22 +642,22 @@ export default {
               {
                 name: '支付宝',
                 type: 'bar',
-                data: paymentData.tableData.map((item) => item.zfbAmount)
+                data: paymentData.tableData.map((item) => item.zfbAmonut)
               },
               {
                 name: '微信',
                 type: 'bar',
-                data: paymentData.tableData.map((item) => item.wxAmount)
+                data: paymentData.tableData.map((item) => item.wxAmonut)
               },
               {
                 name: '银联',
                 type: 'bar',
-                data: paymentData.tableData.map((item) => item.ylAmount)
+                data: paymentData.tableData.map((item) => item.ylAmonut)
               },
               {
                 name: '其他',
                 type: 'bar',
-                data: paymentData.tableData.map((item) => item.qtAmount)
+                data: paymentData.tableData.map((item) => item.qtAmonut)
               }
             ];
             echartsStatistical('paymentBarEcharts', echart, paymentData.tableData, series);
@@ -612,7 +665,7 @@ export default {
             let datasPie = paymentData.tableData.map((item) => {
               return {
                 name: item.happenTime,
-                value: item.xjAmount + item.zfbAmount + item.wxAmonut + item.ylAmonut + item.qtAmonut
+                value: item.xjAmount + item.zfbAmonut + item.wxAmonut + item.ylAmonut + item.qtAmonut
               };
             });
             revenueEcharts('paymentPieEcharts', echart, datasPie);

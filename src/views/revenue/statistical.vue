@@ -309,7 +309,7 @@ export default {
         },
         series: [
           {
-            name: '新手',
+            name: '金额',
             type: 'bar',
             data: datas.map((item) => item.amount)
           }
