@@ -2,7 +2,7 @@
 <template>
   <div class="second-layout">
     <el-row>
-      <el-col :md="14" :sm="24" class="sm-bottom">
+      <el-col :md="15" :sm="24" class="sm-bottom">
         <el-row :gutter="20">
           <el-col :lg="4" :md="6" :sm="6">
             <el-select v-model="params.plantCode" placeholder="险种选择">
@@ -37,7 +37,7 @@
           </el-col>
         </el-row>
       </el-col>
-      <el-col :md="1" :sm="2" class="export-print">
+      <!-- <el-col :md="1" :sm="2" class="export-print">
         <el-row>
           <el-col :md="12" :sm="12">
             <i class="iconfont icon-export" />
@@ -46,8 +46,8 @@
             <i class="iconfont icon-dayin" />
           </el-col>
         </el-row>
-      </el-col>
-    </el-row>
+      </el-col>-->
+    </el-row> 
 
     <!-- echasts图表显示 -->
     <el-row :gutter="20">
@@ -64,7 +64,9 @@
             </el-col>
             <el-col :md="14" :sm="18">
               <div class="header-blue header-position">
-                {{ dataReslut.suppliesCategoryData.map((item) => item.amount - 0).reduce((n, m) => n + m, 0) }}
+                {{
+                  parseFloat(dataReslut.suppliesCategoryData.map((item) => item.amount - 0).reduce((n, m) => n + m, 0)).toFixed(2)
+                }}
               </div>
             </el-col>
           </el-row>
@@ -105,7 +107,9 @@
             </el-col>
             <el-col :md="14" :sm="14">
               <div class="header-green header-position">
-                {{ dataReslut.makeOutAnInvoiceData.map((item) => item.amount - 0).reduce((n, m) => n + m, 0) }}
+                {{
+                  parseFloat(dataReslut.makeOutAnInvoiceData.map((item) => item.amount - 0).reduce((n, m) => n + m, 0)).toFixed(2)
+                }}
               </div>
             </el-col>
           </el-row>
@@ -140,7 +144,9 @@
             </el-col>
             <el-col :md="14">
               <div class="header-yellow header-position">
-                {{ dataReslut.methodOfPaymentData.map((item) => item.amount - 0).reduce((n, m) => n + m, 0) }}
+                {{
+                  parseFloat(dataReslut.methodOfPaymentData.map((item) => item.amount - 0).reduce((n, m) => n + m, 0)).toFixed(2)
+                }}
               </div>
             </el-col>
           </el-row>
@@ -167,38 +173,65 @@
 </template>
 
 <script>
-import { pageHeight , tenantId} from '../../utils/publus';
+import { pageHeight, tenantId, paymentGinsengEcharts, suppliesGinsengEcharts } from '../../utils/publus';
 import { watchEffect, reactive } from 'vue';
 import { ElMessage } from 'element-plus';
 import axios from '../../axios/index';
 import statisticalApi from '../../api/revenue/statistical';
+import baseApi from '../../api/base';
 import * as echart from 'echarts';
 import moment from 'moment';
 import { SuppliesCategory } from '../../enum/index';
 export default {
-  setup() {
+  async setup() {
+    let baseParams = {
+      tenantId,
+      fplb: '0'
+    };
+    // 4.2租户开票项目
+    let invoiceGinsengEcharts = {};
+    await axios.post(baseApi.tenantInvoiceProject, baseParams, { loading: false }).then((res) => {
+      if (res.code === '1') {
+        res.data.map((item) => {
+          invoiceGinsengEcharts[item.xmdm] = item.xmmc;
+        });
+      } else {
+        ElMessage({ message: res.message, duration: 0, showClose: true, offset: 200 });
+      }
+    });
+    // 4.3租户结算险种
+    let plantGinseng = [];
+    await axios.post(baseApi.tenantPlantCode, baseParams, { loading: false }).then((res) => {
+      if (res.code === '1') {
+        plantGinseng = res.data.map((item) => {
+          return {
+            label: item.xzmc,
+            value: item.xzdm
+          };
+        });
+      } else {
+        ElMessage({ message: res.message, duration: 0, showClose: true, offset: 200 });
+      }
+    });
+
+    let departmentGinseng = [];
+    await axios.post(baseApi.tenantDepartment, baseParams, { loading: false }).then((res) => {
+      if (res.code === '1') {
+        departmentGinseng = res.data.map((item) => {
+          return {
+            label: item.ksmc,
+            value: item.ksdm
+          };
+        });
+      } else {
+        ElMessage({ message: res.message, duration: 0, showClose: true, offset: 200 });
+      }
+    });
+
     const state = reactive({
       // 日期参数
-      options: [
-        {
-          value: '',
-          label: '险种选择'
-        },
-        {
-          value: '00000000',
-          label: '自费'
-        }
-      ],
-      options1: [
-        {
-          value: '',
-          label: '科室选择'
-        },
-        {
-          value: '001',
-          label: '主管科室'
-        }
-      ],
+      options: [{ label: '选择险种', value: '' }].concat(plantGinseng),
+      options1: [{ label: '选择科室', value: '' }].concat(departmentGinseng),
       fastDateType: 'day',
       // 时间参数
       date: '',
@@ -276,7 +309,7 @@ export default {
      * echarts: 引入echarts插件
      * datas: 需要加载的数据
      */
-    let echartsStatistical = (id, echart, datas, formatter) => {
+    let echartsStatistical = (id, echart, datas, ginsengEcharts) => {
       /**
        * 报表功能
        */
@@ -298,10 +331,7 @@ export default {
         },
         xAxis: {
           data: datas.map((item) => {
-            if (formatter) {
-              return materialCategoryConversion(item.aggregationElement);
-            }
-            return item.aggregationElement;
+            return ginsengEcharts[item.aggregationElement];
           })
         },
         yAxis: {
@@ -325,7 +355,7 @@ export default {
      * echarts: 引入echarts插件
      * datas: 需要加载的数据
      */
-    let revenueEcharts = (id, echarts, datas, formatter) => {
+    let revenueEcharts = (id, echarts, datas, ginsengEcharts) => {
       var echartsRecords = echarts.init(window.document.getElementById(id), 'light');
       var option = {
         title: {
@@ -360,14 +390,8 @@ export default {
               show: false
             },
             data: datas.map((item) => {
-              if (formatter) {
-                return {
-                  name: materialCategoryConversion(item.aggregationElement),
-                  value: item.amount
-                };
-              }
               return {
-                name: item.aggregationElement,
+                name: ginsengEcharts[item.aggregationElement],
                 value: item.amount
               };
             })
@@ -384,8 +408,9 @@ export default {
       await axios.post(statisticalApi.suppliesCategory, params, { loading: false }).then((res) => {
         if (res.code === '1') {
           dataReslut.suppliesCategoryData = res.data;
-          echartsStatistical('suppliesBarEcharts', echart, dataReslut.suppliesCategoryData, true);
-          revenueEcharts('suppliesPieEcharts', echart, dataReslut.suppliesCategoryData);
+          console.log(res.data);
+          echartsStatistical('suppliesBarEcharts', echart, dataReslut.suppliesCategoryData, suppliesGinsengEcharts);
+          revenueEcharts('suppliesPieEcharts', echart, dataReslut.suppliesCategoryData, suppliesGinsengEcharts);
         } else {
           ElMessage({ message: res.message, duration: 0, showClose: true, offset: 200 });
         }
@@ -394,8 +419,8 @@ export default {
       await axios.post(statisticalApi.makeOutAnInvoice, params, { loading: false }).then((res) => {
         if (res.code === '1') {
           dataReslut.makeOutAnInvoiceData = res.data;
-          echartsStatistical('makeOutBarEcharts', echart, dataReslut.makeOutAnInvoiceData);
-          revenueEcharts('makeOutPieEcharts', echart, dataReslut.makeOutAnInvoiceData);
+          echartsStatistical('makeOutBarEcharts', echart, dataReslut.makeOutAnInvoiceData, invoiceGinsengEcharts);
+          revenueEcharts('makeOutPieEcharts', echart, dataReslut.makeOutAnInvoiceData, invoiceGinsengEcharts);
         } else {
           ElMessage({ message: res.message, duration: 0, showClose: true, offset: 200 });
         }
@@ -404,8 +429,8 @@ export default {
       await axios.post(statisticalApi.methodOfPayment, params, { loading: false }).then((res) => {
         if (res.code === '1') {
           dataReslut.methodOfPaymentData = res.data;
-          echartsStatistical('paymentBarEcharts', echart, dataReslut.methodOfPaymentData);
-          revenueEcharts('paymentPieEcharts', echart, dataReslut.methodOfPaymentData);
+          echartsStatistical('paymentBarEcharts', echart, dataReslut.methodOfPaymentData, paymentGinsengEcharts);
+          revenueEcharts('paymentPieEcharts', echart, dataReslut.methodOfPaymentData, paymentGinsengEcharts);
         } else {
           ElMessage({ message: res.message, duration: 0, showClose: true, offset: 200 });
         }

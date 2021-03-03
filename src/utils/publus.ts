@@ -14,7 +14,7 @@ export const pageHeight = (that: any, reduceHeight: number) => {
 // export const tenantId = '3305021187';
 export const tenantId = '3305231132';
 
-// 支付方式入参
+// 表格支付方式入参
 export let paymentGinseng = [
   { label: '现金', value: '01' },
   { label: '支付宝', value: '02' },
@@ -22,7 +22,7 @@ export let paymentGinseng = [
   { label: '银联', value: '05' },
   { label: '其他', value: '99' }
 ];
-// 物资类别入参
+// 表格物资类别入参
 export let suppliesGinseng = [
   { label: '药品', value: '0' },
   { label: '材料', value: '1' },
@@ -31,3 +31,9 @@ export let suppliesGinseng = [
   { label: '非药品', value: '4' },
   { label: '诊疗', value: '99' }
 ];
+
+// 支付方式键值对
+export let paymentGinsengEcharts = { '01': '现金', '02': '支付宝', '03': '微信', '05': '银联', '99': '其他', '100': '医保金额' };
+
+// 物资类别键值对
+export let suppliesGinsengEcharts = { '0': '药品', '1': '材料', '2': '器械', '3': '保健品', '4': '非药品', '99': '诊疗'  };

@@ -2,7 +2,7 @@
 <template>
   <div class="analyze second-layout" style="overflow: auto">
     <el-row>
-      <el-col :md="14" :sm="9" class="sm-bottom">
+      <el-col :md="15" :sm="24" class="sm-bottom">
         <el-row :gutter="20">
           <el-col :lg="4" :md="6" :sm="12">
             <el-select v-model="state.value" placeholder="测试门店">
@@ -31,7 +31,7 @@
           </el-col>
         </el-row>
       </el-col>
-      <el-col :md="1" :sm="2" class="export-print">
+      <!-- <el-col :md="1" :sm="2" class="export-print">
         <el-row>
           <el-col :md="12" :sm="12">
             <i class="iconfont icon-export" />
@@ -40,7 +40,7 @@
             <i class="iconfont icon-dayin" />
           </el-col>
         </el-row>
-      </el-col>
+      </el-col> -->
     </el-row>
 
     <el-row class="level-three-menu">
@@ -88,13 +88,8 @@
                 <el-carousel-item>
                   <el-table
                     border
-                    :max-height="state.tableHeight"
-                    :data="
-                      coverageData.tableData.slice(
-                        (coverageData.currpage - 1) * coverageData.pagesize,
-                        coverageData.currpage * coverageData.pagesize
-                      )
-                    "
+                    :max-height="state.height"
+                    :data="coverageData.tableData"
                     empty-text="无数据"
                     stripe
                     style="width: 100%"
@@ -112,16 +107,6 @@
                       :key="index"
                     />
                   </el-table>
-                  <el-pagination
-                    :current-page="coverageData.currpage"
-                    :page-sizes="[10, 20, 50, 100, 200]"
-                    :page-size="coverageData.pagesize"
-                    layout="total, sizes, prev, pager, next, jumper"
-                    :total="coverageData.tableData.length"
-                    :hide-on-single-page="coverageData.tableData.length === 0"
-                    @size-change="handleSizeChange"
-                    @current-change="handleCurrentChange"
-                  />
                 </el-carousel-item>
                 <el-carousel-item>
                   <div id="plantPieEcharts" :style="{ height: state.height }" />
@@ -145,13 +130,8 @@
                 <el-carousel-item>
                   <el-table
                     border
-                    :max-height="state.tableHeight"
-                    :data="
-                      paymentData.tableData.slice(
-                        (paymentData.currpage - 1) * paymentData.pagesize,
-                        paymentData.currpage * paymentData.pagesize
-                      )
-                    "
+                    :max-height="state.height"
+                    :data="paymentData.tableData"
                     empty-text="无数据"
                     stripe
                     style="width: 100%"
@@ -174,16 +154,6 @@
                     <el-table-column prop="ylAmonut" label="银联金额" align="right" header-align="center" min-width="120" />
                     <el-table-column prop="qtAmonut" label="其他金额" align="right" header-align="center" min-width="120" /> -->
                   </el-table>
-                  <el-pagination
-                    :current-page="paymentData.currpage"
-                    :page-sizes="[10, 20, 50, 100, 200]"
-                    :page-size="paymentData.pagesize"
-                    layout="total, sizes, prev, pager, next, jumper"
-                    :total="paymentData.tableData.length"
-                    :hide-on-single-page="paymentData.tableData.length === 0"
-                    @size-change="handleSizeChange1"
-                    @current-change="handleCurrentChange1"
-                  />
                 </el-carousel-item>
                 <el-carousel-item>
                   <div id="paymentPieEcharts" :style="{ height: state.height }" />
@@ -207,13 +177,8 @@
                 <el-carousel-item>
                   <el-table
                     border
-                    :max-height="state.tableHeight"
-                    :data="
-                      departmentData.tableData.slice(
-                        (departmentData.currpage - 1) * departmentData.pagesize,
-                        departmentData.currpage * departmentData.pagesize
-                      )
-                    "
+                    :max-height="state.height"
+                    :data="departmentData.tableData"
                     empty-text="无数据"
                     stripe
                     style="width: 100%"
@@ -231,16 +196,6 @@
                       :key="index"
                     />
                   </el-table>
-                  <el-pagination
-                    :current-page="departmentData.currpage"
-                    :page-sizes="[10, 20, 50, 100, 200]"
-                    :page-size="departmentData.pagesize"
-                    layout="total, sizes, prev, pager, next, jumper"
-                    :total="departmentData.tableData.length"
-                    :hide-on-single-page="departmentData.tableData.length === 0"
-                    @size-change="handleSizeChange2"
-                    @current-change="handleCurrentChange2"
-                  />
                 </el-carousel-item>
                 <el-carousel-item>
                   <div id="departmentPieEcharts" :style="{ height: state.height }" />
@@ -264,13 +219,8 @@
                 <el-carousel-item>
                   <el-table
                     border
-                    :max-height="state.tableHeight"
-                    :data="
-                      suppliesData.tableData.slice(
-                        (suppliesData.currpage - 1) * suppliesData.pagesize,
-                        suppliesData.currpage * suppliesData.pagesize
-                      )
-                    "
+                    :max-height="state.height"
+                    :data="suppliesData.tableData"
                     empty-text="无数据"
                     stripe
                     style="width: 100%"
@@ -299,16 +249,6 @@
                     <el-table-column prop="theDrugAmount" label="非药品" align="right" header-align="center" min-width="120" />
                     <el-table-column prop="treatmentAmount" label="诊疗" align="right" header-align="center" min-width="120" /> -->
                   </el-table>
-                  <el-pagination
-                    :current-page="suppliesData.currpage"
-                    :page-sizes="[10, 20, 50, 100, 200]"
-                    :page-size="suppliesData.pagesize"
-                    layout="total, sizes, prev, pager, next, jumper"
-                    :total="suppliesData.tableData.length"
-                    :hide-on-single-page="suppliesData.tableData.length === 0"
-                    @size-change="handleSizeChange3"
-                    @current-change="handleCurrentChange3"
-                  />
                 </el-carousel-item>
                 <el-carousel-item>
                   <div id="suppliesPieEcharts" :style="{ height: state.height }" />
@@ -332,13 +272,8 @@
                 <el-carousel-item>
                   <el-table
                     border
-                    :max-height="state.tableHeight"
-                    :data="
-                      invoiceData.tableData.slice(
-                        (invoiceData.currpage - 1) * invoiceData.pagesize,
-                        invoiceData.currpage * invoiceData.pagesize
-                      )
-                    "
+                    :max-height="state.height"
+                    :data="invoiceData.tableData"
                     empty-text="无数据"
                     stripe
                     style="width: 100%"
@@ -356,16 +291,6 @@
                       :key="index"
                     />
                   </el-table>
-                  <el-pagination
-                    :current-page="invoiceData.currpage"
-                    :page-sizes="[10, 20, 50, 100, 200]"
-                    :page-size="invoiceData.pagesize"
-                    layout="total, sizes, prev, pager, next, jumper"
-                    :total="invoiceData.tableData.length"
-                    :hide-on-single-page="invoiceData.tableData.length === 0"
-                    @size-change="handleSizeChange4"
-                    @current-change="handleCurrentChange4"
-                  />
                 </el-carousel-item>
                 <el-carousel-item>
                   <div id="invoicePieEcharts" :style="{ height: state.height }" />
@@ -382,7 +307,7 @@
 </template>
 
 <script>
-import { tenantId, pageHeight } from '../../../utils/publus';
+import { tenantId, pageHeight, paymentGinseng, suppliesGinseng } from '../../../utils/publus';
 import { SuppliesCategory, Payment } from '../../../enum/index';
 import analyze from '../../../api/revenue/analyze';
 import baseApi from '../../../api/base';
@@ -441,23 +366,23 @@ export default {
       }
     });
 
-    // 支付方式入参
-    let paymentGinseng = [
-      { label: '现金', value: '01' },
-      { label: '支付宝', value: '02' },
-      { label: '微信', value: '03' },
-      { label: '银联', value: '05' },
-      { label: '其他', value: '99' }
-    ];
-    // 物资类别入参
-    let suppliesGinseng = [
-      { label: '药品', value: '0' },
-      { label: '材料', value: '1' },
-      { label: '器械', value: '2' },
-      { label: '保健品', value: '3' },
-      { label: '非药品', value: '4' },
-      { label: '诊疗', value: '99' }
-    ];
+    // // 支付方式入参
+    // let paymentGinseng = [
+    //   { label: '现金', value: '01' },
+    //   { label: '支付宝', value: '02' },
+    //   { label: '微信', value: '03' },
+    //   { label: '银联', value: '05' },
+    //   { label: '其他', value: '99' }
+    // ];
+    // // 物资类别入参
+    // let suppliesGinseng = [
+    //   { label: '药品', value: '0' },
+    //   { label: '材料', value: '1' },
+    //   { label: '器械', value: '2' },
+    //   { label: '保健品', value: '3' },
+    //   { label: '非药品', value: '4' },
+    //   { label: '诊疗', value: '99' }
+    // ];
 
     const state = reactive({
       componentName: 'coverage',
@@ -584,8 +509,8 @@ export default {
         legend: {
           data: series.map((item) => item.name),
           selectedMode: false,
-          orient: 'vertical',
-          left: 'right'
+          orient: 'horizontal',
+          left: 'auto'
         },
         xAxis: {
           data: datas.map((item) => {
@@ -620,6 +545,12 @@ export default {
         tooltip: {
           trigger: 'item',
           formatter: '<br/>{b} 的营收金额: {c} ({d}%)'
+        },
+        legend: {
+          data: datas.map((item) => item.name),
+          selectedMode: false,
+          orient: 'horizontal',
+          left: 'auto'
         },
         series: [
           {
@@ -681,36 +612,15 @@ export default {
     /**************************coverage组件 start************************************/
     const coverageData = reactive({
       datas: [],
-      tableData: [],
-      currpage: 1,
-      pagesize: 10
+      tableData: []
     });
-    // 分页-每页条数
-    let handleSizeChange = (val) => {
-      coverageData.pagesize = val;
-    };
-    // 当前分页
-    let handleCurrentChange = (val) => {
-      coverageData.currpage = val;
-    };
     /**************************coverage组件 end************************************/
 
     /**************************payment组件 start************************************/
     const paymentData = reactive({
       datas: [],
-      tableData: [],
-      currpage: 1,
-      pagesize: 10
+      tableData: []
     });
-
-    // 分页-每页条数
-    let handleSizeChange1 = (val) => {
-      paymentData.pagesize = val;
-    };
-    // 当前分页
-    let handleCurrentChange1 = (val) => {
-      paymentData.currpage = val;
-    };
 
     /**************************payment组件 end************************************/
 
@@ -718,57 +628,25 @@ export default {
 
     const departmentData = reactive({
       datas: [],
-      tableData: [],
-      currpage: 1,
-      pagesize: 10
+      tableData: []
     });
-
-    // 分页-每页条数
-    let handleSizeChange2 = (val) => {
-      departmentData.pagesize = val;
-    };
-    // 当前分页
-    let handleCurrentChange2 = (val) => {
-      departmentData.currpage = val;
-    };
 
     /**************************department组件 end************************************/
 
     /**************************supplies组件 start************************************/
     const suppliesData = reactive({
       datas: [],
-      tableData: [],
-      currpage: 1,
-      pagesize: 10
+      tableData: []
     });
-
-    // 分页-每页条数
-    let handleSizeChange3 = (val) => {
-      suppliesData.pagesize = val;
-    };
-    // 当前分页
-    let handleCurrentChange3 = (val) => {
-      suppliesData.currpage = val;
-    };
 
     /**************************supplies组件 end************************************/
 
     /**************************invoice组件 start************************************/
     const invoiceData = reactive({
       datas: [],
-      tableData: [],
-      currpage: 1,
-      pagesize: 10
+      tableData: []
     });
 
-    // 分页-每页条数
-    let handleSizeChange4 = (val) => {
-      invoiceData.pagesize = val;
-    };
-    // 当前分页
-    let handleCurrentChange4 = (val) => {
-      invoiceData.currpage = val;
-    };
     /**************************invoice组件 end************************************/
 
     watchEffect(async () => {
@@ -791,9 +669,6 @@ export default {
                 name: item.label,
                 type: 'bar',
                 stack: 'total',
-                label: {
-                  show: true
-                },
                 data: coverageData.tableData.map((itemChild) => itemChild[item.value])
               };
             });
@@ -835,9 +710,6 @@ export default {
                 name: item.label,
                 type: 'bar',
                 stack: 'total',
-                label: {
-                  show: true
-                },
                 data: paymentData.tableData.map((itemChild) => itemChild[item.value])
               };
             });
@@ -880,9 +752,6 @@ export default {
                 name: item.label,
                 type: 'bar',
                 stack: 'total',
-                label: {
-                  show: true
-                },
                 data: departmentData.tableData.map((itemChild) => itemChild[item.value])
               };
             });
@@ -923,9 +792,6 @@ export default {
                 name: item.label,
                 type: 'bar',
                 stack: 'total',
-                label: {
-                  show: true
-                },
                 data: suppliesData.tableData.map((itemChild) => itemChild[item.value])
               };
             });
@@ -967,9 +833,6 @@ export default {
                 name: item.label,
                 type: 'bar',
                 stack: 'total',
-                label: {
-                  show: true
-                },
                 data: invoiceData.tableData.map((itemChild) => itemChild[item.value])
               };
             });
@@ -1005,16 +868,6 @@ export default {
       selectAll,
       monthRange,
       moneyFormatter,
-      handleSizeChange,
-      handleSizeChange1,
-      handleSizeChange2,
-      handleSizeChange3,
-      handleSizeChange4,
-      handleCurrentChange,
-      handleCurrentChange1,
-      handleCurrentChange2,
-      handleCurrentChange3,
-      handleCurrentChange4,
       coverageData,
       paymentData,
       departmentData,

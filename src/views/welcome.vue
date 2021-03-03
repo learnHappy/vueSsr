@@ -123,11 +123,11 @@
     <el-row>
       <el-col :span="24">
         <el-card class="box-card">
-          <template #header>
+          <!-- <template #header>
             <div>
               <span class="header-title-native">最近五笔营收记录</span>
             </div>
-          </template>
+          </template> -->
           <el-table :data="latelyRevenueData" empty-text="无数据" style="width: 100%">
             <el-table-column label="结算编号" prop="jsbh" min-width="100" align="center" />
             <el-table-column label="就诊人员" prop="jkry" min-width="100" align="center" />
@@ -464,7 +464,7 @@ export default {
           }
         },
         yAxis: {
-          name: '单位: ￥',
+          name: '',
           nameTextStyle: {
             color: 'black'
           }
