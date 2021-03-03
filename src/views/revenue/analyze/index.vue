@@ -296,7 +296,14 @@
 </template>
 
 <script>
-import { tenantId, pageHeight, paymentGinseng, suppliesGinseng, paymentGinsengEcharts, suppliesGinsengEcharts } from '../../../utils/publus';
+import {
+  tenantId,
+  pageHeight,
+  paymentGinseng,
+  suppliesGinseng,
+  paymentGinsengEcharts,
+  suppliesGinsengEcharts
+} from '../../../utils/publus';
 import { SuppliesCategory, Payment } from '../../../enum/index';
 import analyze from '../../../api/revenue/analyze';
 import baseApi from '../../../api/base';
@@ -329,7 +336,8 @@ export default {
     });
 
     // 4.2租户开票项目
-    let invoiceGinseng = [],invoiceFormatter = {};
+    let invoiceGinseng = [],
+      invoiceFormatter = {};
     await axios.post(baseApi.tenantInvoiceProject, baseParams, { loading: false }).then((res) => {
       if (res.code === '1') {
         invoiceGinseng = res.data.map((item) => {
@@ -562,7 +570,7 @@ export default {
     // 金额格式化
     let moneyFormatter = (row, column, cellValue) => {
       if (!cellValue) {
-        return cellValue;
+        return '0.00';
       }
       return parseFloat(cellValue).toFixed(2);
     };
@@ -814,7 +822,7 @@ export default {
         await axios.post(analyze.suppliesAnalysis, params, { loading: false }).then((res) => {
           if (res.code === '1') {
             suppliesData.datas = res.data;
-                        // 获取表格列的数量
+            // 获取表格列的数量
             let long = 0;
             let value = [];
             res.data.map((item) => {
@@ -873,7 +881,7 @@ export default {
         await axios.post(analyze.makeOutAnInvoiceAnalysis, params, { loading: false }).then((res) => {
           if (res.code === '1') {
             invoiceData.datas = res.data;
-                        // 获取表格列的数量
+            // 获取表格列的数量
             let long = 0;
             let value = [];
             res.data.map((item) => {
