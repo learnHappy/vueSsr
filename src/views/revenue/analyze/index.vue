@@ -99,6 +99,7 @@
                     <el-table-column
                       v-for="(item, index) in state.plantGinsengTable"
                       :prop="item.value"
+                      :class-name="item.value"
                       :label="item.label"
                       :formatter="moneyFormatter"
                       align="right"
@@ -137,10 +138,11 @@
                     style="width: 100%"
                   >
                     <el-table-column type="selection" align="center" width="55" />
-                    <el-table-column prop="happenTime" label="日期" align="center" min-width="120" />
+                    <el-table-column property ="happenTime" label="日期" align="center" min-width="120" />
                     <el-table-column
                       v-for="(item, index) in state.paymentGinsengTable"
-                      :prop="item.value"
+                      :property ="item.value"
+                      :class-name="item.value"
                       :label="item.label"
                       :formatter="moneyFormatter"
                       align="right"
@@ -148,11 +150,6 @@
                       min-width="120"
                       :key="index"
                     />
-                    <!-- <el-table-column prop="xjAmount" label="现金金额" align="right" header-align="center" min-width="120" />
-                    <el-table-column prop="zfbAmonut" label="支付宝金额" align="right" header-align="center" min-width="120" />
-                    <el-table-column prop="wxAmonut" label="微信金额" align="right" header-align="center" min-width="120" />
-                    <el-table-column prop="ylAmonut" label="银联金额" align="right" header-align="center" min-width="120" />
-                    <el-table-column prop="qtAmonut" label="其他金额" align="right" header-align="center" min-width="120" /> -->
                   </el-table>
                 </el-carousel-item>
                 <el-carousel-item>
@@ -188,6 +185,7 @@
                     <el-table-column
                       v-for="(item, index) in state.departmentGinsengTable"
                       :prop="item.value"
+                      :class-name="item.value"
                       :label="item.label"
                       :formatter="moneyFormatter"
                       align="right"
@@ -230,6 +228,7 @@
                     <el-table-column
                       v-for="(item, index) in state.suppliesGinsengTable"
                       :prop="item.value"
+                      :class-name="item.value"
                       :label="item.label"
                       :formatter="moneyFormatter"
                       align="right"
@@ -273,6 +272,7 @@
                       v-for="(item, index) in state.invoiceGinsengTable"
                       :prop="item.value"
                       :label="item.label"
+                      :class-name="item.value"
                       :formatter="moneyFormatter"
                       align="right"
                       header-align="center"
@@ -569,10 +569,10 @@ export default {
 
     // 金额格式化
     let moneyFormatter = (row, column, cellValue) => {
-      if (!cellValue) {
+      if (!row[column.className]) {
         return '0.00';
       }
-      return parseFloat(cellValue).toFixed(2);
+      return parseFloat(row[column.className]).toFixed(2);
     };
 
     // 条件入参
