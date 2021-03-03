@@ -183,7 +183,7 @@
         <el-card class="box-card">
           <template #header>
             <div>
-              <span class="header-title-native">近效期提醒</span>
+              <span class="header-title-native">待处理事项</span>
             </div>
           </template>
           <div>
@@ -193,7 +193,7 @@
                   <i class="iconfont icon-biaoqian--copy-copy" style="color: #f8c239" />
                 </el-col>
                 <el-col :span="16">
-                  <h5>待处理事项</h5>
+                  <h5>近效期提醒</h5>
                   <p :class="o === 1 ? 'bule' : ''">快过期药品品种数量</p>
                 </el-col>
                 <el-col :span="4">
@@ -216,6 +216,7 @@ import { ElMessage, ElLoading } from 'element-plus';
 import * as echarts from 'echarts';
 import axios from '../axios/index';
 import welcomeApi from '../api/welcome';
+import baseApi from '../api/base';
 import moment from 'moment';
 import { tenantId } from '../utils/publus';
 export default {
@@ -224,6 +225,23 @@ export default {
       lock: true,
       text: 'loading...'
     });
+
+    let baseParams = {
+      tenantId,
+      fplb: '0'
+    };
+    // 4.2租户开票项目
+    let invoiceGinsengEcharts = {};
+    await axios.post(baseApi.tenantInvoiceProject, baseParams, { loading: false }).then((res) => {
+      if (res.code === '1') {
+        res.data.map((item) => {
+          invoiceGinsengEcharts[item.xmdm] = item.xmmc;
+        });
+      } else {
+        ElMessage({ message: res.message, duration: 0, showClose: true, offset: 200 });
+      }
+    });
+
     const state = reactive({
       loading,
       tableData: [],
@@ -290,10 +308,8 @@ export default {
     let day = moment(new Date()).format('YYYYMMDD');
     let latelyRevenueParams = {
       tenantId: tenantId,
-      // startDate: day,
-      startDate: '20210223',
-      // endDate: day,
-      endDate: '20210223',
+      startDate: day,
+      endDate: day,
       pageNum: 0,
       pageSize: 5
     };
@@ -316,9 +332,7 @@ export default {
     };
     await axios.post(welcomeApi.latelyRevenueChange, latelyRevenueChangeParams, { loading: false }).then((res) => {
       if (res.code === '1') {
-        state.latelyRevenueChangeX = res.data.map((item) => {
-          return item.fyrq;
-        });
+        state.latelyRevenueChangeX = res.data.map((item) => moment(item.fyrq).format('YYYY-MM-DD'));
         state.latelyRevenueChangeY = res.data.map((item) => {
           return item.incomeAmount;
         });
@@ -335,7 +349,7 @@ export default {
     };
     await axios.post(welcomeApi.latelyMChange, latelyMChangeParams, { loading: false }).then((res) => {
       if (res.code === '1') {
-        state.latelyMChangeX = res.data.map((item) => item.fyrq);
+        state.latelyMChangeX = res.data.map((item) => moment(item.fyrq).format('YYYY-MM-DD'));
         state.latelyMChangeY = res.data.map((item) => item.personTimesNum);
       } else {
         ElMessage({ message: res.message, duration: 0, showClose: true, offset: 200 });
@@ -350,7 +364,12 @@ export default {
     };
     await axios.post(welcomeApi.dayMakeRevenue, dayMakeRevenueParams, { loading: false }).then((res) => {
       if (res.code === '1') {
-        state.latelyMChangeData = res.data;
+        state.latelyMChangeData = res.data.map((item) => {
+          return {
+            name: invoiceGinsengEcharts[item.name],
+            value: item.value
+          };
+        });
       } else {
         ElMessage({ message: res.message, duration: 0, showClose: true, offset: 200 });
       }
@@ -375,7 +394,6 @@ export default {
       if (!cellValue) {
         return cellValue;
       }
-      // return moment(cellValue).utc().tz("America/New_York").format();
       return moment.utc(cellValue).format('YYYY-MM-DD HH:mm:ss');
     };
     // 费用结算类型
@@ -492,7 +510,14 @@ export default {
         },
         tooltip: {
           trigger: 'item',
-          formatter: '{a} <br/>{b}: {c} ({d}%)'
+          formatter: '{a} <br/>{b}: {c} ({d}%)',
+          position: ['20%', '81%']
+        },
+        legend: {
+          data: this.latelyMChangeData.map((item) => item.name),
+          selectedMode: true,
+          orient: 'horizontal',
+          left: 'auto'
         },
         series: [
           {
@@ -501,15 +526,7 @@ export default {
             radius: ['50%', '70%'],
             avoidLabelOverlap: true,
             label: {
-              show: false,
-              position: 'outside'
-            },
-            emphasis: {
-              label: {
-                show: true,
-                fontSize: '30',
-                fontWeight: 'bold'
-              }
+              show: false
             },
             labelLine: {
               show: false
@@ -534,5 +551,10 @@ export default {
 }
 .el-carousel__indicator .el-carousel__button {
   background-color: #7f8081;
+}
+.revenue-money .el-card,
+.comprehensive-data .el-card {
+  box-shadow: unset !important;
+  border: 0 !important;
 }
 </style>

@@ -656,13 +656,13 @@ export default {
           if (res.code === '1') {
             coverageData.datas = res.data;
             coverageData.tableData = res.data.map((item) => {
-              let happenTime = item.happenTime;
-              let tableJson = { happenTime: item.happenTime };
+              let tableJson = { happenTime: moment(item.happenTime).format('YYYY-MM-DD') };
               item.revenueAnalyzeList.map((itemChild) => {
                 tableJson[itemChild.aggregationElement] = itemChild.amount;
               });
               return tableJson;
             });
+            console.log(coverageData.tableData);
             // 加载柱状图
             let series = plantGinseng.map((item) => {
               return {
@@ -697,8 +697,7 @@ export default {
           if (res.code === '1') {
             paymentData.datas = res.data;
             paymentData.tableData = res.data.map((item) => {
-              let happenTime = item.happenTime;
-              let tableJson = { happenTime: item.happenTime };
+              let tableJson = { happenTime: moment(item.happenTime).format('YYYY-MM-DD') };
               item.revenueAnalyzeList.map((itemChild) => {
                 tableJson[itemChild.aggregationElement] = itemChild.amount;
               });
@@ -736,11 +735,9 @@ export default {
         // 3.3营收主管科室分析
         await axios.post(analyze.directorAnalysis, params, { loading: false }).then((res) => {
           if (res.code === '1') {
-            console.log(res.data);
             departmentData.datas = res.data;
             departmentData.tableData = res.data.map((item) => {
-              let happenTime = item.happenTime;
-              let tableJson = { happenTime: item.happenTime };
+              let tableJson = { happenTime: moment(item.happenTime).format('YYYY-MM-DD') };
               item.revenueAnalyzeList.map((itemChild) => {
                 tableJson[itemChild.aggregationElement] = itemChild.amount;
               });
@@ -780,8 +777,7 @@ export default {
           if (res.code === '1') {
             suppliesData.datas = res.data;
             suppliesData.tableData = res.data.map((item) => {
-              let happenTime = item.happenTime;
-              let tableJson = { happenTime: item.happenTime };
+              let tableJson = { happenTime: moment(item.happenTime).format('YYYY-MM-DD') };
               item.revenueAnalyzeList.map((itemChild) => {
                 tableJson[itemChild.aggregationElement] = itemChild.amount;
               });
@@ -820,8 +816,7 @@ export default {
           if (res.code === '1') {
             invoiceData.datas = res.data;
             invoiceData.tableData = res.data.map((item) => {
-              let happenTime = item.happenTime;
-              let tableJson = { happenTime: item.happenTime };
+              let tableJson = { happenTime: moment(item.happenTime).format('YYYY-MM-DD') };
               item.revenueAnalyzeList.map((itemChild) => {
                 tableJson[itemChild.aggregationElement] = itemChild.amount;
               });

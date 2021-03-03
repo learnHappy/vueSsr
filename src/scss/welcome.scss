@@ -89,15 +89,19 @@
 }
 
 .revenue-money {
+    border-radius: 4px;
     background-color: #4fb0ff;
     background-image: linear-gradient(#4fb0ff, #7bc8fc);
 
-    & .el-card {
+    &  .el-card {
         background-color: unset !important;
+        box-shadow: unset !important;
+        border: 0 !important;
     }
 }
 
 .comprehensive-data {
+    border-radius: 4px;
     background-color: #4670ff;
     background-image: linear-gradient(#4670ff, #89affa);
 

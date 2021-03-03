@@ -47,7 +47,7 @@
           </el-col>
         </el-row>
       </el-col>-->
-    </el-row> 
+    </el-row>
 
     <!-- echasts图表显示 -->
     <el-row :gutter="20">
@@ -121,7 +121,13 @@
             </el-carousel-item>
             <el-carousel-item>
               <el-table :data="dataReslut.makeOutAnInvoiceData" empty-text="无数据" stripe style="width: 100%">
-                <el-table-column prop="aggregationElement" label="开票项目" min-width="120" align="center" />
+                <el-table-column
+                  prop="aggregationElement"
+                  label="开票项目"
+                  min-width="120"
+                  align="center"
+                  :formatter="inoviceTableConversion"
+                />
                 <el-table-column prop="amount" label="总金额" min-width="120" align="center" />
               </el-table>
             </el-carousel-item>
@@ -157,8 +163,8 @@
               <div id="paymentBarEcharts" :style="{ height: state.height }" />
             </el-carousel-item>
             <el-carousel-item>
-              <el-table :data="dataReslut.makeOutAnInvoiceData" empty-text="无数据" stripe style="width: 100%">
-                <el-table-column prop="aggregationElement" label="收入分项" min-width="120" align="center" />
+              <el-table :data="dataReslut.methodOfPaymentData" empty-text="无数据" stripe style="width: 100%">
+                <el-table-column prop="aggregationElement" label="收入分项" min-width="120" align="center" :formatter="paymentTableConversion" />
                 <el-table-column prop="amount" label="总金额" min-width="120" align="center" />
               </el-table>
             </el-carousel-item>
@@ -299,9 +305,15 @@ export default {
       }
       return val;
     };
+
+    // 物资类别格式化
     let materialCategoryTableConversion = (row, column, cellValue) => {
       return materialCategoryConversion(cellValue);
     };
+    // 物资类别表格格式化
+    let inoviceTableConversion = (row, column, cellValue) => invoiceGinsengEcharts[cellValue];
+    // 收入分项表格格式化
+    let paymentTableConversion = (row, column, cellValue) => paymentGinsengEcharts[cellValue];
 
     /**
      * 加载生成柱状图
@@ -379,13 +391,6 @@ export default {
               show: false,
               position: 'outside'
             },
-            emphasis: {
-              label: {
-                show: true,
-                fontSize: '30',
-                fontWeight: 'bold'
-              }
-            },
             labelLine: {
               show: false
             },
@@ -429,6 +434,8 @@ export default {
       await axios.post(statisticalApi.methodOfPayment, params, { loading: false }).then((res) => {
         if (res.code === '1') {
           dataReslut.methodOfPaymentData = res.data;
+          console.log("methodOfPaymentData");
+          console.log(res.data);
           echartsStatistical('paymentBarEcharts', echart, dataReslut.methodOfPaymentData, paymentGinsengEcharts);
           revenueEcharts('paymentPieEcharts', echart, dataReslut.methodOfPaymentData, paymentGinsengEcharts);
         } else {
@@ -445,6 +452,8 @@ export default {
       fastDateHanderClick,
       customTimeRange,
       materialCategoryConversion,
+      inoviceTableConversion,
+      paymentTableConversion,
       materialCategoryTableConversion,
       echartsStatistical,
       revenueEcharts

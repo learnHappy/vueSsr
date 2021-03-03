@@ -20,7 +20,11 @@ export let paymentGinseng = [
   { label: '支付宝', value: '02' },
   { label: '微信', value: '03' },
   { label: '银联', value: '05' },
-  { label: '其他', value: '99' }
+  { label: '会员卡扣款', value: '06' },
+  { label: '聚合支付', value: '07' },
+  { label: '智能POSD支付', value: '08' },
+  { label: '其他', value: '99' },
+  { label: '医保金额', value: '100' }
 ];
 // 表格物资类别入参
 export let suppliesGinseng = [
@@ -33,7 +37,17 @@ export let suppliesGinseng = [
 ];
 
 // 支付方式键值对
-export let paymentGinsengEcharts = { '01': '现金', '02': '支付宝', '03': '微信', '05': '银联', '99': '其他', '100': '医保金额' };
+export let paymentGinsengEcharts = {
+  '01': '现金',
+  '02': '支付宝',
+  '03': '微信',
+  '05': '银联',
+  '06': '会员卡扣款',
+  '07': '聚合支付',
+  '08': '智能POSD支付',
+  '99': '其他',
+  '100': '医保金额'
+};
 
 // 物资类别键值对
-export let suppliesGinsengEcharts = { '0': '药品', '1': '材料', '2': '器械', '3': '保健品', '4': '非药品', '99': '诊疗'  };
+export let suppliesGinsengEcharts = { '0': '药品', '1': '材料', '2': '器械', '3': '保健品', '4': '非药品', '99': '诊疗' };
