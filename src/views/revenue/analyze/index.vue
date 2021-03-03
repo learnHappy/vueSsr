@@ -139,7 +139,7 @@
                     <el-table-column type="selection" align="center" width="55" />
                     <el-table-column prop="happenTime" label="日期" align="center" min-width="120" />
                     <el-table-column
-                      v-for="(item, index) in state.paymentGinsengData"
+                      v-for="(item, index) in state.paymentGinsengTable"
                       :prop="item.value"
                       :label="item.label"
                       :formatter="moneyFormatter"
@@ -186,8 +186,8 @@
                     <el-table-column type="selection" align="center" width="55" />
                     <el-table-column prop="happenTime" label="日期" align="center" min-width="120" />
                     <el-table-column
-                      :prop="item.value"
                       v-for="(item, index) in state.departmentGinsengTable"
+                      :prop="item.value"
                       :label="item.label"
                       :formatter="moneyFormatter"
                       align="right"
@@ -228,7 +228,7 @@
                     <el-table-column type="selection" align="center" width="55" />
                     <el-table-column prop="happenTime" label="日期" align="center" min-width="120" />
                     <el-table-column
-                      v-for="(item, index) in state.suppliesGinsengData"
+                      v-for="(item, index) in state.suppliesGinsengTable"
                       :prop="item.value"
                       :label="item.label"
                       :formatter="moneyFormatter"
@@ -237,17 +237,6 @@
                       min-width="120"
                       :key="index"
                     />
-                    <!-- <el-table-column prop="materialbAmount" label="材料" align="right" header-align="center" min-width="120" />
-                    <el-table-column prop="instrumentAmount" label="器械" align="right" header-align="center" min-width="120" />
-                    <el-table-column
-                      prop="healthProductsAmount"
-                      label="保健品"
-                      align="right"
-                      header-align="center"
-                      min-width="120"
-                    />
-                    <el-table-column prop="theDrugAmount" label="非药品" align="right" header-align="center" min-width="120" />
-                    <el-table-column prop="treatmentAmount" label="诊疗" align="right" header-align="center" min-width="120" /> -->
                   </el-table>
                 </el-carousel-item>
                 <el-carousel-item>
@@ -307,7 +296,7 @@
 </template>
 
 <script>
-import { tenantId, pageHeight, paymentGinseng, suppliesGinseng } from '../../../utils/publus';
+import { tenantId, pageHeight, paymentGinseng, suppliesGinseng, paymentGinsengEcharts, suppliesGinsengEcharts } from '../../../utils/publus';
 import { SuppliesCategory, Payment } from '../../../enum/index';
 import analyze from '../../../api/revenue/analyze';
 import baseApi from '../../../api/base';
@@ -323,10 +312,12 @@ export default {
       tenantId,
       fplb: '0'
     };
-    let departmentGinseng = [];
+    let departmentGinseng = [],
+      departmentFormatter = {};
     await axios.post(baseApi.tenantDepartment, baseParams, { loading: false }).then((res) => {
       if (res.code === '1') {
         departmentGinseng = res.data.map((item) => {
+          departmentFormatter[item.ksdm] = item.ksmc;
           return {
             label: item.ksmc,
             value: item.ksdm
@@ -338,10 +329,11 @@ export default {
     });
 
     // 4.2租户开票项目
-    let invoiceGinseng = [];
+    let invoiceGinseng = [],invoiceFormatter = {};
     await axios.post(baseApi.tenantInvoiceProject, baseParams, { loading: false }).then((res) => {
       if (res.code === '1') {
         invoiceGinseng = res.data.map((item) => {
+          invoiceFormatter[item.xmdm] = item.xmmc;
           return {
             label: item.xmmc,
             value: item.xmdm
@@ -352,10 +344,12 @@ export default {
       }
     });
     // 4.3租户结算险种
-    let plantGinseng = [];
+    let plantGinseng = [],
+      plantFormatter = {};
     await axios.post(baseApi.tenantPlantCode, baseParams, { loading: false }).then((res) => {
       if (res.code === '1') {
         plantGinseng = res.data.map((item) => {
+          plantFormatter[item.xzdm] = item.xzmc;
           return {
             label: item.xzmc,
             value: item.xzdm
@@ -365,24 +359,6 @@ export default {
         ElMessage({ message: res.message, duration: 0, showClose: true, offset: 200 });
       }
     });
-
-    // // 支付方式入参
-    // let paymentGinseng = [
-    //   { label: '现金', value: '01' },
-    //   { label: '支付宝', value: '02' },
-    //   { label: '微信', value: '03' },
-    //   { label: '银联', value: '05' },
-    //   { label: '其他', value: '99' }
-    // ];
-    // // 物资类别入参
-    // let suppliesGinseng = [
-    //   { label: '药品', value: '0' },
-    //   { label: '材料', value: '1' },
-    //   { label: '器械', value: '2' },
-    //   { label: '保健品', value: '3' },
-    //   { label: '非药品', value: '4' },
-    //   { label: '诊疗', value: '99' }
-    // ];
 
     const state = reactive({
       componentName: 'coverage',
@@ -402,9 +378,11 @@ export default {
       height: '400px',
       // 表格数据
       tableData: [],
-      plantGinsengTable: plantGinseng,
-      departmentGinsengTable: departmentGinseng,
-      invoiceGinsengTable: invoiceGinseng,
+      plantGinsengTable: [],
+      paymentGinsengTable: [],
+      departmentGinsengTable: [],
+      suppliesGinsengTable: [],
+      invoiceGinsengTable: [],
       paymentGinsengData: paymentGinseng,
       suppliesGinsengData: suppliesGinseng
     });
@@ -490,6 +468,7 @@ export default {
       /**
        * 报表功能
        */
+      echart.dispose(window.document.getElementById(id));
       var echartsCategory = echart.init(window.document.getElementById(id), 'light');
       // 指定图表的配置项和数据
       var option = {
@@ -520,7 +499,7 @@ export default {
         yAxis: {
           // type: 'category',
         },
-        series: series
+        series
       };
       // 使用刚指定的配置项和数据显示图表。
       echartsCategory.setOption(option);
@@ -624,7 +603,7 @@ export default {
 
     /**************************payment组件 end************************************/
 
-    /**************************department组件 start************************************/ departmentGinseng;
+    /**************************department组件 start************************************/
 
     const departmentData = reactive({
       datas: [],
@@ -655,16 +634,35 @@ export default {
         await axios.post(analyze.coverageAnalysis, params, { loading: false }).then((res) => {
           if (res.code === '1') {
             coverageData.datas = res.data;
+            // 获取表格列的数量
+            let long = 0;
+            let value = [];
+            res.data.map((item) => {
+              if (item.revenueAnalyzeList.length >= long) {
+                long = item.revenueAnalyzeList.length;
+                value = item.revenueAnalyzeList;
+              }
+            });
+            state.plantGinsengTable = value.map((item) => {
+              return {
+                label: plantFormatter[item.aggregationElement],
+                value: item.aggregationElement
+              };
+            });
             coverageData.tableData = res.data.map((item) => {
-              let tableJson = { happenTime: moment(item.happenTime).format('YYYY-MM-DD') };
+              let tableJson = {};
+              if (item.happenTime.length === 6) {
+                tableJson.happenTime = moment(item.happenTime).format('YYYY-MM');
+              } else {
+                tableJson.happenTime = moment(item.happenTime).format('YYYY-MM-DD');
+              }
               item.revenueAnalyzeList.map((itemChild) => {
                 tableJson[itemChild.aggregationElement] = itemChild.amount;
               });
               return tableJson;
             });
-            console.log(coverageData.tableData);
             // 加载柱状图
-            let series = plantGinseng.map((item) => {
+            let series = state.plantGinsengTable.map((item) => {
               return {
                 name: item.label,
                 type: 'bar',
@@ -696,15 +694,35 @@ export default {
         await axios.post(analyze.paymentAnalysis, params, { loading: false }).then((res) => {
           if (res.code === '1') {
             paymentData.datas = res.data;
+            // 获取表格列的数量
+            let long = 0;
+            let value = [];
+            res.data.map((item) => {
+              if (item.revenueAnalyzeList.length >= long) {
+                long = item.revenueAnalyzeList.length;
+                value = item.revenueAnalyzeList;
+              }
+            });
+            state.paymentGinsengTable = value.map((item) => {
+              return {
+                label: paymentGinsengEcharts[item.aggregationElement],
+                value: item.aggregationElement
+              };
+            });
             paymentData.tableData = res.data.map((item) => {
-              let tableJson = { happenTime: moment(item.happenTime).format('YYYY-MM-DD') };
+              let tableJson = {};
+              if (item.happenTime.length === 6) {
+                tableJson.happenTime = moment(item.happenTime).format('YYYY-MM');
+              } else {
+                tableJson.happenTime = moment(item.happenTime).format('YYYY-MM-DD');
+              }
               item.revenueAnalyzeList.map((itemChild) => {
                 tableJson[itemChild.aggregationElement] = itemChild.amount;
               });
               return tableJson;
             });
             // 加载柱状图
-            let series = paymentGinseng.map((item) => {
+            let series = state.paymentGinsengTable.map((item) => {
               return {
                 name: item.label,
                 type: 'bar',
@@ -736,15 +754,35 @@ export default {
         await axios.post(analyze.directorAnalysis, params, { loading: false }).then((res) => {
           if (res.code === '1') {
             departmentData.datas = res.data;
+            // 获取表格列的数量
+            let long = 0;
+            let value = [];
+            res.data.map((item) => {
+              if (item.revenueAnalyzeList.length >= long) {
+                long = item.revenueAnalyzeList.length;
+                value = item.revenueAnalyzeList;
+              }
+            });
+            state.departmentGinsengTable = value.map((item) => {
+              return {
+                label: departmentFormatter[item.aggregationElement],
+                value: item.aggregationElement
+              };
+            });
             departmentData.tableData = res.data.map((item) => {
-              let tableJson = { happenTime: moment(item.happenTime).format('YYYY-MM-DD') };
+              let tableJson = {};
+              if (item.happenTime.length === 6) {
+                tableJson.happenTime = moment(item.happenTime).format('YYYY-MM');
+              } else {
+                tableJson.happenTime = moment(item.happenTime).format('YYYY-MM-DD');
+              }
               item.revenueAnalyzeList.map((itemChild) => {
                 tableJson[itemChild.aggregationElement] = itemChild.amount;
               });
               return tableJson;
             });
             // 加载柱状图
-            let series = departmentGinseng.map((item) => {
+            let series = state.departmentGinsengTable.map((item) => {
               return {
                 name: item.label,
                 type: 'bar',
@@ -776,14 +814,34 @@ export default {
         await axios.post(analyze.suppliesAnalysis, params, { loading: false }).then((res) => {
           if (res.code === '1') {
             suppliesData.datas = res.data;
+                        // 获取表格列的数量
+            let long = 0;
+            let value = [];
+            res.data.map((item) => {
+              if (item.revenueAnalyzeList.length >= long) {
+                long = item.revenueAnalyzeList.length;
+                value = item.revenueAnalyzeList;
+              }
+            });
+            state.suppliesGinsengTable = value.map((item) => {
+              return {
+                label: suppliesGinsengEcharts[item.aggregationElement],
+                value: item.aggregationElement
+              };
+            });
             suppliesData.tableData = res.data.map((item) => {
-              let tableJson = { happenTime: moment(item.happenTime).format('YYYY-MM-DD') };
+              let tableJson = {};
+              if (item.happenTime.length === 6) {
+                tableJson.happenTime = moment(item.happenTime).format('YYYY-MM');
+              } else {
+                tableJson.happenTime = moment(item.happenTime).format('YYYY-MM-DD');
+              }
               item.revenueAnalyzeList.map((itemChild) => {
                 tableJson[itemChild.aggregationElement] = itemChild.amount;
               });
               return tableJson;
             });
-            let series = suppliesGinseng.map((item) => {
+            let series = state.suppliesGinsengTable.map((item) => {
               return {
                 name: item.label,
                 type: 'bar',
@@ -815,15 +873,35 @@ export default {
         await axios.post(analyze.makeOutAnInvoiceAnalysis, params, { loading: false }).then((res) => {
           if (res.code === '1') {
             invoiceData.datas = res.data;
+                        // 获取表格列的数量
+            let long = 0;
+            let value = [];
+            res.data.map((item) => {
+              if (item.revenueAnalyzeList.length >= long) {
+                long = item.revenueAnalyzeList.length;
+                value = item.revenueAnalyzeList;
+              }
+            });
+            state.invoiceGinsengTable = value.map((item) => {
+              return {
+                label: invoiceFormatter[item.aggregationElement],
+                value: item.aggregationElement
+              };
+            });
             invoiceData.tableData = res.data.map((item) => {
-              let tableJson = { happenTime: moment(item.happenTime).format('YYYY-MM-DD') };
+              let tableJson = {};
+              if (item.happenTime.length === 6) {
+                tableJson.happenTime = moment(item.happenTime).format('YYYY-MM');
+              } else {
+                tableJson.happenTime = moment(item.happenTime).format('YYYY-MM-DD');
+              }
               item.revenueAnalyzeList.map((itemChild) => {
                 tableJson[itemChild.aggregationElement] = itemChild.amount;
               });
               return tableJson;
             });
             // 加载柱状图
-            let series = invoiceGinseng.map((item) => {
+            let series = state.invoiceGinsengTable.map((item) => {
               return {
                 name: item.label,
                 type: 'bar',
