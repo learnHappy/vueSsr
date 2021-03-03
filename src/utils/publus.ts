@@ -11,4 +11,23 @@ export const pageHeight = (that: any, reduceHeight: number) => {
 
 // 租户编号
 // export const tenantId = '3305231132';
-export const tenantId = '3305021187';
+// export const tenantId = '3305021187';
+export const tenantId = '3305231132';
+
+// 支付方式入参
+export let paymentGinseng = [
+  { label: '现金', value: '01' },
+  { label: '支付宝', value: '02' },
+  { label: '微信', value: '03' },
+  { label: '银联', value: '05' },
+  { label: '其他', value: '99' }
+];
+// 物资类别入参
+export let suppliesGinseng = [
+  { label: '药品', value: '0' },
+  { label: '材料', value: '1' },
+  { label: '器械', value: '2' },
+  { label: '保健品', value: '3' },
+  { label: '非药品', value: '4' },
+  { label: '诊疗', value: '99' }
+];

@@ -217,7 +217,7 @@ import * as echarts from 'echarts';
 import axios from '../axios/index';
 import welcomeApi from '../api/welcome';
 import moment from 'moment';
-import { tenantId } from '../utils/publus'
+import { tenantId } from '../utils/publus';
 export default {
   async setup() {
     const loading = ElLoading.service({
@@ -232,7 +232,7 @@ export default {
       timeRangeParas: {},
       amountSummaryData: {},
       comprehensiveData: { seeSerialCount: '0', settlementCount: '0' },
-      comprehensiveTwoData: {prescriptionCount: '0'},
+      comprehensiveTwoData: { prescriptionCount: '0' },
       latelyRevenueData: [],
       latelyRevenueChangeX: [],
       latelyRevenueChangeY: [],
