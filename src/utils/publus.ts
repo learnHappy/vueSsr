@@ -207,9 +207,16 @@ export let suppliesGinsengEcharts = { '0': '药品', '1': '材料', '2': '器械
 
 // 麻黄碱表格入参
 export const ephedrineGinseng = [
-  { label: '处方药', value: '0' , checked: true},
-  { label: 'otc', value: '1' , checked: true},
-  { label: '处方药双轨', value: '2' , checked: true},
-  { label: '麻黄碱', value: '3' , checked: true}
+  { label: '处方药', value: '0', checked: true },
+  { label: 'otc', value: '1', checked: true },
+  { label: '处方药双轨', value: '2', checked: true },
+  { label: '麻黄碱', value: '3', checked: true }
 ];
 
+// 麻黄碱键值对
+export const ephedrineGinsengEcharts = {
+  '0': '处方药',
+  '1': 'otc',
+  '2': '处方药双轨',
+  '3': '麻黄碱'
+};

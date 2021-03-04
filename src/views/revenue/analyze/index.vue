@@ -59,13 +59,7 @@
       <el-col :span="2" class="fout-style">
         <el-checkbox label="所有" v-model="state.checkAll" @change="selectAll(menu.fourMenus)" />
       </el-col>
-      <el-col
-        v-for="(item, index) in menu.fourMenus"
-        :key="index"
-        :span="2"
-        class="fout-style"
-        @change="fourHandleClick(item)"
-      >
+      <el-col v-for="(item, index) in menu.fourMenus" :key="index" :span="2" class="fout-style" @change="fourHandleClick(item)">
         <el-checkbox :label="item.label" v-model="menu.fourMenus[index].checked" />
       </el-col>
     </el-row>
@@ -547,6 +541,9 @@ export default {
           orient: 'horizontal',
           left: '0'
         },
+        // visualMap: {
+        //   calculable: false
+        // },
         xAxis: {
           name: '日期',
           data: datas.map((item) => item.happenTime),
@@ -682,6 +679,7 @@ export default {
               return {
                 name: item.label,
                 type: 'line',
+                connectNulls: true,
                 data: coverageData.tableData.map((itemChild) => itemChild[item.value])
               };
             });
@@ -737,6 +735,7 @@ export default {
               return {
                 name: item.label,
                 type: 'line',
+                connectNulls: true,
                 data: paymentData.tableData.map((itemChild) => itemChild[item.value])
               };
             });
@@ -792,6 +791,7 @@ export default {
               return {
                 name: item.label,
                 type: 'line',
+                connectNulls: true,
                 data: departmentData.tableData.map((itemChild) => itemChild[item.value])
               };
             });
@@ -847,6 +847,7 @@ export default {
               return {
                 name: item.label,
                 type: 'line',
+                connectNulls: true,
                 data: suppliesData.tableData.map((itemChild) => itemChild[item.value])
               };
             });
@@ -902,6 +903,7 @@ export default {
               return {
                 name: item.label,
                 type: 'line',
+                connectNulls: true,
                 data: invoiceData.tableData.map((itemChild) => itemChild[item.value])
               };
             });
@@ -933,9 +935,9 @@ export default {
   mounted() {
     // 设置内容高度
     let that = this;
-    this.pageHeight(that, 188);
+    this.pageHeight(that, 228);
     window.onresize = () => {
-      that.pageHeight(that, 188);
+      that.pageHeight(that, 228);
     };
   }
 };

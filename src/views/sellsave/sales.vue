@@ -139,7 +139,6 @@
         </div>
       </el-col>
 
-
       <el-col :lg="8" :md="24" :sm="24" class="sm-bottom">
         <div class="echart-header">
           <el-row>
@@ -153,9 +152,7 @@
             </el-col>
             <el-col :md="14" :sm="14">
               <div class="header-yellow header-position">
-                {{
-                  parseFloat(dataReslut.ephedrineData.map((item) => item.amount - 0).reduce((n, m) => n + m, 0)).toFixed(2)
-                }}
+                {{ parseFloat(dataReslut.ephedrineData.map((item) => item.amount - 0).reduce((n, m) => n + m, 0)).toFixed(2) }}
               </div>
             </el-col>
           </el-row>
@@ -167,12 +164,7 @@
             </el-carousel-item>
             <el-carousel-item>
               <el-table :data="dataReslut.ephedrineData" empty-text="无数据" stripe style="width: 100%">
-                <el-table-column
-                  prop="aggregationElement"
-                  label="麻黄碱类"
-                  min-width="120"
-                  align="center"
-                />
+                <el-table-column prop="aggregationElement" label="麻黄碱类" min-width="120" align="center" />
                 <el-table-column prop="amount" label="总金额" min-width="120" align="center" />
               </el-table>
             </el-carousel-item>
@@ -194,7 +186,8 @@ import {
   suppliesGinsengEcharts,
   echartsStatistical,
   revenueEcharts,
-  invoiceAixosData
+  invoiceAixosData,
+  ephedrineGinsengEcharts
 } from '../../utils/publus';
 import { watchEffect, reactive } from 'vue';
 import { ElMessage } from 'element-plus';
@@ -232,7 +225,7 @@ export default {
     const dataReslut = reactive({
       suppliesCategoryData: [],
       makeOutAnInvoiceData: [],
-      ephedrineData: [],
+      ephedrineData: []
     });
 
     // 点击快速选择时间范围
@@ -264,6 +257,9 @@ export default {
     let invoiceFormatter = (row, colunm, cellValue) => {
       return invoceData.invoiceFormatter[cellValue];
     };
+    let ephedrineFormatter = (row, colunm, cellValue) => {
+      return ephedrineGinsengEcharts[cellValue];
+    };
     // 监听参数变化,改变后请求查询后台
     watchEffect(async () => {
       // 5.1药品销售统计物资类别
@@ -291,8 +287,8 @@ export default {
       await axios.post(salesApi.salesEphedrine, params, { loading: false }).then((res) => {
         if (res.code === '1') {
           dataReslut.ephedrineData = res.data;
-        //   echartsStatistical('ephedrineBarEcharts', echart, dataReslut.ephedrineData, invoceData.invoiceFormatter);
-        //   revenueEcharts('ephedrinePieEcharts', echart, dataReslut.ephedrineData, invoceData.invoiceFormatter);
+          echartsStatistical('ephedrineBarEcharts', echart, dataReslut.ephedrineData, ephedrineGinsengEcharts);
+          revenueEcharts('ephedrinePieEcharts', echart, dataReslut.ephedrineData, ephedrineGinsengEcharts);
         } else {
           ElMessage({ message: res.message, duration: 0, showClose: true, offset: 200 });
         }

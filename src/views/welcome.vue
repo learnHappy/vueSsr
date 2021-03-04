@@ -9,7 +9,8 @@
               <button class="fun-entrance">
                 <el-row>
                   <el-col :span="6">
-                    <i class="iconfont icon-yingshoubaobiao1" />
+                    <!-- <i class="iconfont icon-yingshoubaobiao1" /> -->
+                    <i class="el-icon-data-analysis" />
                   </el-col>
                   <el-col :span="18" class="fun-style-child">营收统计</el-col>
                 </el-row>
@@ -438,6 +439,9 @@ export default {
     this.echartsRecords(echarts);
     this.revenueEcharts(echarts);
     this.loading.close();
+    window.onresize = () => {
+      window.location.reload()
+    }
   },
   methods: {
     echartsDoctor(echarts) {
