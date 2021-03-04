@@ -105,7 +105,7 @@
                   </el-table>
                 </el-carousel-item>
                 <el-carousel-item>
-                  <div id="plantPieEcharts" :style="{ height: state.height }" />
+                  <div id="plantLineEcharts" :style="{ height: state.height }" />
                 </el-carousel-item>
               </el-carousel>
             </div>
@@ -148,7 +148,7 @@
                   </el-table>
                 </el-carousel-item>
                 <el-carousel-item>
-                  <div id="paymentPieEcharts" :style="{ height: state.height }" />
+                  <div id="paymentLineEcharts" :style="{ height: state.height }" />
                 </el-carousel-item>
               </el-carousel>
             </div>
@@ -191,7 +191,7 @@
                   </el-table>
                 </el-carousel-item>
                 <el-carousel-item>
-                  <div id="departmentPieEcharts" :style="{ height: state.height }" />
+                  <div id="departmentLineEcharts" :style="{ height: state.height }" />
                 </el-carousel-item>
               </el-carousel>
             </div>
@@ -234,7 +234,7 @@
                   </el-table>
                 </el-carousel-item>
                 <el-carousel-item>
-                  <div id="suppliesPieEcharts" :style="{ height: state.height }" />
+                  <div id="suppliesLineEcharts" :style="{ height: state.height }" />
                 </el-carousel-item>
               </el-carousel>
             </div>
@@ -277,7 +277,7 @@
                   </el-table>
                 </el-carousel-item>
                 <el-carousel-item>
-                  <div id="invoicePieEcharts" :style="{ height: state.height }" />
+                  <div id="invoiceLineEcharts" :style="{ height: state.height }" />
                 </el-carousel-item>
               </el-carousel>
             </div>
@@ -467,7 +467,6 @@ export default {
           checked: state.checkAll
         };
       });
-      console.log(menu.fourShow);
       params.prarm2 = menu.fourShow;
     };
 
@@ -502,7 +501,7 @@ export default {
           data: series.map((item) => item.name),
           selectedMode: false,
           orient: 'horizontal',
-          left: 'auto'
+          left: '0'
         },
         xAxis: {
           data: datas.map((item) => {
@@ -518,62 +517,49 @@ export default {
       echartsCategory.setOption(option);
     };
 
-    /**
-     * 加载生成饼图
-     * id: dom的id
-     * echarts: 引入echarts插件
-     * datas: 需要加载的数据
-     */
-    let revenueEcharts = (id, echarts, datas) => {
+    // 折线图
+    let echartsLineEcharts = (id, echarts, datas, series) => {
+      /**
+       * 报表功能
+       */
+      echarts.dispose(window.document.getElementById(id));
       var echartsRecords = echarts.init(window.document.getElementById(id), 'light');
+      // 指定图表的配置项和数据
       var option = {
         title: {
-          text: '',
-          subtext: '',
-          textStyle: { fontFamily: 'serif' },
-          top: 50,
-          left: 'center'
+          text: ''
         },
         tooltip: {
-          trigger: 'item',
-          formatter: '<br/>{b} 的营收金额: {c} ({d}%)'
+          formatter: (params) => {
+            return `${params.name}${params.seriesName}金额为${params.value}`;
+          }
         },
         legend: {
-          data: datas.map((item) => item.name),
+          data: series.map((item) => item.name),
           selectedMode: false,
           orient: 'horizontal',
-          left: 'auto'
+          left: '0'
         },
-        series: [
-          {
-            name: '金额',
-            type: 'pie',
-            radius: ['50%', '70%'],
-            avoidLabelOverlap: true,
-            label: {
-              show: false,
-              position: 'outside'
-            },
-            emphasis: {
-              label: {
-                show: true,
-                fontSize: '30',
-                fontWeight: 'bold'
-              }
-            },
-            labelLine: {
-              show: false
-            },
-            data: datas
+        xAxis: {
+          name: '日期',
+          data: datas.map((item) => item.happenTime),
+          nameTextStyle: {
+            color: 'black'
           }
-        ]
-      };
-      // 使用刚指定的配置项和数据显示图表。
+        },
+        yAxis: {
+          name: '',
+          nameTextStyle: {
+            color: 'black'
+          }
+        },
+        series
+      }; // 使用刚指定的配置项和数据显示图表。
       echartsRecords.setOption(option);
     };
 
     // 金额格式化
-    let moneyFormatter = (row, column, cellValue) => {
+    let moneyFormatter = (row, column) => {
       if (!row[column.className]) {
         return '0.00';
       }
@@ -684,20 +670,16 @@ export default {
               };
             });
             echartsStatistical('plantBarEcharts', echart, coverageData.tableData, series);
-            // 加载饼图
-            let datasPie = coverageData.tableData.map((item) => {
-              let amount = 0;
-              for (let key in item) {
-                if (key != 'happenTime') {
-                  amount += item[key];
-                }
-              }
+            // 加载折线图
+            let seriesLine = state.plantGinsengTable.map((item) => {
               return {
-                name: item.happenTime,
-                value: amount
+                name: item.label,
+                type: 'line',
+                stack: 'total',
+                data: coverageData.tableData.map((itemChild) => itemChild[item.value])
               };
             });
-            revenueEcharts('plantPieEcharts', echart, datasPie);
+            echartsLineEcharts('plantLineEcharts', echart, coverageData.tableData, seriesLine);
           } else {
             ElMessage({ message: res.message, duration: 0, showClose: true, offset: 200 });
           }
@@ -743,21 +725,17 @@ export default {
                 data: paymentData.tableData.map((itemChild) => itemChild[item.value])
               };
             });
-            echartsStatistical('paymentBarEcharts', echart, paymentData.tableData, series);
-            // 加载饼图
-            let datasPie = paymentData.tableData.map((item) => {
-              let amount = 0;
-              for (let key in item) {
-                if (key != 'happenTime') {
-                  amount += item[key];
-                }
-              }
+            echartsLineEcharts('paymentBarEcharts', echart, paymentData.tableData, series);
+            // 加载折线图
+            let seriesLine = state.paymentGinsengTable.map((item) => {
               return {
-                name: item.happenTime,
-                value: amount
+                name: item.label,
+                type: 'line',
+                stack: 'total',
+                data: paymentData.tableData.map((itemChild) => itemChild[item.value])
               };
             });
-            revenueEcharts('paymentPieEcharts', echart, datasPie);
+            echartsStatistical('paymentLineEcharts', echart, paymentData.tableData, seriesLine);
           } else {
             ElMessage({ message: res.message, duration: 0, showClose: true, offset: 200 });
           }
@@ -804,20 +782,16 @@ export default {
               };
             });
             echartsStatistical('departmentBarEcharts', echart, departmentData.tableData, series);
-            // 加载饼图
-            let datasPie = departmentData.tableData.map((item) => {
-              let amount = 0;
-              for (let key in item) {
-                if (key != 'happenTime') {
-                  amount += item[key];
-                }
-              }
+            // 加载折线图
+            let seriesLine = state.departmentGinsengTable.map((item) => {
               return {
-                name: item.happenTime,
-                value: amount
+                name: item.label,
+                type: 'line',
+                stack: 'total',
+                data: departmentData.tableData.map((itemChild) => itemChild[item.value])
               };
             });
-            revenueEcharts('departmentPieEcharts', echart, datasPie);
+            echartsStatistical('departmentLineEcharts', echart, departmentData.tableData, seriesLine);
           } else {
             ElMessage({ message: res.message, duration: 0, showClose: true, offset: 200 });
           }
@@ -863,20 +837,17 @@ export default {
               };
             });
             echartsStatistical('suppliesBarEcharts', echart, suppliesData.tableData, series);
-            // 加载饼图
-            let datasPie = suppliesData.tableData.map((item) => {
-              let amount = 0;
-              for (let key in item) {
-                if (key != 'happenTime') {
-                  amount += item[key];
-                }
-              }
+
+            // 加载折线图
+            let seriesLine = state.suppliesGinsengTable.map((item) => {
               return {
-                name: item.happenTime,
-                value: amount
+                name: item.label,
+                type: 'line',
+                stack: 'total',
+                data: suppliesData.tableData.map((itemChild) => itemChild[item.value])
               };
             });
-            revenueEcharts('suppliesPieEcharts', echart, datasPie);
+            echartsStatistical('suppliesLineEcharts', echart, suppliesData.tableData, seriesLine);
           } else {
             ElMessage({ message: res.message, duration: 0, showClose: true, offset: 200 });
           }
@@ -923,20 +894,16 @@ export default {
               };
             });
             echartsStatistical('invoiceBarEcharts', echart, invoiceData.tableData, series);
-            // 加载饼图
-            let datasPie = invoiceData.tableData.map((item) => {
-              let amount = 0;
-              for (let key in item) {
-                if (key != 'happenTime') {
-                  amount += item[key];
-                }
-              }
+            // 加载折线图
+            let seriesLine = state.invoiceGinsengTable.map((item) => {
               return {
-                name: item.happenTime,
-                value: amount
+                name: item.label,
+                type: 'line',
+                stack: 'total',
+                data: invoiceData.tableData.map((itemChild) => itemChild[item.value])
               };
             });
-            revenueEcharts('invoicePieEcharts', echart, datasPie);
+            echartsStatistical('invoiceLineEcharts', echart, invoiceData.tableData, seriesLine);
           } else {
             ElMessage({ message: res.message, duration: 0, showClose: true, offset: 200 });
           }
