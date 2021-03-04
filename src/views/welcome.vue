@@ -9,9 +9,19 @@
               <button class="fun-entrance">
                 <el-row>
                   <el-col :span="6">
-                    <i class="el-icon-date" />
+                    <i class="iconfont icon-yingshoubaobiao1" />
                   </el-col>
                   <el-col :span="18" class="fun-style-child">营收统计</el-col>
+                </el-row>
+              </button>
+            </router-link>
+            <router-link to="/revenue">
+              <button class="fun-entrance">
+                <el-row>
+                  <el-col :span="6">
+                    <i class="iconfont icon-jinxiaocunbaobiao_icox" />
+                  </el-col>
+                  <el-col :span="18" class="fun-style-child">进销存统计</el-col>
                 </el-row>
               </button>
             </router-link>

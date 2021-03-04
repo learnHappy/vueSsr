@@ -6,6 +6,20 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "7992285",
+      "name": "营收报表",
+      "font_class": "yingshoubaobiao1",
+      "unicode": "e6db",
+      "unicode_decimal": 59099
+    },
+    {
+      "icon_id": "11192516",
+      "name": "进销存报表_ico@2x",
+      "font_class": "jinxiaocunbaobiao_icox",
+      "unicode": "e6c8",
+      "unicode_decimal": 59080
+    },
+    {
       "icon_id": "4719761",
       "name": "营收报表",
       "font_class": "yingshoubaobiao",
