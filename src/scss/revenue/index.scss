@@ -10,3 +10,15 @@
 .el-tabs__nav-wrap {
     padding: 0 20px;
 }
+
+.return-icon {
+    position: absolute;
+    top: 7px;
+    right: 20px;
+    color: #2e92fa;
+    cursor: pointer;
+    z-index: 999;
+    & i{
+        font-size: 22px;
+    }
+}

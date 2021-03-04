@@ -454,7 +454,7 @@ export default {
       revenueEcharts
     };
   },
-  mounted() {
+  beforeMount() {
     // 设置内容高度
     let that = this;
     this.pageHeight(that, 198);

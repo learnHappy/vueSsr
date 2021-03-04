@@ -2,8 +2,8 @@
 <template>
   <div class="revenue">
     <router-link to="/welcome">
-      <div style="position: absolute; top: 7px; right: 20px; color: #2e92fa; cursor: pointer; z-index: 999">
-        <i style="font-size: 22px" class="iconfont icon-withdraw" />
+      <div class="return-icon">
+        <i class="iconfont icon-withdraw" />
       </div>
     </router-link>
     <el-tabs v-model="state.activeName" @tab-click="handleClick">

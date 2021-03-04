@@ -1,3 +1,11 @@
+import { ElMessage } from 'element-plus';
+import axios from '../axios/index';
+import baseApi from '../api/base';
+
+// export const suppliesCategory = () => {
+
+// }
+
 // 租户编号
 // export const tenantId = '3305231132';
 // export const tenantId = '3305021187';
@@ -38,26 +46,147 @@ export const customTimeRange = (val: string, state: any, params: any, moment: an
   state.fastDateType = 'timeRange';
 };
 
+/**
+ * 加载生成柱状图
+ * id: dom的id
+ * echarts: 引入echarts插件
+ * datas: 需要加载的数据
+ */
+export const echartsStatistical = (id: string, echart: any, datas: any, ginsengEcharts: any) => {
+  /**
+   * 报表功能
+   */
+  echart.dispose(window.document.getElementById(id));
+  var echartsCategory = echart.init(window.document.getElementById(id), 'light');
+  // 指定图表的配置项和数据
+  var option = {
+    title: {
+      text: ''
+    },
+    tooltip: {},
+    // 防止左侧数据
+    grid: {
+      left: '2%',
+      right: '2%',
+      bottom: '10%',
+      containLabel: true,
+      show: 'true',
+      borderWidth: '0'
+    },
+    xAxis: {
+      data: datas.map((item) => {
+        return ginsengEcharts[item.aggregationElement];
+      })
+    },
+    yAxis: {
+      // type: 'category',
+    },
+    series: [
+      {
+        name: '金额',
+        type: 'bar',
+        data: datas.map((item) => item.amount)
+      }
+    ]
+  };
+  // 使用刚指定的配置项和数据显示图表。
+  echartsCategory.setOption(option);
+};
+
+/**
+ * 加载生成饼图
+ * id: dom的id
+ * echarts: 引入echarts插件
+ * datas: 需要加载的数据
+ */
+export const revenueEcharts = (id: string, echarts: any, datas: any, ginsengEcharts: any) => {
+  echarts.dispose(window.document.getElementById(id));
+  var echartsRecords = echarts.init(window.document.getElementById(id), 'light');
+  var option = {
+    title: {
+      text: '',
+      subtext: '',
+      textStyle: { fontFamily: 'serif' },
+      top: 50,
+      left: 'center'
+    },
+    tooltip: {
+      trigger: 'item',
+      formatter: '{a} <br/>{b}: {c} ({d}%)'
+    },
+    series: [
+      {
+        name: '金额',
+        type: 'pie',
+        radius: ['50%', '70%'],
+        avoidLabelOverlap: true,
+        label: {
+          show: false,
+          position: 'outside'
+        },
+        labelLine: {
+          show: false
+        },
+        data: datas.map((item) => {
+          return {
+            name: ginsengEcharts[item.aggregationElement],
+            value: item.amount
+          };
+        })
+      }
+    ]
+  };
+  // 使用刚指定的配置项和数据显示图表。
+  echartsRecords.setOption(option);
+};
+
+// 4.2租户开票项目
+export const invoiceAixosData = async () => {
+  let baseParams = {
+    tenantId,
+    fplb: '0'
+  };
+  let invoiceGinseng: any = [],
+    invoiceFormatter: any = {};
+  await axios.post(baseApi.tenantInvoiceProject, baseParams, { loading: false }).then((res: any) => {
+    if (res.code === '1') {
+      invoiceGinseng = res.data.map((item) => {
+        invoiceFormatter[item.xmdm] = item.xmmc;
+        return {
+          label: item.xmmc,
+          value: item.xmdm
+        };
+      });
+    } else {
+      ElMessage({ message: res.message, duration: 0, showClose: true, offset: 200 });
+    }
+  });
+  return {
+    invoiceGinseng,
+    invoiceFormatter
+  };
+};
+
 // 表格支付方式入参
 export let paymentGinseng = [
-  { label: '现金', value: '01', checked: false },
-  { label: '支付宝', value: '02', checked: false },
-  { label: '微信', value: '03', checked: false },
-  { label: '银联', value: '05', checked: false },
-  { label: '会员卡扣款', value: '06', checked: false },
-  { label: '聚合支付', value: '07', checked: false },
-  { label: '智能POSD支付', value: '08', checked: false },
-  { label: '其他', value: '99', checked: false },
-  { label: '医保金额', value: '100', checked: false }
+  { label: '现金', value: '01', checked: true },
+  { label: '支付宝', value: '02', checked: true },
+  { label: '微信', value: '03', checked: true },
+  { label: '银联', value: '05', checked: true },
+  { label: '会员卡扣款', value: '06', checked: true },
+  { label: '聚合支付', value: '07', checked: true },
+  { label: '智能POSD支付', value: '08', checked: true },
+  { label: '其他', value: '99', checked: true },
+  { label: '医保金额', value: '100', checked: true }
 ];
 // 表格物资类别入参
 export let suppliesGinseng = [
-  { label: '药品', value: '0', checked: false },
-  { label: '材料', value: '1', checked: false },
-  { label: '器械', value: '2', checked: false },
-  { label: '保健品', value: '3', checked: false },
-  { label: '非药品', value: '4', checked: false },
-  { label: '诊疗', value: '99', checked: false }
+  { label: '药品', value: '0', checked: true },
+  { label: '材料', value: '1', checked: true },
+  { label: '器械', value: '2', checked: true },
+  { label: '保健品', value: '3', checked: true },
+  { label: '非药品', value: '4', checked: true },
+  { label: '诊疗', value: '99', checked: true }
 ];
 
 // 支付方式键值对
@@ -75,3 +204,12 @@ export let paymentGinsengEcharts = {
 
 // 物资类别键值对
 export let suppliesGinsengEcharts = { '0': '药品', '1': '材料', '2': '器械', '3': '保健品', '4': '非药品', '99': '诊疗' };
+
+// 麻黄碱表格入参
+export const ephedrineGinseng = [
+  { label: '处方药', value: '0' , checked: true},
+  { label: 'otc', value: '1' , checked: true},
+  { label: '处方药双轨', value: '2' , checked: true},
+  { label: '麻黄碱', value: '3' , checked: true}
+];
+

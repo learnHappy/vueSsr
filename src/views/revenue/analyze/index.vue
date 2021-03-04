@@ -64,7 +64,7 @@
         :key="index"
         :span="2"
         class="fout-style"
-        @change="fourHandleClick(item.value)"
+        @change="fourHandleClick(item)"
       >
         <el-checkbox :label="item.label" v-model="menu.fourMenus[index].checked" />
       </el-col>
@@ -321,7 +321,8 @@ export default {
           departmentFormatter[item.ksdm] = item.ksmc;
           return {
             label: item.ksmc,
-            value: item.ksdm
+            value: item.ksdm,
+            checked: true
           };
         });
       } else {
@@ -338,7 +339,8 @@ export default {
           invoiceFormatter[item.xmdm] = item.xmmc;
           return {
             label: item.xmmc,
-            value: item.xmdm
+            value: item.xmdm,
+            checked: true
           };
         });
       } else {
@@ -354,7 +356,8 @@ export default {
           plantFormatter[item.xzdm] = item.xzmc;
           return {
             label: item.xzmc,
-            value: item.xzdm
+            value: item.xzdm,
+            checked: true
           };
         });
       } else {
@@ -380,7 +383,7 @@ export default {
       height: '400px',
       // 表格数据
       tableData: [],
-      checkAll: false,
+      checkAll: true,
       checkOne: (val, val1) => val.indexOf(val1) > -1,
       plantGinsengTable: [],
       paymentGinsengTable: [],
@@ -409,7 +412,7 @@ export default {
       ],
       fourMenus: plantGinseng,
       threeShow: 0,
-      fourShow: []
+      fourShow: plantGinseng.map((item) => item.value)
     });
 
     // 点击快速选择时间范围
@@ -427,20 +430,24 @@ export default {
     let threeHandleClick = (index, tabName) => {
       menu.threeShow = index;
       menu.fourMenus = JSON.parse(JSON.stringify(menu.menus[index]['fourMenus']));
+      console.log(menu.fourMenus);
       // 初始化参数条件
-      menu.fourShow = [];
+      menu.fourShow = menu.fourMenus.map((item) => item.value);
       state.componentName = tabName;
+      state.checkAll = true;
       state.fastDateType = 'thisMonth';
       state.month = moment(new Date()).format('YYYY-MM');
       state.year = moment(new Date()).format('YYYY');
       params.startDate = moment(state.month).startOf('month').format('YYYYMMDD');
       params.endDate = moment(state.month).endOf('month').format('YYYYMMDD');
-      params.prarm2 = [];
+      params.prarm2 = menu.fourMenus.map((item) => item.value);
       params.dateType = 'thisMonth';
     };
 
     // 点击四级菜单事件
-    let fourHandleClick = (val) => {
+    let fourHandleClick = (vals) => {
+      let val = vals.value;
+      console.log(menu.fourShow);
       // 已存在则删除
       let index = menu.fourShow.indexOf(val);
       if (index > -1) {
@@ -571,7 +578,7 @@ export default {
       tenantId,
       startDate: moment(state.month).startOf('month').format('YYYYMMDD'),
       endDate: moment(state.month).endOf('month').format('YYYYMMDD'),
-      prarm2: [],
+      prarm2: plantGinseng.map((item) => item.value),
       dateType: 'thisMonth'
     });
 
@@ -926,9 +933,9 @@ export default {
   mounted() {
     // 设置内容高度
     let that = this;
-    this.pageHeight(that, 228);
+    this.pageHeight(that, 188);
     window.onresize = () => {
-      that.pageHeight(that, 228);
+      that.pageHeight(that, 188);
     };
   }
 };
