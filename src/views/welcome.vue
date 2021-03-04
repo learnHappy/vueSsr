@@ -15,7 +15,7 @@
                 </el-row>
               </button>
             </router-link>
-            <router-link to="/revenue">
+            <router-link to="/sellsave">
               <button class="fun-entrance">
                 <el-row>
                   <el-col :span="6">

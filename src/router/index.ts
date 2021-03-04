@@ -22,6 +22,11 @@ export default function (type?: 'client' | 'server') {
         component: () => import('@/views/revenue/statistical.vue')
       },
       {
+        path: '/sellsave',
+        name: '进销存',
+        component: () => import('@/views/sellsave/index.vue')
+      },
+      {
         path: '/:catchAll(.*)',
         name: '404',
         component: () => import('@/views/404.vue')

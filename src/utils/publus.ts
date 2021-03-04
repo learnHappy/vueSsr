@@ -1,3 +1,8 @@
+// 租户编号
+// export const tenantId = '3305231132';
+// export const tenantId = '3305021187';
+export const tenantId = '3305231132';
+
 // 根据电脑分辨率设置高度
 // 参数:  that: 传入this对象 ,reduceHeight 当前页面可见高度减去高度
 // 使用该方法前提 需要在setup里面定义state常量且属性有height
@@ -9,10 +14,29 @@ export const pageHeight = (that: any, reduceHeight: number) => {
   }
 };
 
-// 租户编号
-// export const tenantId = '3305231132';
-// export const tenantId = '3305021187';
-export const tenantId = '3305231132';
+// 点击快速选择时间范围
+export const fastDateHanderClick = (val: string, state: any, params: any, moment: any) => {
+  state.fastDateType = val;
+  let day = moment(new Date()).format('YYYYMMDD');
+  if (val === 'day') {
+    params.startDate = day;
+    params.endDate = day;
+  } else if (val === 'month') {
+    params.startDate = moment(new Date()).startOf('month').format('YYYYMMDD');
+    params.endDate = day;
+  } else if (val === 'year') {
+    params.startDate = moment(new Date()).startOf('year').format('YYYYMMDD');
+    params.endDate = day;
+  }
+  state.date = [params.startDate, params.endDate];
+};
+
+// 自定义时间范围
+export const customTimeRange = (val: string, state: any, params: any, moment: any) => {
+  params.startDate = moment(val[0]).format('YYYYMMDD');
+  params.endDate = moment(val[1]).format('YYYYMMDD');
+  state.fastDateType = 'timeRange';
+};
 
 // 表格支付方式入参
 export let paymentGinseng = [

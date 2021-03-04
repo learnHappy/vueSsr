@@ -243,8 +243,6 @@ export default {
       date: '',
       // 走马灯参数
       height: '',
-      // 表格数据
-      tableData: []
     });
 
     // 今日日期

@@ -675,7 +675,6 @@ export default {
               return {
                 name: item.label,
                 type: 'line',
-                stack: 'total',
                 data: coverageData.tableData.map((itemChild) => itemChild[item.value])
               };
             });
@@ -725,17 +724,16 @@ export default {
                 data: paymentData.tableData.map((itemChild) => itemChild[item.value])
               };
             });
-            echartsLineEcharts('paymentBarEcharts', echart, paymentData.tableData, series);
+            echartsStatistical('paymentBarEcharts', echart, paymentData.tableData, series);
             // 加载折线图
             let seriesLine = state.paymentGinsengTable.map((item) => {
               return {
                 name: item.label,
                 type: 'line',
-                stack: 'total',
                 data: paymentData.tableData.map((itemChild) => itemChild[item.value])
               };
             });
-            echartsStatistical('paymentLineEcharts', echart, paymentData.tableData, seriesLine);
+            echartsLineEcharts('paymentLineEcharts', echart, paymentData.tableData, seriesLine);
           } else {
             ElMessage({ message: res.message, duration: 0, showClose: true, offset: 200 });
           }
@@ -787,11 +785,10 @@ export default {
               return {
                 name: item.label,
                 type: 'line',
-                stack: 'total',
                 data: departmentData.tableData.map((itemChild) => itemChild[item.value])
               };
             });
-            echartsStatistical('departmentLineEcharts', echart, departmentData.tableData, seriesLine);
+            echartsLineEcharts('departmentLineEcharts', echart, departmentData.tableData, seriesLine);
           } else {
             ElMessage({ message: res.message, duration: 0, showClose: true, offset: 200 });
           }
@@ -843,11 +840,10 @@ export default {
               return {
                 name: item.label,
                 type: 'line',
-                stack: 'total',
                 data: suppliesData.tableData.map((itemChild) => itemChild[item.value])
               };
             });
-            echartsStatistical('suppliesLineEcharts', echart, suppliesData.tableData, seriesLine);
+            echartsLineEcharts('suppliesLineEcharts', echart, suppliesData.tableData, seriesLine);
           } else {
             ElMessage({ message: res.message, duration: 0, showClose: true, offset: 200 });
           }
@@ -899,11 +895,10 @@ export default {
               return {
                 name: item.label,
                 type: 'line',
-                stack: 'total',
                 data: invoiceData.tableData.map((itemChild) => itemChild[item.value])
               };
             });
-            echartsStatistical('invoiceLineEcharts', echart, invoiceData.tableData, seriesLine);
+            echartsLineEcharts('invoiceLineEcharts', echart, invoiceData.tableData, seriesLine);
           } else {
             ElMessage({ message: res.message, duration: 0, showClose: true, offset: 200 });
           }

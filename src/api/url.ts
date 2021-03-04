@@ -1,6 +1,6 @@
 // 开发环境地址
-const development = 'http://192.168.0.69:8082';
-// const development = 'http://192.168.0.110:8082';
+// const development = 'http://192.168.0.69:8082';
+const development = 'http://192.168.0.110:8082';
 // 生产环境地址
 const production = 'http://192.168.0.69:8082';
 // url地址
