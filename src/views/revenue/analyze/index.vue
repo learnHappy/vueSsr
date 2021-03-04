@@ -56,22 +56,17 @@
           <div class="arrow-up" />
         </div>
       </el-col>
-      <el-col
-        :span="2"
-        class="fout-style"
-        :class="{ 'is-active-four': menu.fourShow.length === menu.fourMenus.length }"
-        @click="selectAll(menu.fourMenus)"
-        >所有</el-col
-      >
+      <el-col :span="2" class="fout-style">
+        <el-checkbox label="所有" v-model="state.checkAll"  @change="selectAll(menu.fourMenus)" />
+      </el-col>
       <el-col
         v-for="(item, index) in menu.fourMenus"
         :key="index"
         :span="2"
-        :class="{ 'is-active-four': menu.fourShow.indexOf(item.value) > -1 }"
         class="fout-style"
-        @click="fourHandleClick(item.value)"
+        @change="fourHandleClick(item.value)"
       >
-        {{ item.label }}
+        <el-checkbox :label="item.label" v-model="menu.fourMenus[index].checked" />
       </el-col>
     </el-row>
     <!-- <component :is="state.componentName" :datas="reslutData.coverageAnalysisData"/> -->
@@ -138,10 +133,10 @@
                     style="width: 100%"
                   >
                     <el-table-column type="selection" align="center" width="55" />
-                    <el-table-column property ="happenTime" label="日期" align="center" min-width="120" />
+                    <el-table-column property="happenTime" label="日期" align="center" min-width="120" />
                     <el-table-column
                       v-for="(item, index) in state.paymentGinsengTable"
-                      :property ="item.value"
+                      :property="item.value"
                       :class-name="item.value"
                       :label="item.label"
                       :formatter="moneyFormatter"
@@ -386,6 +381,8 @@ export default {
       height: '400px',
       // 表格数据
       tableData: [],
+      checkAll: false,
+      checkOne: (val, val1) => val.indexOf(val1) > -1,
       plantGinsengTable: [],
       paymentGinsengTable: [],
       departmentGinsengTable: [],
@@ -453,6 +450,7 @@ export default {
         // 不存在则添加
         menu.fourShow.push(val);
       }
+      state.checkAll = menu.fourShow.length === menu.fourMenus.length;
       params.prarm2 = menu.fourShow;
     };
 
@@ -463,6 +461,14 @@ export default {
       } else {
         menu.fourShow = JSON.parse(JSON.stringify(vals.map((val) => val.value)));
       }
+      menu.fourMenus = vals.map((item) => {
+        return {
+          label: item.label,
+          value: item.value,
+          checked: state.checkAll
+        };
+      });
+      console.log(menu.fourShow);
       params.prarm2 = menu.fourShow;
     };
 

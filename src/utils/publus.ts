@@ -16,24 +16,24 @@ export const tenantId = '3305231132';
 
 // 表格支付方式入参
 export let paymentGinseng = [
-  { label: '现金', value: '01' },
-  { label: '支付宝', value: '02' },
-  { label: '微信', value: '03' },
-  { label: '银联', value: '05' },
-  { label: '会员卡扣款', value: '06' },
-  { label: '聚合支付', value: '07' },
-  { label: '智能POSD支付', value: '08' },
-  { label: '其他', value: '99' },
-  { label: '医保金额', value: '100' }
+  { label: '现金', value: '01', checked: false },
+  { label: '支付宝', value: '02', checked: false },
+  { label: '微信', value: '03', checked: false },
+  { label: '银联', value: '05', checked: false },
+  { label: '会员卡扣款', value: '06', checked: false },
+  { label: '聚合支付', value: '07', checked: false },
+  { label: '智能POSD支付', value: '08', checked: false },
+  { label: '其他', value: '99', checked: false },
+  { label: '医保金额', value: '100', checked: false }
 ];
 // 表格物资类别入参
 export let suppliesGinseng = [
-  { label: '药品', value: '0' },
-  { label: '材料', value: '1' },
-  { label: '器械', value: '2' },
-  { label: '保健品', value: '3' },
-  { label: '非药品', value: '4' },
-  { label: '诊疗', value: '99' }
+  { label: '药品', value: '0', checked: false },
+  { label: '材料', value: '1', checked: false },
+  { label: '器械', value: '2', checked: false },
+  { label: '保健品', value: '3', checked: false },
+  { label: '非药品', value: '4', checked: false },
+  { label: '诊疗', value: '99', checked: false }
 ];
 
 // 支付方式键值对
