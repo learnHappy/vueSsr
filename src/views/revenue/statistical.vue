@@ -413,7 +413,6 @@ export default {
       await axios.post(statisticalApi.suppliesCategory, params, { loading: false }).then((res) => {
         if (res.code === '1') {
           dataReslut.suppliesCategoryData = res.data;
-          console.log(res.data);
           echartsStatistical('suppliesBarEcharts', echart, dataReslut.suppliesCategoryData, suppliesGinsengEcharts);
           revenueEcharts('suppliesPieEcharts', echart, dataReslut.suppliesCategoryData, suppliesGinsengEcharts);
         } else {
@@ -434,8 +433,6 @@ export default {
       await axios.post(statisticalApi.methodOfPayment, params, { loading: false }).then((res) => {
         if (res.code === '1') {
           dataReslut.methodOfPaymentData = res.data;
-          console.log("methodOfPaymentData");
-          console.log(res.data);
           echartsStatistical('paymentBarEcharts', echart, dataReslut.methodOfPaymentData, paymentGinsengEcharts);
           revenueEcharts('paymentPieEcharts', echart, dataReslut.methodOfPaymentData, paymentGinsengEcharts);
         } else {
