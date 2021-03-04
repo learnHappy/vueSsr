@@ -57,7 +57,7 @@
         </div>
       </el-col>
       <el-col :span="2" class="fout-style">
-        <el-checkbox label="所有" v-model="state.checkAll"  @change="selectAll(menu.fourMenus)" />
+        <el-checkbox label="所有" v-model="state.checkAll" @change="selectAll(menu.fourMenus)" />
       </el-col>
       <el-col
         v-for="(item, index) in menu.fourMenus"
@@ -97,10 +97,10 @@
                       :class-name="item.value"
                       :label="item.label"
                       :formatter="moneyFormatter"
+                      :key="index"
                       align="right"
                       header-align="center"
                       min-width="120"
-                      :key="index"
                     />
                   </el-table>
                 </el-carousel-item>
@@ -140,10 +140,10 @@
                       :class-name="item.value"
                       :label="item.label"
                       :formatter="moneyFormatter"
+                      :key="index"
                       align="right"
                       header-align="center"
                       min-width="120"
-                      :key="index"
                     />
                   </el-table>
                 </el-carousel-item>
@@ -183,10 +183,10 @@
                       :class-name="item.value"
                       :label="item.label"
                       :formatter="moneyFormatter"
+                      :key="index"
                       align="right"
                       header-align="center"
                       min-width="120"
-                      :key="index"
                     />
                   </el-table>
                 </el-carousel-item>
@@ -226,10 +226,10 @@
                       :class-name="item.value"
                       :label="item.label"
                       :formatter="moneyFormatter"
+                      :key="index"
                       align="right"
                       header-align="center"
                       min-width="120"
-                      :key="index"
                     />
                   </el-table>
                 </el-carousel-item>
@@ -269,10 +269,10 @@
                       :label="item.label"
                       :class-name="item.value"
                       :formatter="moneyFormatter"
+                      :key="index"
                       align="right"
                       header-align="center"
                       min-width="120"
-                      :key="index"
                     />
                   </el-table>
                 </el-carousel-item>
@@ -299,12 +299,11 @@ import {
   paymentGinsengEcharts,
   suppliesGinsengEcharts
 } from '../../../utils/publus';
-import { SuppliesCategory, Payment } from '../../../enum/index';
 import analyze from '../../../api/revenue/analyze';
 import baseApi from '../../../api/base';
 import axios from '../../../axios/index';
 import * as echart from 'echarts';
-import { onMounted, reactive, watch, watchEffect } from 'vue';
+import { reactive, watchEffect } from 'vue';
 import { ElMessage } from 'element-plus';
 import moment from 'moment';
 export default {
