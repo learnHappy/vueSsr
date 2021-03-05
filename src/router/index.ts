@@ -27,6 +27,11 @@ export default function (type?: 'client' | 'server') {
         component: () => import('@/views/sellsave/index.vue')
       },
       {
+        path: '/test',
+        name: '2131',
+        component: () => import('@/views/sellsave/analyze/analyzeTest.vue')
+      },
+      {
         path: '/:catchAll(.*)',
         name: '404',
         component: () => import('@/views/404.vue')

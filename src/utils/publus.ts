@@ -46,13 +46,72 @@ export const customTimeRange = (val: string, state: any, params: any, moment: an
   state.fastDateType = 'timeRange';
 };
 
+// 分析金额格式化
+export const anlyzeMoneyFormatter = (row: any, column: any) => {
+  if (!row[column.className]) {
+    return '0.00';
+  }
+  return parseFloat(row[column.className]).toFixed(2);
+};
+
+// 金额格式化
+let moneyFormatter = (row: any, column: any, cellValue: any) => {
+  return parseFloat(cellValue).toFixed(2);
+};
+
 /**
  * 加载生成柱状图
  * id: dom的id
  * echarts: 引入echarts插件
  * datas: 需要加载的数据
  */
-export const echartsStatistical = (id: string, echart: any, datas: any, ginsengEcharts: any) => {
+export const revenueEchartsStatistical = (id: any, echart: any, datas: any, ginsengEcharts: any) => {
+  /**
+   * 报表功能
+   */
+  var echartsCategory = echart.init(window.document.getElementById(id), 'light');
+  // 指定图表的配置项和数据
+  var option = {
+    title: {
+      text: ''
+    },
+    tooltip: {},
+    // 防止左侧数据
+    grid: {
+      left: '2%',
+      right: '2%',
+      bottom: '10%',
+      containLabel: true,
+      show: 'true',
+      borderWidth: '0'
+    },
+    xAxis: {
+      data: datas.map((item: any) => {
+        return ginsengEcharts[item.aggregationElement];
+      })
+    },
+    yAxis: {
+      // type: 'category',
+    },
+    series: [
+      {
+        name: '金额',
+        type: 'bar',
+        data: datas.map((item: any) => item.amount)
+      }
+    ]
+  };
+  // 使用刚指定的配置项和数据显示图表。
+  echartsCategory.setOption(option);
+};
+
+/**
+ * 加载生成柱状图
+ * id: dom的id
+ * echarts: 引入echarts插件
+ * datas: 需要加载的数据
+ */
+export const echartsStatistical = (id: string, echart: any, datas: any, series: any) => {
   /**
    * 报表功能
    */
@@ -73,21 +132,21 @@ export const echartsStatistical = (id: string, echart: any, datas: any, ginsengE
       show: 'true',
       borderWidth: '0'
     },
+    legend: {
+      data: series.map((item: any) => item.name),
+      selectedMode: false,
+      orient: 'horizontal',
+      left: '0'
+    },
     xAxis: {
-      data: datas.map((item) => {
-        return ginsengEcharts[item.aggregationElement];
+      data: datas.map((item: any) => {
+        return item.happenTime;
       })
     },
     yAxis: {
       // type: 'category',
     },
-    series: [
-      {
-        name: '金额',
-        type: 'bar',
-        data: datas.map((item) => item.amount)
-      }
-    ]
+    series
   };
   // 使用刚指定的配置项和数据显示图表。
   echartsCategory.setOption(option);
@@ -127,7 +186,7 @@ export const revenueEcharts = (id: string, echarts: any, datas: any, ginsengEcha
         labelLine: {
           show: false
         },
-        data: datas.map((item) => {
+        data: datas.map((item: any) => {
           return {
             name: ginsengEcharts[item.aggregationElement],
             value: item.amount
@@ -137,6 +196,50 @@ export const revenueEcharts = (id: string, echarts: any, datas: any, ginsengEcha
     ]
   };
   // 使用刚指定的配置项和数据显示图表。
+  echartsRecords.setOption(option);
+};
+
+// 折线图
+export const echartsLineEcharts = (id: string, echarts: any, datas: any, series: any) => {
+  /**
+   * 报表功能
+   */
+  echarts.dispose(window.document.getElementById(id));
+  var echartsRecords = echarts.init(window.document.getElementById(id), 'light');
+  // 指定图表的配置项和数据
+  var option = {
+    title: {
+      text: ''
+    },
+    tooltip: {
+      formatter: (params: any) => {
+        return `${params.name}${params.seriesName}金额为${params.value}`;
+      }
+    },
+    legend: {
+      data: series.map((item: any) => item.name),
+      selectedMode: false,
+      orient: 'horizontal',
+      left: '0'
+    },
+    // visualMap: {
+    //   calculable: false
+    // },
+    xAxis: {
+      name: '日期',
+      data: datas.map((item: any) => item.happenTime),
+      nameTextStyle: {
+        color: 'black'
+      }
+    },
+    yAxis: {
+      name: '',
+      nameTextStyle: {
+        color: 'black'
+      }
+    },
+    series
+  }; // 使用刚指定的配置项和数据显示图表。
   echartsRecords.setOption(option);
 };
 

@@ -190,7 +190,7 @@ import {
   tenantId,
   paymentGinsengEcharts,
   suppliesGinsengEcharts,
-  echartsStatistical,
+  revenueEchartsStatistical,
   revenueEcharts,
   invoiceAixosData,
   ephedrineGinsengEcharts
@@ -277,7 +277,7 @@ export default {
       await axios.post(salesApi.salesSuppliesCategory, params, { loading: false }).then((res) => {
         if (res.code === '1') {
           dataReslut.suppliesCategoryData = res.data;
-          echartsStatistical('suppliesBarEcharts', echart, dataReslut.suppliesCategoryData, suppliesGinsengEcharts);
+          revenueEchartsStatistical('suppliesBarEcharts', echart, dataReslut.suppliesCategoryData, suppliesGinsengEcharts);
           revenueEcharts('suppliesPieEcharts', echart, dataReslut.suppliesCategoryData, suppliesGinsengEcharts);
         } else {
           ElMessage({ message: res.message, duration: 0, showClose: true, offset: 200 });
@@ -287,7 +287,7 @@ export default {
       await axios.post(salesApi.salesMakeOutAnInvoice, params, { loading: false }).then((res) => {
         if (res.code === '1') {
           dataReslut.makeOutAnInvoiceData = res.data;
-          echartsStatistical('makeOutBarEcharts', echart, dataReslut.makeOutAnInvoiceData, invoceData.invoiceFormatter);
+          revenueEchartsStatistical('makeOutBarEcharts', echart, dataReslut.makeOutAnInvoiceData, invoceData.invoiceFormatter);
           revenueEcharts('makeOutPieEcharts', echart, dataReslut.makeOutAnInvoiceData, invoceData.invoiceFormatter);
         } else {
           ElMessage({ message: res.message, duration: 0, showClose: true, offset: 200 });
@@ -297,7 +297,7 @@ export default {
       await axios.post(salesApi.salesEphedrine, params, { loading: false }).then((res) => {
         if (res.code === '1') {
           dataReslut.ephedrineData = res.data;
-          echartsStatistical('ephedrineBarEcharts', echart, dataReslut.ephedrineData, ephedrineGinsengEcharts);
+          revenueEchartsStatistical('ephedrineBarEcharts', echart, dataReslut.ephedrineData, ephedrineGinsengEcharts);
           revenueEcharts('ephedrinePieEcharts', echart, dataReslut.ephedrineData, ephedrineGinsengEcharts);
         } else {
           ElMessage({ message: res.message, duration: 0, showClose: true, offset: 200 });
@@ -312,12 +312,13 @@ export default {
       pageHeight,
       fastDateHanderClick,
       customTimeRange,
-      echartsStatistical,
+      revenueEchartsStatistical,
       revenueEcharts,
       supplierFormatter,
       invoiceFormatter,
       ephedrineFormatter,
-      customTimeRange
+      customTimeRange,
+      moenyFormatter
     };
   },
   beforeMount() {

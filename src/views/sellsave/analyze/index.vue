@@ -53,14 +53,17 @@
         <el-checkbox :label="item.label" v-model="menu.fourMenus[index].checked" />
       </el-col>
     </el-row>
+    <component :is="state.componentName" :param="params"></component>
   </div>
 </template>
 
 <script>
+import salesSupplies from './salesSupplies.vue';
 import { reactive, watchEffect } from 'vue';
 import { ElMessage } from 'element-plus';
 import moment from 'moment';
 import axios from '../../../axios/index';
+import analyzeApi from '../../../api/sellsave/analyze';
 import {
   tenantId,
   pageHeight,
@@ -70,9 +73,12 @@ import {
   suppliesGinsengEcharts
 } from '../../../utils/publus';
 export default {
+  components: {
+    salesSupplies
+  },
   setup() {
     const state = reactive({
-      componentName: '',
+      componentName: 'salesSupplies',
       // 日期参数
       options: [
         {
@@ -82,6 +88,7 @@ export default {
       ],
       value: '',
       fastDateType: 'thisMonth',
+      tableData: [],
       // 时间参数
       month: moment(new Date()).format('YYYYMM'),
       year: moment(new Date()).format('YYYY'),
@@ -137,6 +144,38 @@ export default {
       params.supplierName = '';
     };
 
+    // 点击四级菜单事件
+    let fourHandleClick = (vals) => {
+      let val = vals.value;
+      // 已存在则删除
+      let index = menu.fourShow.indexOf(val);
+      if (index > -1) {
+        menu.fourShow.splice(index, 1);
+      } else {
+        // 不存在则添加
+        menu.fourShow.push(val);
+      }
+      state.checkAll = menu.fourShow.length === menu.fourMenus.length;
+      params.prarm2 = menu.fourShow;
+    };
+
+    // 四级菜单选择所有
+    let selectAll = (vals) => {
+      if (menu.fourShow.length === vals.length) {
+        menu.fourShow = [];
+      } else {
+        menu.fourShow = JSON.parse(JSON.stringify(vals.map((val) => val.value)));
+      }
+      menu.fourMenus = vals.map((item) => {
+        return {
+          label: item.label,
+          value: item.value,
+          checked: state.checkAll
+        };
+      });
+      params.prarm2 = menu.fourShow;
+    };
+
     // 获取开始时间和结束时间
     let monthRange = (date) => {
       let dateType = '';
@@ -149,15 +188,15 @@ export default {
       params.endDate = moment(date).endOf(dateType).format('YYYYMMDD');
     };
 
-    watchEffect(async () => {});
-
     return {
       state,
       menu,
       params,
       fastDateHanderClick,
       threeHandleClick,
-      monthRange
+      monthRange,
+      fourHandleClick,
+      selectAll
     };
   }
 };
