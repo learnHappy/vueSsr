@@ -85,7 +85,7 @@
                   align="center"
                   :formatter="supplierFormatter"
                 />
-                <el-table-column prop="amount" label="总金额" min-width="120" align="center" />
+                <el-table-column prop="amount" label="总金额" min-width="120" align="center" :formatter="moenyFormatter" />
               </el-table>
             </el-carousel-item>
             <el-carousel-item>
@@ -129,7 +129,7 @@
                   align="center"
                   :formatter="invoiceFormatter"
                 />
-                <el-table-column prop="amount" label="总金额" min-width="120" align="center" />
+                <el-table-column prop="amount" label="总金额" min-width="120" align="center" :formatter="moenyFormatter"/>
               </el-table>
             </el-carousel-item>
             <el-carousel-item>
@@ -164,8 +164,14 @@
             </el-carousel-item>
             <el-carousel-item>
               <el-table :data="dataReslut.ephedrineData" empty-text="无数据" stripe style="width: 100%">
-                <el-table-column prop="aggregationElement" label="麻黄碱类" min-width="120" align="center" />
-                <el-table-column prop="amount" label="总金额" min-width="120" align="center" />
+                <el-table-column
+                  prop="aggregationElement"
+                  label="麻黄碱类"
+                  min-width="120"
+                  align="center"
+                  :formatter="ephedrineFormatter"
+                />
+                <el-table-column prop="amount" label="总金额" min-width="120" align="center" :formatter="moenyFormatter"/>
               </el-table>
             </el-carousel-item>
             <el-carousel-item>
@@ -258,8 +264,13 @@ export default {
       return invoceData.invoiceFormatter[cellValue];
     };
     let ephedrineFormatter = (row, colunm, cellValue) => {
+      console.log(cellValue);
       return ephedrineGinsengEcharts[cellValue];
     };
+    let moenyFormatter = (row, colunm, cellValue) => {
+      return parseFloat(cellValue).toFixed(2);
+    };
+
     // 监听参数变化,改变后请求查询后台
     watchEffect(async () => {
       // 5.1药品销售统计物资类别
@@ -276,7 +287,6 @@ export default {
       await axios.post(salesApi.salesMakeOutAnInvoice, params, { loading: false }).then((res) => {
         if (res.code === '1') {
           dataReslut.makeOutAnInvoiceData = res.data;
-          console.log(invoceData);
           echartsStatistical('makeOutBarEcharts', echart, dataReslut.makeOutAnInvoiceData, invoceData.invoiceFormatter);
           revenueEcharts('makeOutPieEcharts', echart, dataReslut.makeOutAnInvoiceData, invoceData.invoiceFormatter);
         } else {
@@ -306,6 +316,7 @@ export default {
       revenueEcharts,
       supplierFormatter,
       invoiceFormatter,
+      ephedrineFormatter,
       customTimeRange
     };
   },
