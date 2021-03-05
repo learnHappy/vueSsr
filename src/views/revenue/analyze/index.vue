@@ -943,96 +943,21 @@ export default {
 };
 </script>
 
+<style scoped lang="scss">
+@import '../../../scss/analyze.scss';
+</style>
 <style lang="scss">
-// 三级菜单样式
-.level-three-menu {
-  background-color: white;
-  border-radius: 5px;
-  & div {
-    user-select: none;
-    -webkit-user-select: none; /*webkit浏览器*/
-  }
-  & .el-tabs__nav-wrap.is-top {
-    border-bottom: 1px solid #5db1ff;
-    position: relative;
-  }
-  & .el-tabs__nav-wrap::after {
-    height: 0;
-  }
-  .el-tabs__active-bar.is-top {
-    height: 0;
-  }
-}
-
-// 三级菜单样式
-.three-style {
-  position: relative;
-  width: 20%;
-  display: inline-block;
-  text-align: center;
-  height: 40px;
-  line-height: 40px;
-  border-bottom: 1px solid #5db1ff;
-  cursor: pointer;
-}
-
-// 激活三级菜单
-.is-active-three {
-  color: #1e91fe;
-  & .arrow-up {
-    display: block;
-  }
-}
-
-// 向上箭头
-.arrow-up {
-  width: 7px;
-  height: 7px;
-  position: absolute;
-  bottom: -4px;
-  left: calc(50% - 3.5px);
-  transform: rotate(45deg);
-  -webkit-transform: rotate(45deg);
-  background-color: white;
-  border: 1px solid #5db1ff;
-  border-right: 0;
-  border-bottom: 0;
-  content: '';
-  z-index: 99;
-  display: none;
-}
-
-// 四级菜单样式
-.fout-style {
-  text-align: center;
-  height: 40px;
-  line-height: 40px;
-  font-size: 12px;
-  cursor: pointer;
-}
-
-// 激活四级菜单
-.is-active-four {
-  color: #1e91fe;
-}
-
 // 时间参数样式
 .date-param {
   text-align: right;
+
   & .date-ul {
     margin-right: 5px;
   }
+
   & .el-input.el-input--prefix {
     width: 100%;
   }
-}
-
-.table-layout {
-  padding: 10px;
-}
-
-.revenue {
-  overflow: hidden;
 }
 </style>
 
