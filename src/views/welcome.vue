@@ -213,7 +213,7 @@
               </el-row>
             </div>
             <!-- <el-button type="primary" style="width: 100%">更多</el-button> -->
-            <div style="height: 40px"></div>
+            <!-- <div style="height: 40px"></div> -->
           </div>
         </el-card>
       </el-col>
@@ -322,7 +322,13 @@ export default {
       startDate: day,
       endDate: day,
       pageNum: 0,
-      pageSize: 5
+      pageSize: 5,
+      orders: [
+        {
+          column: 'fssj',
+          asc: 'false'
+        }
+      ]
     };
     axios.post(welcomeApi.latelyRevenue, latelyRevenueParams, { loading: false }).then((res) => {
       if (res.code === '1') {
@@ -440,8 +446,8 @@ export default {
     this.revenueEcharts(echarts);
     this.loading.close();
     window.onresize = () => {
-      window.location.reload()
-    }
+      window.location.reload();
+    };
   },
   methods: {
     echartsDoctor(echarts) {
