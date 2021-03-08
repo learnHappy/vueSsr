@@ -23,6 +23,11 @@
   }
 }
 
+.three-style-border {
+  border-bottom: 1px solid #5db1ff;
+  border-radius: 4px 4px 0 0;
+}
+
 // 三级菜单样式
 .three-style {
   position: relative;
@@ -31,7 +36,7 @@
   text-align: center;
   height: 40px;
   line-height: 40px;
-  border-bottom: 1px solid #5db1ff;
+  // border-bottom: 1px solid #5db1ff;
   cursor: pointer;
 }
 

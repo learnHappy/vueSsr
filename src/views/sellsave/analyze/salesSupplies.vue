@@ -12,7 +12,7 @@
                 <el-table-column type="selection" align="center" width="55" />
                 <el-table-column prop="happenTime" label="日期" align="center" min-width="120" />
                 <el-table-column
-                  v-for="(item, index) in state.ginsengTable"
+                  v-for="(item, index) in state.ginseng.ginsengTable"
                   :prop="item.value"
                   :class-name="item.value"
                   :label="item.label"
@@ -35,39 +35,30 @@
 </template>
 
 <script>
-import { reactive, watch, watchEffect } from 'vue';
+import { nextTick, reactive, watch, watchEffect } from 'vue';
 import * as echart from 'echarts';
 import moment from 'moment';
 import { ElMessage } from 'element-plus';
 import axios from '../../../axios/index';
-import analyzeApi from '../../../api/sellsave/analyze';
-import {
-  tenantId,
-  pageHeight,
-  echartsStatistical,
-  echartsLineEcharts,
-  paymentGinseng,
-  suppliesGinseng,
-  paymentGinsengEcharts,
-  suppliesGinsengEcharts,
-  anlyzeMoneyFormatter
-} from '../../../utils/publus';
+import { tenantId, pageHeight, echartsStatistical, echartsLineEcharts, anlyzeMoneyFormatter } from '../../../utils/publus';
 export default {
   props: {
-    param: Object
+    param: Object,
+    ginseng: Object
   },
   setup(props) {
+    console.log(props.param);
     const state = {
       tableData: [],
       // 走马灯参数
-      height: '400px',
-      ginsengTable: suppliesGinseng
+      height: '0',
+      ginseng: props.ginseng
     };
-    watch(() => {
+    watch(async () => {
       // 3.4营收物资类别分析
-      axios.post(analyzeApi.suppliesCategoryAnalyze, props.param, { loading: false }).then((res) => {
+      state.ginseng = props.ginseng;
+      await axios.post(state.ginseng.api, props.param, { loading: false }).then((res) => {
         if (res.code === '1') {
-          console.log(res.data);
           let long = 0;
           let value = [];
           // 获取表格数据
@@ -87,19 +78,16 @@ export default {
             });
             return tableJson;
           });
-          console.log(`value`);
-          console.log(value);
           // 获取表列
-          state.ginsengTable = value.map((item) => {
+          state.ginseng.ginsengTable = value.map((item) => {
             return {
-              label: suppliesGinsengEcharts[item.aggregationElement],
+              label: state.ginseng.ginsengEcharts[item.aggregationElement],
               value: item.aggregationElement
             };
           });
-          console.log();
 
           // 加载柱状图
-          let series = state.ginsengTable.map((item) => {
+          let series = state.ginseng.ginsengTable.map((item) => {
             return {
               name: item.label,
               type: 'bar',
@@ -109,7 +97,7 @@ export default {
           });
           echartsStatistical('barEcharts', echart, state.tableData, series);
           // 加载折线图
-          let seriesLine = state.ginsengTable.map((item) => {
+          let seriesLine = state.ginseng.ginsengTable.map((item) => {
             return {
               name: item.label,
               type: 'line',
@@ -131,14 +119,13 @@ export default {
       echartsLineEcharts
     };
   },
-  mounted() {
+  beforeMount() {
     // 设置内容高度
     let that = this;
-    this.pageHeight(that, 168);
+    this.pageHeight(that, 208);
     window.onresize = () => {
-      that.pageHeight(that, 168);
+      that.pageHeight(that, 208);
     };
-    console.log(this.state.height);
   }
 };
 </script>

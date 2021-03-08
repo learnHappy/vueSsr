@@ -69,9 +69,9 @@ export const revenueEchartsStatistical = (id: any, echart: any, datas: any, gins
   /**
    * 报表功能
    */
-  var echartsCategory = echart.init(window.document.getElementById(id), 'light');
+  let echartsCategory = echart.init(window.document.getElementById(id), 'light');
   // 指定图表的配置项和数据
-  var option = {
+  let option = {
     title: {
       text: ''
     },
@@ -116,9 +116,9 @@ export const echartsStatistical = (id: string, echart: any, datas: any, series: 
    * 报表功能
    */
   echart.dispose(window.document.getElementById(id));
-  var echartsCategory = echart.init(window.document.getElementById(id), 'light');
+  let echartsCategory = echart.init(window.document.getElementById(id), 'light');
   // 指定图表的配置项和数据
-  var option = {
+  let option = {
     title: {
       text: ''
     },
@@ -160,8 +160,8 @@ export const echartsStatistical = (id: string, echart: any, datas: any, series: 
  */
 export const revenueEcharts = (id: string, echarts: any, datas: any, ginsengEcharts: any) => {
   echarts.dispose(window.document.getElementById(id));
-  var echartsRecords = echarts.init(window.document.getElementById(id), 'light');
-  var option = {
+  let echartsRecords = echarts.init(window.document.getElementById(id), 'light');
+  let option = {
     title: {
       text: '',
       subtext: '',
@@ -205,9 +205,9 @@ export const echartsLineEcharts = (id: string, echarts: any, datas: any, series:
    * 报表功能
    */
   echarts.dispose(window.document.getElementById(id));
-  var echartsRecords = echarts.init(window.document.getElementById(id), 'light');
+  let echartsRecords = echarts.init(window.document.getElementById(id), 'light');
   // 指定图表的配置项和数据
-  var option = {
+  let option = {
     title: {
       text: ''
     },
@@ -253,7 +253,7 @@ export const invoiceAixosData = async () => {
     invoiceFormatter: any = {};
   await axios.post(baseApi.tenantInvoiceProject, baseParams, { loading: false }).then((res: any) => {
     if (res.code === '1') {
-      invoiceGinseng = res.data.map((item) => {
+      invoiceGinseng = res.data.map((item: any) => {
         invoiceFormatter[item.xmdm] = item.xmmc;
         return {
           label: item.xmmc,
@@ -292,6 +292,20 @@ export let suppliesGinseng = [
   { label: '诊疗', value: '99', checked: true }
 ];
 
+// 表格物资类别入参
+export let invoicePartGinseng = [
+  { label: '西药', value: '01', checked: true },
+  { label: '中成药', value: '02', checked: true },
+  { label: '中草药', value: '03', checked: true }
+];
+
+// 麻黄碱表格入参
+export let ephedrineGinseng = [
+  { label: '处方药', value: '0', checked: true },
+  { label: 'otc', value: '1', checked: true },
+  { label: '麻黄碱', value: '3', checked: true }
+];
+
 // 支付方式键值对
 export let paymentGinsengEcharts = {
   '01': '现金',
@@ -308,18 +322,12 @@ export let paymentGinsengEcharts = {
 // 物资类别键值对
 export let suppliesGinsengEcharts = { '0': '药品', '1': '材料', '2': '器械', '3': '保健品', '4': '非药品', '99': '诊疗' };
 
-// 麻黄碱表格入参
-export const ephedrineGinseng = [
-  { label: '处方药', value: '0', checked: true },
-  { label: 'otc', value: '1', checked: true },
-  { label: '处方药双轨', value: '2', checked: true },
-  { label: '麻黄碱', value: '3', checked: true }
-];
+// 开票项目部分键值对
+export let invoicePartGinsengEcharts = { '01': '西药', '02': '中成药', '03': '中草药' };
 
 // 麻黄碱键值对
-export const ephedrineGinsengEcharts = {
+export let ephedrineGinsengEcharts = {
   '0': '处方药',
   '1': 'otc',
-  '2': '处方药双轨',
   '3': '麻黄碱'
 };

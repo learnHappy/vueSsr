@@ -9,5 +9,5 @@ export default {
   makeOutAnInvoiceAnalyze: `${url}/api/kcBdlsRedundant/getDrugsSalesAnalyzeInvoiceProject`,
 
   // 6.3药品销售分析OTC/处方药/麻黄碱类药品
-  ephedrineAnalyze: `${url}/api/kcBdlsRedundant/ getDrugsSalesAnalyzeOTCandEphedrine`
+  ephedrineAnalyze: `${url}/api/kcBdlsRedundant/getDrugsSalesAnalyzeOTCandEphedrine`
 };

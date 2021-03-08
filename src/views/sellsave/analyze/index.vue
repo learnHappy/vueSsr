@@ -34,7 +34,7 @@
     </el-row>
 
     <el-row class="level-three-menu">
-      <el-col :span="24">
+      <el-col :span="24" class="three-style-border">
         <div
           v-for="(item, index) in menu.menus"
           :key="index"
@@ -53,13 +53,16 @@
         <el-checkbox :label="item.label" v-model="menu.fourMenus[index].checked" />
       </el-col>
     </el-row>
-    <component :is="state.componentName" :param="params"></component>
+
+    <component :is="componentName" v-if="state.componentName === 'salesSupplies'" :param="params" :ginseng="ginseng"></component>
+    <component :is="componentName" v-else-if="state.componentName === 'salesInvoice'" :param="params" :ginseng="ginseng"></component>
+    <component :is="componentName" v-else-if="state.componentName === 'salesEphedrine'" :param="params" :ginseng="ginseng"></component>
   </div>
 </template>
 
 <script>
 import salesSupplies from './salesSupplies.vue';
-import { reactive, watchEffect } from 'vue';
+import { reactive, toRef, watchEffect } from 'vue';
 import { ElMessage } from 'element-plus';
 import moment from 'moment';
 import axios from '../../../axios/index';
@@ -67,16 +70,19 @@ import analyzeApi from '../../../api/sellsave/analyze';
 import {
   tenantId,
   pageHeight,
-  paymentGinseng,
   suppliesGinseng,
-  paymentGinsengEcharts,
-  suppliesGinsengEcharts
+  suppliesGinsengEcharts,
+  ephedrineGinseng,
+  ephedrineGinsengEcharts,
+  invoicePartGinseng,
+  invoicePartGinsengEcharts
 } from '../../../utils/publus';
 export default {
   components: {
     salesSupplies
   },
   setup() {
+    let componentName = 'salesSupplies';
     const state = reactive({
       componentName: 'salesSupplies',
       // 日期参数
@@ -99,13 +105,24 @@ export default {
     });
 
     const menu = reactive({
-      menus: [{ tabName: 'salesSupplies', threeMenus: '物资类别', fourMenus: suppliesGinseng }],
+      menus: [
+        { tabName: 'salesSupplies', threeMenus: '物资类别', fourMenus: suppliesGinseng },
+        { tabName: 'salesInvoice', threeMenus: '开票项目', fourMenus: invoicePartGinseng },
+        { tabName: 'salesEphedrine', threeMenus: '麻黄碱类', fourMenus: ephedrineGinseng }
+      ],
       fourMenus: suppliesGinseng,
       threeShow: 0,
       fourShow: suppliesGinseng.map((item) => item.value)
     });
 
-    // 条件入参
+    //子组件翻译入参
+    const ginseng = reactive({
+      ginsengTable: suppliesGinseng,
+      ginsengEcharts: suppliesGinsengEcharts,
+      api: analyzeApi.suppliesCategoryAnalyze
+    });
+
+    // 子组件条件入参
     const params = reactive({
       tenantId,
       startDate: moment(state.month).startOf('month').format('YYYYMMDD'),
@@ -128,20 +145,38 @@ export default {
 
     // 点击三级菜单事件
     let threeHandleClick = (index, tabName) => {
+      // 三级菜单修改
       menu.threeShow = index;
       menu.fourMenus = JSON.parse(JSON.stringify(menu.menus[index]['fourMenus']));
-      // 初始化参数条件
       menu.fourShow = menu.fourMenus.map((item) => item.value);
+      // state 公共参数修改
       state.componentName = tabName;
       state.checkAll = true;
       state.fastDateType = 'thisMonth';
       state.month = moment(new Date()).format('YYYY-MM');
       state.year = moment(new Date()).format('YYYY');
+      // 子组件入参条件修改
       params.startDate = moment(state.month).startOf('month').format('YYYYMMDD');
       params.endDate = moment(state.month).endOf('month').format('YYYYMMDD');
       params.prarm2 = menu.fourMenus.map((item) => item.value);
+      console.log(params.prarm2);
       params.dateType = 'thisMonth';
       params.supplierName = '';
+      // 子组件翻译入参修改
+      console.log(state.componentName);
+      if (state.tabName === 'salesSupplies') {
+        ginseng.ginsengTable = suppliesGinseng;
+        ginseng.ginsengEcharts = suppliesGinsengEcharts;
+        ginseng.api = analyzeApi.suppliesCategoryAnalyze;
+      } else if (state.componentName === 'salesInvoice') {
+        ginseng.ginsengTable = invoicePartGinseng;
+        ginseng.ginsengEcharts = invoicePartGinsengEcharts;
+        ginseng.api = analyzeApi.makeOutAnInvoiceAnalyze;
+      } else if (state.componentName === 'salesEphedrine') {
+        ginseng.ginsengTable = ephedrineGinseng;
+        ginseng.ginsengEcharts = ephedrineGinsengEcharts;
+        ginseng.api = analyzeApi.ephedrineAnalyze;
+      }
     };
 
     // 点击四级菜单事件
@@ -189,8 +224,10 @@ export default {
     };
 
     return {
+      componentName,
       state,
       menu,
+      ginseng,
       params,
       fastDateHanderClick,
       threeHandleClick,
