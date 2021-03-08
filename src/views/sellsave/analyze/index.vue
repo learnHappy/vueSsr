@@ -54,15 +54,15 @@
       </el-col>
     </el-row>
 
-    <component :is="componentName" v-if="state.componentName === 'salesSupplies'" :param="params" :ginseng="ginseng"></component>
-    <component :is="componentName" v-else-if="state.componentName === 'salesInvoice'" :param="params" :ginseng="ginseng"></component>
-    <component :is="componentName" v-else-if="state.componentName === 'salesEphedrine'" :param="params" :ginseng="ginseng"></component>
+    <component :is="componentName" v-if="state.componentName === 'salesSupplies'" :subclass="subclassChild"></component>
+    <component :is="componentName" v-else-if="state.componentName === 'salesInvoice'" :subclass="subclassChild1"></component>
+    <component :is="componentName" v-else-if="state.componentName === 'salesEphedrine'" :subclass="subclassChild2"></component>
   </div>
 </template>
 
 <script>
 import salesSupplies from './salesSupplies.vue';
-import { reactive, toRef, watchEffect } from 'vue';
+import { nextTick, reactive, toRef, watchEffect } from 'vue';
 import { ElMessage } from 'element-plus';
 import moment from 'moment';
 import axios from '../../../axios/index';
@@ -132,6 +132,19 @@ export default {
       supplierName: ''
     });
 
+    const subclassChild = reactive({
+      ginseng: JSON.parse(JSON.stringify(ginseng)),
+      params: JSON.parse(JSON.stringify(params))
+    });
+    const subclassChild1 = reactive({
+      ginseng: {},
+      params: {}
+    });
+    const subclassChild2 = reactive({
+      ginseng: {},
+      params: {}
+    });
+
     // 点击快速选择时间范围
     let fastDateHanderClick = (val) => {
       state.fastDateType = val;
@@ -150,7 +163,6 @@ export default {
       menu.fourMenus = JSON.parse(JSON.stringify(menu.menus[index]['fourMenus']));
       menu.fourShow = menu.fourMenus.map((item) => item.value);
       // state 公共参数修改
-      state.componentName = tabName;
       state.checkAll = true;
       state.fastDateType = 'thisMonth';
       state.month = moment(new Date()).format('YYYY-MM');
@@ -163,20 +175,26 @@ export default {
       params.dateType = 'thisMonth';
       params.supplierName = '';
       // 子组件翻译入参修改
-      console.log(state.componentName);
-      if (state.tabName === 'salesSupplies') {
+      if (tabName === 'salesSupplies') {
         ginseng.ginsengTable = suppliesGinseng;
         ginseng.ginsengEcharts = suppliesGinsengEcharts;
         ginseng.api = analyzeApi.suppliesCategoryAnalyze;
-      } else if (state.componentName === 'salesInvoice') {
+        subclassChild.ginseng = JSON.parse(JSON.stringify(ginseng));
+        subclassChild.params = JSON.parse(JSON.stringify(params));
+      } else if (tabName === 'salesInvoice') {
         ginseng.ginsengTable = invoicePartGinseng;
         ginseng.ginsengEcharts = invoicePartGinsengEcharts;
         ginseng.api = analyzeApi.makeOutAnInvoiceAnalyze;
-      } else if (state.componentName === 'salesEphedrine') {
+        subclassChild1.ginseng = JSON.parse(JSON.stringify(ginseng));
+        subclassChild1.params = JSON.parse(JSON.stringify(params));
+      } else if (tabName === 'salesEphedrine') {
         ginseng.ginsengTable = ephedrineGinseng;
         ginseng.ginsengEcharts = ephedrineGinsengEcharts;
         ginseng.api = analyzeApi.ephedrineAnalyze;
+        subclassChild2.ginseng = JSON.parse(JSON.stringify(ginseng));
+        subclassChild2.params = JSON.parse(JSON.stringify(params));
       }
+      state.componentName = tabName;
     };
 
     // 点击四级菜单事件
@@ -192,6 +210,13 @@ export default {
       }
       state.checkAll = menu.fourShow.length === menu.fourMenus.length;
       params.prarm2 = menu.fourShow;
+      if (state.componentName === 'salesSupplies') {
+        subclassChild.params = JSON.parse(JSON.stringify(params));
+      } else if (state.componentName === 'salesInvoice') {
+        subclassChild1.params = JSON.parse(JSON.stringify(params));
+      } else if (state.componentName === 'salesEphedrine') {
+        subclassChild2.params = JSON.parse(JSON.stringify(params));
+      }
     };
 
     // 四级菜单选择所有
@@ -209,6 +234,13 @@ export default {
         };
       });
       params.prarm2 = menu.fourShow;
+      if (state.componentName === 'salesSupplies') {
+        subclassChild.params = JSON.parse(JSON.stringify(params));
+      } else if (state.componentName === 'salesInvoice') {
+        subclassChild1.params = JSON.parse(JSON.stringify(params));
+      } else if (state.componentName === 'salesEphedrine') {
+        subclassChild2.params = JSON.parse(JSON.stringify(params));
+      }
     };
 
     // 获取开始时间和结束时间
@@ -221,6 +253,13 @@ export default {
       }
       params.startDate = moment(date).startOf(dateType).format('YYYYMMDD');
       params.endDate = moment(date).endOf(dateType).format('YYYYMMDD');
+      if (state.componentName === 'salesSupplies') {
+        subclassChild.params = JSON.parse(JSON.stringify(params));
+      } else if (state.componentName === 'salesInvoice') {
+        subclassChild1.params = JSON.parse(JSON.stringify(params));
+      } else if (state.componentName === 'salesEphedrine') {
+        subclassChild2.params = JSON.parse(JSON.stringify(params));
+      }
     };
 
     return {
@@ -229,6 +268,9 @@ export default {
       menu,
       ginseng,
       params,
+      subclassChild,
+      subclassChild1,
+      subclassChild2,
       fastDateHanderClick,
       threeHandleClick,
       monthRange,

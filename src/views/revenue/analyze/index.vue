@@ -44,7 +44,7 @@
     </el-row>
 
     <el-row class="level-three-menu">
-      <el-col :span="24">
+      <el-col :span="24" class="three-style-border">
         <div
           v-for="(item, index) in menu.menus"
           :key="index"

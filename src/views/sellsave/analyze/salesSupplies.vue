@@ -43,21 +43,20 @@ import axios from '../../../axios/index';
 import { tenantId, pageHeight, echartsStatistical, echartsLineEcharts, anlyzeMoneyFormatter } from '../../../utils/publus';
 export default {
   props: {
-    param: Object,
-    ginseng: Object
+    subclass: Object
   },
   setup(props) {
-    console.log(props.param);
     const state = {
       tableData: [],
       // 走马灯参数
       height: '0',
-      ginseng: props.ginseng
+      ginseng: props.subclass.ginseng,
+      frirt: true
     };
     watch(async () => {
       // 3.4营收物资类别分析
-      state.ginseng = props.ginseng;
-      await axios.post(state.ginseng.api, props.param, { loading: false }).then((res) => {
+      // state.ginseng = props.subclass.ginseng;
+      await axios.post(state.ginseng.api, props.subclass.params, { loading: false }).then((res) => {
         if (res.code === '1') {
           let long = 0;
           let value = [];
